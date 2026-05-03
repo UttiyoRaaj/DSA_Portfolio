@@ -1,0 +1,49 @@
+{
+    "id": 10,
+    "leetcode_number": 79,
+    "title": "Word Search",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/word-search/",
+    "problem_statement": "Given a 2D board and a word, return true if the word exists in the board by consecutive letters adjacent horizontally or vertically. You may not reuse the same cell twice.",
+    "examples": [
+        {
+            "input": "board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCCED\"",
+            "output": "true",
+            "explanation": "The word can be formed by a path through the board."
+        },
+        {
+            "input": "board = [[\"a\"]], word = \"aa\"",
+            "output": "false",
+            "explanation": "Cannot reuse the same cell twice."
+        }
+    ],
+    "constraints": [
+        "m == board.length",
+        "n == board[i].length",
+        "1 ≤ m, n ≤ 6",
+        "1 ≤ word.length ≤ 15"
+    ],
+    "intuition": "Perform DFS from each cell and backtrack, marking visited cells so the current path does not reuse a position.",
+    "approaches": [
+        {
+            "name": "DFS with Backtracking",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Start search from each board cell. Recursively match the word one letter at a time, marking visited cells and backtracking if needed.",
+            "time": "O(m·n·4^L)",
+            "space": "O(L)",
+            "why_not": null,
+            "code": "class Solution {\n    public boolean exist(char[][] board, String word) {\n        for (int i = 0; i < board.length; i++) {\n            for (int j = 0; j < board[0].length; j++) {\n                if (dfs(board, word, i, j, 0)) return true;\n            }\n        }\n        return false;\n    }\n\n    private boolean dfs(char[][] board, String word, int i, int j, int index) {\n        if (index == word.length()) return true;\n        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length) return false;\n        if (board[i][j] != word.charAt(index)) return false;\n        char c = board[i][j];\n        board[i][j] = '#';\n        boolean found = dfs(board, word, i + 1, j, index + 1)\n            || dfs(board, word, i - 1, j, index + 1)\n            || dfs(board, word, i, j + 1, index + 1)\n            || dfs(board, word, i, j - 1, index + 1);\n        board[i][j] = c;\n        return found;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why mark visited cells and restore them?",
+            "a": "Marking prevents cycles during one search path while restoring allows other starting points to reuse the cell."
+        },
+        {
+            "q": "What makes this search expensive?",
+            "a": "The search branches in four directions at each step, so the worst-case complexity includes 4^L possibilities for a word of length L."
+        }
+    ]
+}

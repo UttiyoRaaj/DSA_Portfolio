@@ -1,0 +1,47 @@
+{
+    "id": 1,
+    "leetcode_number": 432,
+    "title": "All O`1` Data Structure",
+    "difficulty": "Hard",
+    "url": "https://leetcode.com/problems/all-oone-data-structure/",
+    "problem_statement": "Design a data structure supporting increment, decrement, getMaxKey, and getMinKey operations all in O(1) time.",
+    "examples": [
+        {
+            "input": "Operations include inc(\"a\"), inc(\"b\"), inc(\"b\"), getMaxKey(), getMinKey()",
+            "output": "\"b\", \"a\"",
+            "explanation": "b has highest count, a has lowest count."
+        },
+        {
+            "input": "After decrementing and removing keys, getMaxKey() and getMinKey() return empty strings.",
+            "output": "\"\", \"\"",
+            "explanation": "No keys remain."
+        }
+    ],
+    "constraints": [
+        "At most 5·10⁴ operations.",
+        "Keys are non-empty strings of lowercase letters."
+    ],
+    "intuition": "Use a doubly linked list of count buckets and a hash map from keys to nodes so counts can be updated and extremes can be read in O(1).",
+    "approaches": [
+        {
+            "name": "Bucket List with HashMaps",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Maintain a linked list of frequency nodes and a map from keys to their bucket to support constant-time updates.",
+            "time": "O(1)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class AllOne {\n    private static class Node {\n        int count;\n        Set<String> keys = new HashSet<>();\n        Node prev, next;\n    }\n\n    private final Node head = new Node();\n    private final Node tail = new Node();\n    private final Map<String, Node> keyToNode = new HashMap<>();\n\n    public AllOne() {\n        head.next = tail;\n        tail.prev = head;\n    }\n\n    public void inc(String key) {\n        Node node = keyToNode.getOrDefault(key, head);\n        Node next = node.next;\n        if (next == tail || next.count != node.count + 1) {\n            next = insertAfter(node, node.count + 1);\n        }\n        next.keys.add(key);\n        keyToNode.put(key, next);\n        if (node != head) {\n            node.keys.remove(key);\n            if (node.keys.isEmpty()) remove(node);\n        }\n    }\n\n    public void dec(String key) {\n        Node node = keyToNode.get(key);\n        if (node == null) return;\n        if (node.count == 1) {\n            keyToNode.remove(key);\n        } else {\n            Node prev = node.prev;\n            if (prev == head || prev.count != node.count - 1) {\n                prev = insertAfter(node.prev, node.count - 1);\n            }\n            prev.keys.add(key);\n            keyToNode.put(key, prev);\n        }\n        node.keys.remove(key);\n        if (node.keys.isEmpty()) remove(node);\n    }\n\n    public String getMaxKey() {\n        return tail.prev == head ? \"\" : tail.prev.keys.iterator().next();\n    }\n\n    public String getMinKey() {\n        return head.next == tail ? \"\" : head.next.keys.iterator().next();\n    }\n\n    private Node insertAfter(Node node, int count) {\n        Node newNode = new Node();\n        newNode.count = count;\n        newNode.next = node.next;\n        newNode.prev = node;\n        node.next.prev = newNode;\n        node.next = newNode;\n        return newNode;\n    }\n\n    private void remove(Node node) {\n        node.prev.next = node.next;\n        node.next.prev = node.prev;\n    }\n} // simplified for clarity"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why use a linked list of buckets?",
+            "a": "It lets you move keys between counts and still access min/max counts in constant time."
+        },
+        {
+            "q": "What does the key-to-node map store?",
+            "a": "It stores current bucket references for each key to update counts quickly."
+        }
+    ]
+}

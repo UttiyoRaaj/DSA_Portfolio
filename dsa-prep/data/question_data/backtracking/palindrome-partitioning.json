@@ -1,0 +1,47 @@
+{
+    "id": 5,
+    "leetcode_number": 131,
+    "title": "Palindrome Partitioning",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/palindrome-partitioning/",
+    "problem_statement": "Given a string s, partition s into substrings such that every substring is a palindrome. Return all possible palindrome partitionings.",
+    "examples": [
+        {
+            "input": "s = \"aab\"",
+            "output": "[[\"a\",\"a\",\"b\"],[\"aa\",\"b\"]]",
+            "explanation": "Two palindrome partitions exist."
+        },
+        {
+            "input": "s = \"a\"",
+            "output": "[[\"a\"]]",
+            "explanation": "Single character is a palindrome."
+        }
+    ],
+    "constraints": [
+        "1 ≤ s.length ≤ 16",
+        "s consists of lowercase English letters."
+    ],
+    "intuition": "Backtrack by expanding palindrome substrings from the start index and recurse on the remainder.",
+    "approaches": [
+        {
+            "name": "DFS with Palindrome Check",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use recursion to choose a palindrome prefix and partition the remainder.",
+            "time": "O(n · 2^n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<String>> partition(String s) {\n        List<List<String>> result = new ArrayList<>();\n        backtrack(s, 0, new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(String s, int start, List<String> current, List<List<String>> result) {\n        if (start == s.length()) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        for (int end = start + 1; end <= s.length(); end++) {\n            String sub = s.substring(start, end);\n            if (isPalindrome(sub)) {\n                current.add(sub);\n                backtrack(s, end, current, result);\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n\n    private boolean isPalindrome(String s) {\n        int i = 0, j = s.length() - 1;\n        while (i < j) {\n            if (s.charAt(i++) != s.charAt(j--)) return false;\n        }\n        return true;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "How can palindrome tests be optimized?",
+            "a": "Use DP or memoization to avoid repeating palindrome checks for the same substring."
+        },
+        {
+            "q": "Why are results stored as new ArrayList copies?",
+            "a": "Each partition branch must preserve its own combination independently of later backtracking changes."
+        }
+    ]
+}

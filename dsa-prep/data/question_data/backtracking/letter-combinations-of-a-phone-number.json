@@ -1,0 +1,47 @@
+{
+    "id": 3,
+    "leetcode_number": 17,
+    "title": "Letter Combinations of a Phone Number",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/",
+    "problem_statement": "Given a string containing digits 2-9 inclusive, return all possible letter combinations that the number could represent using telephone keypad letters.",
+    "examples": [
+        {
+            "input": "digits = \"23\"",
+            "output": "[\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]",
+            "explanation": "Combine letters from digits 2 and 3."
+        },
+        {
+            "input": "digits = \"\"",
+            "output": "[]",
+            "explanation": "No digits means no combinations."
+        }
+    ],
+    "constraints": [
+        "0 ≤ digits.length ≤ 4",
+        "digits[i] is in the range [2, 9]."
+    ],
+    "intuition": "Use backtracking to append one letter per digit and explore all combinations.",
+    "approaches": [
+        {
+            "name": "Recursive Combination Build",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Map each digit to its letters, then backtrack across digits building each string character by character.",
+            "time": "O(4^n · n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    private static final String[] KEYS = {\n        \"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"\n    };\n\n    public List<String> letterCombinations(String digits) {\n        List<String> result = new ArrayList<>();\n        if (digits.isEmpty()) return result;\n        backtrack(digits, 0, new StringBuilder(), result);\n        return result;\n    }\n\n    private void backtrack(String digits, int index, StringBuilder current, List<String> result) {\n        if (index == digits.length()) {\n            result.add(current.toString());\n            return;\n        }\n        String letters = KEYS[digits.charAt(index) - '0'];\n        for (char letter : letters.toCharArray()) {\n            current.append(letter);\n            backtrack(digits, index + 1, current, result);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "What is the branching factor for each digit?",
+            "a": "Each digit maps to 3 or 4 letters, so the total combinations grow exponentially with the number of digits."
+        },
+        {
+            "q": "Why use StringBuilder instead of string concatenation?",
+            "a": "StringBuilder avoids creating a new string at every step and is more efficient for repeated append/remove operations."
+        }
+    ]
+}

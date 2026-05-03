@@ -1,0 +1,48 @@
+{
+    "id": 1,
+    "leetcode_number": 39,
+    "title": "Combination Sum",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/combination-sum/",
+    "problem_statement": "Given a set of distinct candidates and a target number, return all unique combinations of candidates where the chosen numbers sum to target. You may reuse the same number multiple times.",
+    "examples": [
+        {
+            "input": "candidates = [2,3,6,7], target = 7",
+            "output": "[[2,2,3],[7]]",
+            "explanation": "Two combinations sum to 7."
+        },
+        {
+            "input": "candidates = [2,3,5], target = 8",
+            "output": "[[2,2,2,2],[2,3,3],[3,5]]",
+            "explanation": "All combinations using unlimited repeats."
+        }
+    ],
+    "constraints": [
+        "1 ≤ candidates.length ≤ 30",
+        "1 ≤ candidates[i] ≤ 200",
+        "All candidates are distinct."
+    ],
+    "intuition": "Use recursion to build combinations, allowing repeated picks and pruning when the running sum exceeds the target.",
+    "approaches": [
+        {
+            "name": "DFS with Pruning",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Recursively choose or skip each candidate, reusing it as needed while keeping the combination sorted to avoid duplicates.",
+            "time": "O(N^target/min(candidates)) in the worst case",
+            "space": "O(target/min(candidates)) recursion stack",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<Integer>> combinationSum(int[] candidates, int target) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(candidates);\n        backtrack(candidates, target, 0, new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(int[] candidates, int remain, int start, List<Integer> comb, List<List<Integer>> result) {\n        if (remain == 0) {\n            result.add(new ArrayList<>(comb));\n            return;\n        }\n        for (int i = start; i < candidates.length; i++) {\n            if (candidates[i] > remain) break;\n            comb.add(candidates[i]);\n            backtrack(candidates, remain - candidates[i], i, comb, result);\n            comb.remove(comb.size() - 1);\n        }\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why do we reuse the same candidate index on the recursive call?",
+            "a": "Reusing the same index allows unlimited instances of that candidate to be included in the combination."
+        },
+        {
+            "q": "How do we avoid duplicate combinations?",
+            "a": "We keep the recursion order fixed by only exploring candidates from the current index onward."
+        }
+    ]
+}

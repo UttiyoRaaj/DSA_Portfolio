@@ -1,0 +1,41 @@
+{
+    "id": 2,
+    "leetcode_number": null,
+    "title": "Merge Two Sorted Lists",
+    "difficulty": "Easy",
+    "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+    "problem_statement": "Implement the problem \"Merge Two Sorted Lists\" using a standard topic-specific approach.",
+    "examples": [
+        {
+            "input": "Example input",
+            "output": "Example output",
+            "explanation": "Example explanation will be added here."
+        }
+    ],
+    "constraints": [
+        "Constraints will be added."
+    ],
+    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "approaches": [
+        {
+            "name": "Optimal Solution",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "A clean explanation of the optimal approach will be added here.",
+            "time": "",
+            "space": "",
+            "why_not": null,
+            "code": null
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Key interview question about this problem.",
+            "a": "Answer will be added here."
+        },
+        {
+            "q": "Follow-up or edge-case question.",
+            "a": "Answer will be added here."
+        }
+    ]
+}

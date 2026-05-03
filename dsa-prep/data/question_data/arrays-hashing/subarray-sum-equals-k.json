@@ -1,0 +1,48 @@
+{
+    "id": 11,
+    "leetcode_number": 560,
+    "title": "Subarray Sum Equals K",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+    "problem_statement": "Given an integer array nums and an integer k, return the total number of continuous subarrays whose sum equals k.",
+    "examples": [
+        {
+            "input": "nums = [1,1,1], k = 2",
+            "output": "2",
+            "explanation": "Two subarrays [1,1] sum to 2."
+        },
+        {
+            "input": "nums = [1,2,3], k = 3",
+            "output": "2",
+            "explanation": "Subarrays [1,2] and [3] match."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 2·10⁴",
+        "-1000 ≤ nums[i] ≤ 1000",
+        "-10⁷ ≤ k ≤ 10⁷"
+    ],
+    "intuition": "Use prefix sums and count how many previous prefix sums differ from the current sum by k.",
+    "approaches": [
+        {
+            "name": "Prefix Sum Frequency Map",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Track how many times each prefix sum has occurred. For each current sum, add the count of previous sums equal to currentSum - k.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public int subarraySum(int[] nums, int k) {\n        Map<Integer, Integer> freq = new HashMap<>();\n        freq.put(0, 1);\n        int sum = 0;\n        int count = 0;\n        for (int num : nums) {\n            sum += num;\n            count += freq.getOrDefault(sum - k, 0);\n            freq.put(sum, freq.getOrDefault(sum, 0) + 1);\n        }\n        return count;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why initialize freq[0] = 1?",
+            "a": "That accounts for subarrays starting at index 0 whose sum equals k."
+        },
+        {
+            "q": "Does this method work with negative numbers?",
+            "a": "Yes. It relies on prefix sums and works for both positive and negative values."
+        }
+    ]
+}

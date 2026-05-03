@@ -1,0 +1,46 @@
+{
+    "id": 4,
+    "leetcode_number": 51,
+    "title": "N-Queens",
+    "difficulty": "Hard",
+    "url": "https://leetcode.com/problems/n-queens/",
+    "problem_statement": "Place n queens on an n×n chessboard so that no two queens attack each other. Return all distinct solutions in board string form.",
+    "examples": [
+        {
+            "input": "n = 4",
+            "output": "[[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]",
+            "explanation": "There are two valid arrangements for n=4."
+        },
+        {
+            "input": "n = 1",
+            "output": "[[\"Q\"]]",
+            "explanation": "Single queen on a 1x1 board."
+        }
+    ],
+    "constraints": [
+        "1 ≤ n ≤ 9"
+    ],
+    "intuition": "Place queens row by row and use sets to track occupied columns, diagonals, and anti-diagonals.",
+    "approaches": [
+        {
+            "name": "Backtracking with Diagonals",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use recursion to place one queen per row while checking columns and diagonals for conflicts.",
+            "time": "O(n!)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<String>> solveNQueens(int n) {\n        List<List<String>> result = new ArrayList<>();\n        backtrack(n, 0, new int[n], new HashSet<>(), new HashSet<>(), new HashSet<>(), result);\n        return result;\n    }\n\n    private void backtrack(int n, int row, int[] queens, Set<Integer> cols, Set<Integer> diags, Set<Integer> antiDiags, List<List<String>> result) {\n        if (row == n) {\n            result.add(buildBoard(queens, n));\n            return;\n        }\n        for (int col = 0; col < n; col++) {\n            int diag = row - col;\n            int antiDiag = row + col;\n            if (cols.contains(col) || diags.contains(diag) || antiDiags.contains(antiDiag)) continue;\n            queens[row] = col;\n            cols.add(col);\n            diags.add(diag);\n            antiDiags.add(antiDiag);\n            backtrack(n, row + 1, queens, cols, diags, antiDiags, result);\n            cols.remove(col);\n            diags.remove(diag);\n            antiDiags.remove(antiDiag);\n        }\n    }\n\n    private List<String> buildBoard(int[] queens, int n) {\n        List<String> board = new ArrayList<>();\n        for (int row = 0; row < n; row++) {\n            char[] line = new char[n];\n            Arrays.fill(line, '.');\n            line[queens[row]] = 'Q';\n            board.add(new String(line));\n        }\n        return board;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why use diagonals as row-col and row+col?",
+            "a": "Those values uniquely identify the two diagonal directions and allow quick conflict detection."
+        },
+        {
+            "q": "Why is the solution exponential?",
+            "a": "The problem examines all safe queen placements, which grows factorially with board size."
+        }
+    ]
+}

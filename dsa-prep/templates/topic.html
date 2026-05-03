@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic.title }} — DSA Prep{% endblock %}
+
+{% block head %}
+<style>
+    .topic-hero {
+        padding: 3rem 3rem 2.5rem;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(to bottom, rgba(0,217,255,0.03), transparent);
+    }
+
+    .topic-hero-inner {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    .topic-title-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .topic-big-icon {
+        font-size: 2rem;
+    }
+
+    .topic-hero-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 2.25rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .topic-hero-sub {
+        color: var(--text2);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .questions-container {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 2.5rem 3rem;
+    }
+
+    .q-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.1rem 1.25rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text);
+        margin-bottom: 0.75rem;
+        transition: all 0.2s;
+    }
+
+    .q-list-item:hover {
+        border-color: var(--border2);
+        background: var(--surface2);
+        transform: translateX(4px);
+    }
+
+    .q-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--text3);
+        width: 24px;
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .lc-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        color: var(--yellow);
+        background: rgba(245,158,11,0.1);
+        border: 1px solid rgba(245,158,11,0.2);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        flex-shrink: 0;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .q-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        flex: 1;
+    }
+
+    .q-arrow {
+        color: var(--text3);
+        transition: transform 0.2s;
+        font-size: 0.8rem;
+    }
+
+    .q-list-item:hover .q-arrow {
+        transform: translateX(4px);
+        color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+        .topic-hero, .questions-container { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="topic-hero">
+    <div class="topic-hero-inner">
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span class="sep">›</span>
+            <span>{{ topic.title }}</span>
+        </div>
+        <div class="topic-title-row">
+            <span class="topic-big-icon">{{ topic.icon }}</span>
+            <h1 class="topic-hero-title">{{ topic.title }}</h1>
+        </div>
+        <p class="topic-hero-sub">
+            {{ topic.questions|length }} of {{ topic.total }} questions solved &mdash; Java solutions with full approach evolution
+        </p>
+    </div>
+</div>
+
+<div class="questions-container">
+    <div class="section-label">Questions</div>
+
+    {% for q in topic.questions %}
+    <a href="/question/{{ topic.slug }}/{{ loop.index0 }}" class="q-list-item">
+        <span class="q-num">{{ loop.index }}</span>
+        {% if q.leetcode_number %}
+        <span class="lc-num">LC {{ q.leetcode_number }}</span>
+        {% endif %}
+        <span class="q-title">{{ q.title }}</span>
+        <span class="badge badge-{{ q.difficulty | lower }}">{{ q.difficulty }}</span>
+        <span class="q-arrow">→</span>
+    </a>
+    {% endfor %}
+
+    {% if topic.questions|length < topic.total %}
+    <div style="text-align: center; padding: 2rem; color: var(--text3); font-size: 0.85rem; border: 1px dashed var(--border); border-radius: 12px; margin-top: 1rem;">
+        {{ topic.total - topic.questions|length }} more questions coming soon...
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

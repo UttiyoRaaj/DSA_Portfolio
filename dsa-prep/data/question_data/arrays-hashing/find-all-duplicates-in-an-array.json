@@ -1,0 +1,49 @@
+{
+    "id": 10,
+    "leetcode_number": 442,
+    "title": "Find All Duplicates in an Array",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/",
+    "problem_statement": "Given an array of integers where 1 ≤ nums[i] ≤ n (n = size of array), some elements appear twice and others appear once. Return all elements that appear twice.",
+    "examples": [
+        {
+            "input": "nums = [4,3,2,7,8,2,3,1]",
+            "output": "[2,3]",
+            "explanation": "2 and 3 each appear twice."
+        },
+        {
+            "input": "nums = [1,1,2]",
+            "output": "[1]",
+            "explanation": "Only 1 appears twice."
+        }
+    ],
+    "constraints": [
+        "n == nums.length",
+        "1 ≤ n ≤ 10⁵",
+        "1 ≤ nums[i] ≤ n",
+        "Each integer appears once or twice."
+    ],
+    "intuition": "Index-marking works because values map to indices. Negate the value at the mapped index to mark it seen; if it is already negative, the number is a duplicate.",
+    "approaches": [
+        {
+            "name": "Index Marking",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use each value as an index and flip the sign of the visited position. A second visit indicates a duplicate.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<Integer> findDuplicates(int[] nums) {\n        List<Integer> duplicates = new ArrayList<>();\n        for (int num : nums) {\n            int idx = Math.abs(num) - 1;\n            if (nums[idx] < 0) {\n                duplicates.add(Math.abs(num));\n            } else {\n                nums[idx] = -nums[idx];\n            }\n        }\n        return duplicates;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Does this modify the input?",
+            "a": "Yes, it negates numbers in place. If the original array must remain unchanged, use a HashMap instead."
+        },
+        {
+            "q": "Why is this safe for 1..n values?",
+            "a": "The input guarantees values lie in the index range, so each value maps to a valid index."
+        }
+    ]
+}

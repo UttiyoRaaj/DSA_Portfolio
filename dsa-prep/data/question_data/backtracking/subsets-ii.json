@@ -1,0 +1,47 @@
+{
+    "id": 8,
+    "leetcode_number": 90,
+    "title": "Subsets II",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/subsets-ii/",
+    "problem_statement": "Given an integer array nums that may contain duplicates, return all possible subsets (the power set) without duplicate subsets.",
+    "examples": [
+        {
+            "input": "nums = [1,2,2]",
+            "output": "[[],[1],[1,2],[1,2,2],[2],[2,2]]",
+            "explanation": "Subsets are unique despite duplicate values."
+        },
+        {
+            "input": "nums = [0]",
+            "output": "[[],[0]]",
+            "explanation": "Single element yields two subsets."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 10",
+        "-10 ≤ nums[i] ≤ 10"
+    ],
+    "intuition": "Sort the array and use backtracking, skipping duplicate values at the same recursion depth.",
+    "approaches": [
+        {
+            "name": "Backtrack with Duplicate Skip",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Sort nums, then build subsets recursively while skipping identical values that would start duplicate branches.",
+            "time": "O(2^n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<Integer>> subsetsWithDup(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n        backtrack(nums, 0, new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(int[] nums, int start, List<Integer> current, List<List<Integer>> result) {\n        result.add(new ArrayList<>(current));\n        for (int i = start; i < nums.length; i++) {\n            if (i > start && nums[i] == nums[i - 1]) continue;\n            current.add(nums[i]);\n            backtrack(nums, i + 1, current, result);\n            current.remove(current.size() - 1);\n        }\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why sort before backtracking?",
+            "a": "Sorting groups duplicates so we can easily skip repeating branches."
+        },
+        {
+            "q": "Are empty subsets allowed?",
+            "a": "Yes, the empty set is always included in the power set."
+        }
+    ]
+}

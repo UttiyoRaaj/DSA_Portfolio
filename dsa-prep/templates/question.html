@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}{{ question.title }} — DSA Prep{% endblock %}
+
+{% block head %}
+<style>
+    .q-layout {
+        display: flex;
+        min-height: calc(100vh - 60px);
+    }
+
+    .q-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        background: var(--bg2);
+        border-right: 1px solid var(--border);
+        position: sticky;
+        top: 60px;
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border2) transparent;
+        padding: 1.5rem 0;
+    }
+
+    .qs-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text3);
+        padding: 0 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .qs-link {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: all 0.15s;
+        border-left: 2px solid transparent;
+    }
+
+    .qs-link:hover { color: var(--text2); background: var(--surface); }
+    .qs-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,217,255,0.05); }
+
+    .qs-lc {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--text3);
+        background: var(--surface);
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        flex-shrink: 0;
+    }
+
+    /* MAIN */
+    .q-main {
+        flex: 1;
+        min-width: 0;
+        padding: 2.5rem 3rem;
+        max-width: 900px;
+    }
+
+    /* QUESTION HEADER */
+    .q-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .q-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .q-number-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+    }
+
+    .q-main-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+        margin-bottom: 1rem;
+    }
+
+    /* PROBLEM STATEMENT */
+    .problem-text {
+        font-size: 0.92rem;
+        color: var(--text2);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .problem-text code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85em;
+        color: var(--accent);
+        background: rgba(0,217,255,0.08);
+        padding: 0.1em 0.3em;
+        border-radius: 3px;
+    }
+
+    /* SECTION SPACING */
+    .section-block {
+        margin-bottom: 2.5rem;
+    }
+
+    /* APPROACH TRANSITION ARROW */
+    .approach-why-not {
+        margin-top: 0.6rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--red);
+        opacity: 0.8;
+    }
+
+    .approach-why-not::before {
+        content: '✕';
+        flex-shrink: 0;
+        font-size: 0.7rem;
+        margin-top: 0.05rem;
+    }
+
+    .approach-desc {
+        font-size: 0.875rem;
+        color: var(--text2);
+        line-height: 1.7;
+    }
+
+    .approach-desc code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85em;
+        color: var(--accent);
+        background: rgba(0,217,255,0.08);
+        padding: 0.1em 0.3em;
+        border-radius: 3px;
+    }
+
+    .code-wrapper {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border2);
+        margin-top: 1rem;
+    }
+
+    /* OPTIMAL GLOW */
+    .optimal-glow {
+        position: relative;
+    }
+
+    .optimal-glow::after {
+        content: '★ OPTIMAL';
+        position: absolute;
+        top: -0.5rem;
+        right: 1rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--green);
+        background: rgba(16,185,129,0.1);
+        border: 1px solid rgba(16,185,129,0.3);
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+    }
+
+    @media (max-width: 900px) {
+        .q-sidebar { display: none; }
+        .q-main { padding: 1.5rem 1.25rem; }
+        .q-main-title { font-size: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="q-layout">
+
+    <!-- Sidebar: all questions in topic -->
+    <div class="q-sidebar">
+        <div class="qs-title">{{ topic.icon }} {{ topic.title }}</div>
+        {% for q in topic.questions %}
+        <a href="/question/{{ topic.slug }}/{{ loop.index0 }}"
+           class="qs-link {% if loop.index0 == q_index %}active{% endif %}">
+            {% if q.leetcode_number %}<span class="qs-lc">{{ q.leetcode_number }}</span>{% endif %}
+            <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ q.title }}</span>
+            <span style="font-size:0.65rem; opacity:0.6; flex-shrink:0; font-family:'JetBrains Mono',monospace;">
+                {% if q.difficulty == 'Easy' %}🟢{% elif q.difficulty == 'Medium' %}🟡{% else %}🔴{% endif %}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Main -->
+    <div class="q-main">
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <span class="sep">›</span>
+            <a href="/topic/{{ topic.slug }}">{{ topic.title }}</a>
+            <span class="sep">›</span>
+            <span>{{ question.title }}</span>
+        </div>
+
+        <!-- QUESTION HEADER -->
+        <div class="q-header">
+            <div class="q-meta-row">
+                {% if question.leetcode_number %}
+                <span class="q-number-badge">LC {{ question.leetcode_number }}</span>
+                {% endif %}
+                <span class="badge badge-{{ question.difficulty | lower }}">{{ question.difficulty }}</span>
+                {% if question.url %}
+                <a href="{{ question.url }}" target="_blank" class="lc-link">↗ LeetCode</a>
+                {% endif %}
+            </div>
+            <h1 class="q-main-title">{{ question.title }}</h1>
+        </div>
+
+        <!-- PROBLEM STATEMENT -->
+        <div class="section-block">
+            <div class="section-label">Problem</div>
+            <div class="card">
+                <div class="problem-text">{{ question.problem_statement | safe }}</div>
+
+                {% for ex in question.examples %}
+                <div class="example-block">
+                    <div class="example-label">Example {{ loop.index }}</div>
+                    <div class="example-row"><strong>Input:</strong> {{ ex.input }}</div>
+                    <div class="example-row"><strong>Output:</strong> {{ ex.output }}</div>
+                    {% if ex.explanation %}
+                    <div class="example-explanation">{{ ex.explanation }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                {% if question.constraints %}
+                <div style="margin-top: 0.5rem;">
+                    <div class="example-label" style="margin-bottom: 0.6rem;">Constraints</div>
+                    <ul class="constraints-list">
+                        {% for c in question.constraints %}
+                        <li>{{ c }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- INTUITION -->
+        <div class="section-block">
+            <div class="section-label">Intuition</div>
+            <div class="intuition-box">
+                {{ question.intuition }}
+            </div>
+        </div>
+
+        <!-- APPROACHES -->
+        <div class="section-block">
+            <div class="section-label">Approach Evolution</div>
+            <div class="approach-timeline">
+                {% for ap in question.approaches %}
+                <div class="approach-node {{ ap.badge_color }} {% if ap.badge_color == 'green' %}optimal-glow{% endif %}">
+                    <div class="approach-card {% if ap.badge_color == 'green' %}optimal{% endif %}">
+                        <div class="approach-header">
+                            <span class="approach-name">{{ ap.name }}</span>
+                            <span class="badge badge-{{ ap.badge_color }}">{{ ap.badge }}</span>
+                        </div>
+
+                        <div class="approach-desc">{{ ap.description | safe }}</div>
+
+                        <div class="complexity-row">
+                            <div class="complexity-pill">
+                                <span class="complexity-label">Time</span>
+                                {{ ap.time }}
+                            </div>
+                            <div class="complexity-pill">
+                                <span class="complexity-label">Space</span>
+                                {{ ap.space }}
+                            </div>
+                        </div>
+
+                        {% if ap.why_not %}
+                        <div class="approach-why-not">{{ ap.why_not }}</div>
+                        {% endif %}
+
+                        {% if ap.code %}
+                        <div class="code-wrapper" style="margin-top: 1.25rem;">
+                            <div class="code-header">
+                                <span>Java</span>
+                                <button class="copy-btn">Copy</button>
+                            </div>
+                            <pre><code class="language-java">{{ ap.code }}</code></pre>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- INTERVIEW QA -->
+        {% if question.interview_qa %}
+        <div class="section-block">
+            <div class="section-label">Interview Q&A</div>
+            {% for qa in question.interview_qa %}
+            <div class="qa-item">
+                <div class="qa-question">
+                    <span class="qa-q-icon">Q{{ loop.index }}</span>
+                    {{ qa.q }}
+                </div>
+                <div class="qa-answer">{{ qa.a }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- QUESTION NAV -->
+        <div class="q-nav">
+            {% if q_index > 0 %}
+            <a href="/question/{{ topic.slug }}/{{ q_index - 1 }}" class="q-nav-btn" style="text-align:left;">
+                <span class="q-nav-label">← Previous</span>
+                <span>{{ topic.questions[q_index - 1].title }}</span>
+            </a>
+            {% else %}
+            <div style="flex:1;"></div>
+            {% endif %}
+
+            {% if q_index < topic.questions|length - 1 %}
+            <a href="/question/{{ topic.slug }}/{{ q_index + 1 }}" class="q-nav-btn" style="text-align:right;">
+                <span class="q-nav-label">Next →</span>
+                <span>{{ topic.questions[q_index + 1].title }}</span>
+            </a>
+            {% endif %}
+        </div>
+
+    </div><!-- /q-main -->
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{
+    "id": 7,
+    "leetcode_number": 81,
+    "title": "Search in Rotated Sorted Array II",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/",
+    "problem_statement": "Search a target value in a rotated sorted array that may contain duplicates. Return true if the target exists.",
+    "examples": [
+        {
+            "input": "nums = [2,5,6,0,0,1,2], target = 0",
+            "output": "true",
+            "explanation": "0 exists in the array."
+        },
+        {
+            "input": "nums = [2,5,6,0,0,1,2], target = 3",
+            "output": "false",
+            "explanation": "3 is not present."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 5000",
+        "-10⁴ ≤ nums[i], target ≤ 10⁴"
+    ],
+    "intuition": "Modified binary search handles duplicates by shrinking the search interval when the ordered half cannot be determined.",
+    "approaches": [
+        {
+            "name": "Binary Search with Duplicates",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Compare mid to left and right to determine which half is sorted, and skip duplicates when ambiguous.",
+            "time": "O(n) worst case",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public boolean search(int[] nums, int target) {\n        int left = 0, right = nums.length - 1;\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] == target) return true;\n            if (nums[left] == nums[mid] && nums[mid] == nums[right]) {\n                left++;\n                right--;\n            } else if (nums[left] <= nums[mid]) {\n                if (nums[left] <= target && target < nums[mid]) {\n                    right = mid - 1;\n                } else {\n                    left = mid + 1;\n                }\n            } else {\n                if (nums[mid] < target && target <= nums[right]) {\n                    left = mid + 1;\n                } else {\n                    right = mid - 1;\n                }\n            }\n        }\n        return false;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why can this degrade to O(n)?",
+            "a": "When duplicates hide the sorted half, the algorithm may need to shrink the interval linearly."
+        },
+        {
+            "q": "What if left, mid, and right are equal?",
+            "a": "In that case, move both bounds inward to reduce ambiguity."
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "id": 4,
+    "leetcode_number": 238,
+    "title": "Product of Array Except Self",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/product-of-array-except-self/",
+    "problem_statement": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i]. Solve it without using division and in O(n) time.",
+    "examples": [
+        {
+            "input": "nums = [1,2,3,4]",
+            "output": "[24,12,8,6]",
+            "explanation": "Each answer position multiplies all values except the current one."
+        },
+        {
+            "input": "nums = [-1,1,0,-3,3]",
+            "output": "[0,0,9,0,0]",
+            "explanation": "Zero resets products for all positions except itself."
+        }
+    ],
+    "constraints": [
+        "2 ≤ nums.length ≤ 10⁵",
+        "-30 ≤ nums[i] ≤ 30",
+        "The product of any prefix or suffix fits in a 32-bit integer."
+    ],
+    "intuition": "Compute prefix products and suffix products separately, then multiply them for each index.",
+    "approaches": [
+        {
+            "name": "Prefix and Suffix Pass",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Build the answer using left products then multiply by a rolling right product in a second pass.",
+            "time": "O(n)",
+            "space": "O(1) extra",
+            "why_not": null,
+            "code": "class Solution {\n    public int[] productExceptSelf(int[] nums) {\n        int n = nums.length;\n        int[] answer = new int[n];\n        answer[0] = 1;\n        for (int i = 1; i < n; i++) {\n            answer[i] = answer[i - 1] * nums[i - 1];\n        }\n        int rightProduct = 1;\n        for (int i = n - 1; i >= 0; i--) {\n            answer[i] *= rightProduct;\n            rightProduct *= nums[i];\n        }\n        return answer;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why can the output array be excluded from space complexity?",
+            "a": "The output array is required by the problem, so extra auxiliary space ignores it in the usual analysis."
+        },
+        {
+            "q": "Why not use division?",
+            "a": "Division breaks when the array contains zero and the problem explicitly forbids it."
+        }
+    ]
+}

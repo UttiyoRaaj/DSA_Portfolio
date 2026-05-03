@@ -1,0 +1,59 @@
+{
+    "id": 9,
+    "leetcode_number": 268,
+    "title": "Missing Number",
+    "difficulty": "Easy",
+    "url": "https://leetcode.com/problems/missing-number/",
+    "problem_statement": "Given an array containing n distinct numbers in the range [0, n], return the only number missing from the array.",
+    "examples": [
+        {
+            "input": "nums = [3,0,1]",
+            "output": "2",
+            "explanation": "2 is the missing value."
+        },
+        {
+            "input": "nums = [0,1]",
+            "output": "2",
+            "explanation": "The missing value is n=2."
+        }
+    ],
+    "constraints": [
+        "n == nums.length",
+        "1 ≤ n ≤ 10⁴",
+        "0 ≤ nums[i] ≤ n",
+        "All numbers are unique."
+    ],
+    "intuition": "The numbers 0..n have a known sum. Subtracting the given numbers from that sum reveals the missing value. XOR also works.",
+    "approaches": [
+        {
+            "name": "Sum Formula",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Compute n*(n+1)/2 and subtract the sum of the array.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public int missingNumber(int[] nums) {\n        int n = nums.length;\n        int expected = n * (n + 1) / 2;\n        int actual = 0;\n        for (int num : nums) {\n            actual += num;\n        }\n        return expected - actual;\n    }\n}"
+        },
+        {
+            "name": "XOR Trick",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "XOR all numbers from 0..n and XOR with the array values. The missing number remains.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public int missingNumber(int[] nums) {\n        int missing = nums.length;\n        for (int i = 0; i < nums.length; i++) {\n            missing ^= i ^ nums[i];\n        }\n        return missing;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why does XOR find the missing number?",
+            "a": "XORing every number twice cancels them out, leaving only the missing value."
+        },
+        {
+            "q": "Which method avoids overflow?",
+            "a": "The XOR method avoids overflow, while the sum formula can overflow for very large n, though not within the problem constraints."
+        }
+    ]
+}

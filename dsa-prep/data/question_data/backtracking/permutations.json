@@ -1,0 +1,47 @@
+{
+    "id": 7,
+    "leetcode_number": 46,
+    "title": "Permutations",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/permutations/",
+    "problem_statement": "Given an array nums of distinct integers, return all possible permutations in any order.",
+    "examples": [
+        {
+            "input": "nums = [1,2,3]",
+            "output": "[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]",
+            "explanation": "All distinct permutations."
+        },
+        {
+            "input": "nums = [0,1]",
+            "output": "[[0,1],[1,0]]",
+            "explanation": "Two permutations for two elements."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 6",
+        "All integers are distinct."
+    ],
+    "intuition": "Use backtracking to choose an unused number at each position until the permutation is complete.",
+    "approaches": [
+        {
+            "name": "DFS with Used Array",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Mark numbers as used while building the current permutation and backtrack when the permutation is complete.",
+            "time": "O(n!)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<Integer>> permute(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(nums, new boolean[nums.length], new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(int[] nums, boolean[] used, List<Integer> current, List<List<Integer>> result) {\n        if (current.size() == nums.length) {\n            result.add(new ArrayList<>(current));\n            return;\n        }\n        for (int i = 0; i < nums.length; i++) {\n            if (used[i]) continue;\n            used[i] = true;\n            current.add(nums[i]);\n            backtrack(nums, used, current, result);\n            current.remove(current.size() - 1);\n            used[i] = false;\n        }\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why use a used array instead of swapping?",
+            "a": "A used array keeps the code straightforward and avoids in-place mutation when values are needed in original order."
+        },
+        {
+            "q": "What is the time complexity of generating all permutations?",
+            "a": "There are n! permutations and each takes O(n) to build, so O(n·n!) total."
+        }
+    ]
+}

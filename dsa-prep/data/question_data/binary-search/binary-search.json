@@ -1,0 +1,48 @@
+{
+    "id": 1,
+    "leetcode_number": 704,
+    "title": "Binary Search",
+    "difficulty": "Easy",
+    "url": "https://leetcode.com/problems/binary-search/",
+    "problem_statement": "Given a sorted array of distinct integers and a target value, return the index if the target is found. Otherwise return -1.",
+    "examples": [
+        {
+            "input": "nums = [-1,0,3,5,9,12], target = 9",
+            "output": "4",
+            "explanation": "9 is found at index 4."
+        },
+        {
+            "input": "nums = [-1,0,3,5,9,12], target = 2",
+            "output": "-1",
+            "explanation": "2 is not in the array."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 10⁴",
+        "-10⁴ ≤ nums[i], target ≤ 10⁴",
+        "nums is sorted in ascending order and contains distinct values."
+    ],
+    "intuition": "Use binary search to halve the search interval until you find the target or the interval is empty.",
+    "approaches": [
+        {
+            "name": "Classic Binary Search",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Maintain left and right bounds, compare the middle element with the target, and move one bound inward based on the comparison.",
+            "time": "O(log n)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public int search(int[] nums, int target) {\n        int left = 0, right = nums.length - 1;\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] == target) return mid;\n            if (nums[mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        return -1;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why compute mid as left + (right - left) / 2?",
+            "a": "This avoids integer overflow when left and right are large."
+        },
+        {
+            "q": "What is the stopping condition?",
+            "a": "Stop when left > right, which means the target is not present in the interval."
+        }
+    ]
+}

@@ -1,0 +1,47 @@
+{
+    "id": 2,
+    "leetcode_number": 40,
+    "title": "Combination Sum II",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/combination-sum-ii/",
+    "problem_statement": "Given a collection of candidate numbers with possible duplicates and a target, return unique combinations where the numbers sum to target. Each number may be used at most once.",
+    "examples": [
+        {
+            "input": "candidates = [10,1,2,7,6,1,5], target = 8",
+            "output": "[[1,1,6],[1,2,5],[1,7],[2,6]]",
+            "explanation": "Find unique combinations using each candidate once."
+        },
+        {
+            "input": "candidates = [2,5,2,1,2], target = 5",
+            "output": "[[1,2,2],[5]]",
+            "explanation": "Duplicate candidates are handled gracefully."
+        }
+    ],
+    "constraints": [
+        "1 ≤ candidates.length ≤ 100",
+        "1 ≤ candidates[i] ≤ 50"
+    ],
+    "intuition": "Sort the candidates and use recursion, skipping over duplicates at the same depth to avoid repeated combinations.",
+    "approaches": [
+        {
+            "name": "DFS with Duplicate Skipping",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Sort the input and backtrack while skipping duplicates that would start a new branch at the same level.",
+            "time": "O(2^n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(candidates);\n        backtrack(candidates, target, 0, new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(int[] candidates, int remain, int start, List<Integer> comb, List<List<Integer>> result) {\n        if (remain == 0) {\n            result.add(new ArrayList<>(comb));\n            return;\n        }\n        for (int i = start; i < candidates.length; i++) {\n            if (i > start && candidates[i] == candidates[i - 1]) continue;\n            if (candidates[i] > remain) break;\n            comb.add(candidates[i]);\n            backtrack(candidates, remain - candidates[i], i + 1, comb, result);\n            comb.remove(comb.size() - 1);\n        }\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why skip duplicates at the same recursive level?",
+            "a": "Skipping duplicates prevents generating the same combination from different positions in the sorted list."
+        },
+        {
+            "q": "Why advance i + 1 instead of i?",
+            "a": "Each candidate can only be used once, so the next recursion should start after the current index."
+        }
+    ]
+}

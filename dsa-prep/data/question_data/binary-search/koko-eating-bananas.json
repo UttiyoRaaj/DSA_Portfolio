@@ -1,0 +1,48 @@
+{
+    "id": 4,
+    "leetcode_number": 875,
+    "title": "Koko Eating Bananas",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/koko-eating-bananas/",
+    "problem_statement": "Koko loves to eat bananas. Given piles of bananas and h hours, return the minimum eating speed k such that Koko can eat all bananas within h hours.",
+    "examples": [
+        {
+            "input": "piles = [3,6,7,11], h = 8",
+            "output": "4",
+            "explanation": "Speed 4 allows finishing in 8 hours."
+        },
+        {
+            "input": "piles = [30,11,23,4,20], h = 5",
+            "output": "30",
+            "explanation": "The slowest possible speed to finish on time is 30."
+        }
+    ],
+    "constraints": [
+        "1 ≤ piles.length ≤ 10⁴",
+        "1 ≤ piles[i] ≤ 10⁹",
+        "piles.length ≤ h ≤ 10⁹"
+    ],
+    "intuition": "Binary search on the eating speed. For each speed, compute the hours needed and adjust the range accordingly.",
+    "approaches": [
+        {
+            "name": "Binary Search on Answer",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Search for the smallest speed that finishes the piles within h hours.",
+            "time": "O(n log m)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public int minEatingSpeed(int[] piles, int h) {\n        int left = 1, right = Arrays.stream(piles).max().getAsInt();\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (canFinish(piles, mid, h)) {\n                right = mid;\n            } else {\n                left = mid + 1;\n            }\n        }\n        return left;\n    }\n\n    private boolean canFinish(int[] piles, int speed, int h) {\n        long hours = 0;\n        for (int pile : piles) {\n            hours += (pile + speed - 1) / speed;\n            if (hours > h) return false;\n        }\n        return hours <= h;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why binary search on speed?",
+            "a": "The time required decreases monotonically as speed increases, which makes the answer space searchable."
+        },
+        {
+            "q": "How do you compute hours for a pile?",
+            "a": "Use ceiling division: (pile + speed - 1) / speed to count full hours needed."
+        }
+    ]
+}

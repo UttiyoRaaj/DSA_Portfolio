@@ -1,0 +1,47 @@
+{
+    "id": 3,
+    "leetcode_number": 217,
+    "title": "Contains Duplicate",
+    "difficulty": "Easy",
+    "url": "https://leetcode.com/problems/contains-duplicate/",
+    "problem_statement": "Given an integer array nums, return true if any value appears at least twice in the array, and false if every element is distinct.",
+    "examples": [
+        {
+            "input": "nums = [1,2,3,1]",
+            "output": "true",
+            "explanation": "The value 1 appears more than once."
+        },
+        {
+            "input": "nums = [1,2,3,4]",
+            "output": "false",
+            "explanation": "All values are unique."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 10⁵",
+        "-10⁹ ≤ nums[i] ≤ 10⁹"
+    ],
+    "intuition": "Use a set to remember values already seen. If a value is added twice, it is a duplicate.",
+    "approaches": [
+        {
+            "name": "HashSet Lookup",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Add each number to a set while scanning. If a number already exists, return true.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public boolean containsDuplicate(int[] nums) {\n        Set<Integer> seen = new HashSet<>();\n        for (int num : nums) {\n            if (!seen.add(num)) {\n                return true;\n            }\n        }\n        return false;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why is HashSet a good choice here?",
+            "a": "HashSet membership checks are average O(1), so duplicates are detected quickly."
+        },
+        {
+            "q": "What if the array must not use extra space?",
+            "a": "Sort the array and then check adjacent values. This uses O(1) extra space but O(n log n) time."
+        }
+    ]
+}

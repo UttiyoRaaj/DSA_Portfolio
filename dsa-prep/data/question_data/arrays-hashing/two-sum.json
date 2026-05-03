@@ -1,0 +1,48 @@
+{
+    "id": 1,
+    "leetcode_number": 1,
+    "title": "Two Sum",
+    "difficulty": "Easy",
+    "url": "https://leetcode.com/problems/two-sum/",
+    "problem_statement": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. Assume exactly one solution and do not use the same element twice.",
+    "examples": [
+        {
+            "input": "nums = [2,7,11,15], target = 9",
+            "output": "[0,1]",
+            "explanation": "nums[0] and nums[1] sum to 9."
+        },
+        {
+            "input": "nums = [3,2,4], target = 6",
+            "output": "[1,2]",
+            "explanation": "2 and 4 add to 6."
+        }
+    ],
+    "constraints": [
+        "2 ≤ nums.length ≤ 10⁴",
+        "-10⁹ ≤ nums[i], target ≤ 10⁹",
+        "Exactly one solution exists."
+    ],
+    "intuition": "Keep a map from number to index. For each element, check if its complement target - num already exists in the map.",
+    "approaches": [
+        {
+            "name": "HashMap One Pass",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Traverse once and store each number with its index. When a complement appears, return the pair.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": null,
+            "code": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int complement = target - nums[i];\n            if (map.containsKey(complement)) {\n                return new int[]{map.get(complement), i};\n            }\n            map.put(nums[i], i);\n        }\n        return new int[]{};\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why use a HashMap instead of sorting?",
+            "a": "Sorting costs O(n log n) and loses original indices. The HashMap method is O(n) and preserves positions."
+        },
+        {
+            "q": "How are duplicates handled?",
+            "a": "If a duplicate is needed, the earlier occurrence is already stored in the map so the second occurrence can form the pair."
+        }
+    ]
+}

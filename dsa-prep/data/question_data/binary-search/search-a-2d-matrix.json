@@ -1,0 +1,50 @@
+{
+    "id": 6,
+    "leetcode_number": 74,
+    "title": "Search a 2D Matrix",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/search-a-2d-matrix/",
+    "problem_statement": "Write an efficient algorithm that searches for a target value in an m x n matrix with each row sorted and rows connected end-to-start.",
+    "examples": [
+        {
+            "input": "matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,50]], target = 3",
+            "output": "true",
+            "explanation": "3 exists in the matrix."
+        },
+        {
+            "input": "matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,50]], target = 13",
+            "output": "false",
+            "explanation": "13 is not present."
+        }
+    ],
+    "constraints": [
+        "m == matrix.length",
+        "n == matrix[i].length",
+        "1 ≤ m, n ≤ 100",
+        "-10⁴ ≤ matrix[i][j], target ≤ 10⁴",
+        "Each row is sorted and the first element of each row is greater than the last element of the previous row."
+    ],
+    "intuition": "Treat the matrix as a flattened sorted array and use binary search on a virtual index.",
+    "approaches": [
+        {
+            "name": "Virtual Flattened Binary Search",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Map a 1D index to 2D coordinates and binary search across the whole matrix.",
+            "time": "O(log(mn))",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public boolean searchMatrix(int[][] matrix, int target) {\n        int m = matrix.length;\n        int n = matrix[0].length;\n        int left = 0, right = m * n - 1;\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            int midValue = matrix[mid / n][mid % n];\n            if (midValue == target) return true;\n            if (midValue < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        return false;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "How do you map the 1D index to the matrix?",
+            "a": "Row = index / n and column = index % n if n is the number of columns."
+        },
+        {
+            "q": "Why is the matrix treated as sorted?",
+            "a": "The row-wise ordering and the condition between rows make the flattened array globally sorted."
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "id": 2,
+    "leetcode_number": 49,
+    "title": "Group Anagrams",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/group-anagrams/",
+    "problem_statement": "Given an array of strings strs, group the anagrams together. Return the answer in any order.",
+    "examples": [
+        {
+            "input": "strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]",
+            "output": "[[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]",
+            "explanation": "Strings that are anagrams appear in the same group."
+        },
+        {
+            "input": "strs = [\"\"]",
+            "output": "[[\"\"]]",
+            "explanation": "The empty string is grouped with itself."
+        }
+    ],
+    "constraints": [
+        "1 ≤ strs.length ≤ 10⁴",
+        "0 ≤ strs[i].length ≤ 100",
+        "strs[i] consists of lowercase English letters."
+    ],
+    "intuition": "Anagrams share the same character counts. Use a canonical key to group strings that have the same letters.",
+    "approaches": [
+        {
+            "name": "Frequency Count Key",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use a 26-length frequency array for each string, convert it to a key, and group by that key.",
+            "time": "O(n·k)",
+            "space": "O(n·k)",
+            "why_not": null,
+            "code": "class Solution {\n    public List<List<String>> groupAnagrams(String[] strs) {\n        Map<String, List<String>> groups = new HashMap<>();\n        for (String s : strs) {\n            int[] counts = new int[26];\n            for (char c : s.toCharArray()) {\n                counts[c - 'a']++;\n            }\n            String key = Arrays.toString(counts);\n            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(s);\n        }\n        return new ArrayList<>(groups.values());\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why use character frequency instead of sorting each string?",
+            "a": "Frequency counting is O(k) per string. Sorting is O(k log k) and slower for longer strings."
+        },
+        {
+            "q": "What if strings contain uppercase letters?",
+            "a": "Extend the key generation to include uppercase ranges or use a larger frequency array to cover the full alphabet."
+        }
+    ]
+}

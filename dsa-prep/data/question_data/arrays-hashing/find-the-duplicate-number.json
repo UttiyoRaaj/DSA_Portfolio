@@ -1,0 +1,48 @@
+{
+    "id": 8,
+    "leetcode_number": 287,
+    "title": "Find the Duplicate Number",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/find-the-duplicate-number/",
+    "problem_statement": "Given an array nums containing n + 1 integers where each integer is between 1 and n inclusive, return the duplicate number without modifying the array and using only constant extra space.",
+    "examples": [
+        {
+            "input": "nums = [1,3,4,2,2]",
+            "output": "2",
+            "explanation": "2 appears twice."
+        },
+        {
+            "input": "nums = [3,1,3,4,2]",
+            "output": "3",
+            "explanation": "3 is the duplicate value."
+        }
+    ],
+    "constraints": [
+        "2 ≤ n ≤ 10⁵",
+        "nums.length == n + 1",
+        "1 ≤ nums[i] ≤ n"
+    ],
+    "intuition": "Treat the array as a linked list of indices. A duplicate creates a cycle, and cycle detection finds the repeated value.",
+    "approaches": [
+        {
+            "name": "Floyd’s Cycle Detection",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use tortoise and hare pointers on the implicit linked list defined by values → indices to locate the cycle start.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public int findDuplicate(int[] nums) {\n        int tortoise = nums[0];\n        int hare = nums[0];\n        do {\n            tortoise = nums[tortoise];\n            hare = nums[nums[hare]];\n        } while (tortoise != hare);\n        tortoise = nums[0];\n        while (tortoise != hare) {\n            tortoise = nums[tortoise];\n            hare = nums[hare];\n        }\n        return hare;\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why does this problem have a cycle?",
+            "a": "The range 1..n and n+1 numbers force at least one value to repeat, which makes the implicit next-pointer graph cyclic."
+        },
+        {
+            "q": "What if you sort the array?",
+            "a": "Sorting would find the duplicate but requires modifying the input and costs O(n log n). The cycle method is O(n) and space O(1)."
+        }
+    ]
+}

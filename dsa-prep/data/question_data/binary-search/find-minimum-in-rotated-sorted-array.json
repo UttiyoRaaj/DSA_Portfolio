@@ -1,0 +1,48 @@
+{
+    "id": 2,
+    "leetcode_number": 153,
+    "title": "Find Minimum in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",
+    "problem_statement": "Suppose an array sorted in ascending order is rotated at an unknown pivot. Find the minimum element in the array.",
+    "examples": [
+        {
+            "input": "nums = [3,4,5,1,2]",
+            "output": "1",
+            "explanation": "The smallest item is 1 after rotation."
+        },
+        {
+            "input": "nums = [4,5,6,7,0,1,2]",
+            "output": "0",
+            "explanation": "0 is the minimum."
+        }
+    ],
+    "constraints": [
+        "1 ≤ nums.length ≤ 5000",
+        "-10⁴ ≤ nums[i] ≤ 10⁴",
+        "All values are unique and the array is rotated at some pivot."
+    ],
+    "intuition": "Use binary search by comparing mid to right. If mid > right, the minimum is in the right half; otherwise it is in the left half.",
+    "approaches": [
+        {
+            "name": "Binary Search Pivot",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Track the sorted halves and narrow down the location of the minimum element using mid comparisons.",
+            "time": "O(log n)",
+            "space": "O(1)",
+            "why_not": null,
+            "code": "class Solution {\n    public int findMin(int[] nums) {\n        int left = 0, right = nums.length - 1;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (nums[mid] > nums[right]) {\n                left = mid + 1;\n            } else {\n                right = mid;\n            }\n        }\n        return nums[left];\n    }\n}"
+        }
+    ],
+    "interview_qa": [
+        {
+            "q": "Why compare mid with right?",
+            "a": "The minimum is always in the half that contains the pivot between sorted segments."
+        },
+        {
+            "q": "Why not compare mid with left?",
+            "a": "Comparing with right directly identifies whether mid is in the rotated tail or the sorted head."
+        }
+    ]
+}

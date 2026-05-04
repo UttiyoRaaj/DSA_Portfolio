@@ -4,18 +4,24 @@
     "title": "Same Tree",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/same-tree/",
-    "problem_statement": "Implement the problem \"Same Tree\" using a standard topic-specific approach.",
+    "problem_statement": "Determine whether two binary trees are structurally identical with equal values.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "p = [1,2,3], q = [1,2,3]",
+            "output": "true",
+            "explanation": "Both trees are identical."
+        },
+        {
+            "input": "p = [1,2], q = [1,null,2]",
+            "output": "false",
+            "explanation": "Trees have different structures."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁴",
+        "Tree nodes contain integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Traverse recursively or iteratively, combining subtree results.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +31,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public boolean isSameTree(TreeNode p, TreeNode q) {\n        if (p == null && q == null) return true;\n        if (p == null || q == null) return false;\n        if (p.val != q.val) return false;\n        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}DSA Interview Prep{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <style>
         :root {
@@ -28,6 +28,9 @@
             --easy: #2f6f41;
             --medium: #b57e18;
             --hard: #9b2f1d;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,7 +38,7 @@
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             background: linear-gradient(180deg, #f9f1e6 0%, #f2e6d7 100%);
             color: var(--text);
             min-height: 100vh;
@@ -72,12 +75,12 @@
         }
 
         .nav-logo {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
+            font-family: var(--font-heading);
+            font-weight: 700;
             font-size: 1.1rem;
             color: var(--accent);
             text-decoration: none;
-            letter-spacing: -0.02em;
+            letter-spacing: 0;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -96,15 +99,12 @@
             50% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        .nav-topics {
+        .nav-actions {
             display: flex;
             gap: 0.25rem;
-            overflow-x: auto;
-            scrollbar-width: none;
-            flex: 1;
+            margin-left: auto;
+            align-items: center;
         }
-
-        .nav-topics::-webkit-scrollbar { display: none; }
 
         .nav-topic-link {
             font-size: 0.78rem;
@@ -153,7 +153,7 @@
         }
 
         .sidebar-section-title {
-            font-family: 'Syne', sans-serif;
+            font-family: var(--font-heading);
             font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 0.12em;
@@ -196,7 +196,7 @@
         .sidebar-badge {
             margin-left: auto;
             font-size: 0.7rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             color: var(--text3);
             background: var(--surface);
             padding: 0.1rem 0.4rem;
@@ -262,7 +262,7 @@
             border-radius: 20px;
             font-size: 0.72rem;
             font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             letter-spacing: 0.02em;
         }
 
@@ -285,7 +285,7 @@
             background: #faf3e8;
         }
 
-        pre code { font-family: 'JetBrains Mono', monospace !important; }
+        pre code { font-family: var(--font-mono) !important; }
 
         .code-header {
             display: flex;
@@ -295,7 +295,7 @@
             background: rgba(167, 111, 42, 0.08);
             border-bottom: 1px solid rgba(92,64,42,0.12);
             font-size: 0.75rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             color: var(--text3);
         }
 
@@ -307,7 +307,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.7rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             transition: all 0.2s;
         }
 
@@ -373,7 +373,7 @@
         }
 
         .approach-name {
-            font-family: 'Syne', sans-serif;
+            font-family: var(--font-heading);
             font-weight: 700;
             font-size: 1rem;
         }
@@ -389,7 +389,7 @@
             align-items: center;
             gap: 0.4rem;
             font-size: 0.78rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             color: var(--text2);
             background: var(--bg2);
             padding: 0.3rem 0.7rem;
@@ -404,7 +404,7 @@
 
         /* SECTION HEADINGS */
         .section-label {
-            font-family: 'Syne', sans-serif;
+            font-family: var(--font-heading);
             font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 0.12em;
@@ -424,12 +424,12 @@
         }
 
         .section-title {
-            font-family: 'Syne', sans-serif;
+            font-family: var(--font-heading);
             font-size: 1.75rem;
-            font-weight: 800;
+            font-weight: 700;
             line-height: 1.2;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
+            letter-spacing: 0;
         }
 
         /* INTERVIEW QA */
@@ -457,7 +457,7 @@
         .qa-q-icon {
             font-size: 0.75rem;
             font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             color: var(--accent);
             background: rgba(167,111,42,0.12);
             border: 1px solid rgba(167,111,42,0.2);
@@ -489,7 +489,7 @@
             border-radius: 12px;
             padding: 1rem 1.25rem;
             margin-bottom: 0.75rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             font-size: 0.82rem;
         }
 
@@ -499,12 +499,12 @@
             letter-spacing: 0.1em;
             color: var(--text3);
             margin-bottom: 0.4rem;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
         }
 
         .example-row { margin-bottom: 0.2rem; color: var(--text2); }
         .example-row strong { color: var(--text); }
-        .example-explanation { color: var(--text3); font-size: 0.78rem; margin-top: 0.4rem; font-family: 'Inter', sans-serif; }
+        .example-explanation { color: var(--text3); font-size: 0.78rem; margin-top: 0.4rem; font-family: var(--font-body); }
 
         /* INTUITION BOX */
         .intuition-box {
@@ -525,7 +525,7 @@
             top: -0.5rem;
             left: 1rem;
             font-size: 4rem;
-            font-family: 'Syne', sans-serif;
+            font-family: var(--font-heading);
             color: rgba(124,58,237,0.2);
             line-height: 1;
         }
@@ -539,7 +539,7 @@
         }
 
         .constraints-list li {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             font-size: 0.78rem;
             background: var(--bg2);
             border: 1px solid var(--border);
@@ -558,7 +558,7 @@
             color: var(--yellow);
             font-size: 0.8rem;
             text-decoration: none;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             transition: opacity 0.2s;
         }
 
@@ -656,14 +656,9 @@
         <div class="dot"></div>
         DSA PREP
     </a>
-    <div class="nav-topics">
-        {% for t in (topics if topics is defined else all_topics if all_topics is defined else []) %}
-        <a href="/topic/{{ t.slug }}"
-           class="nav-topic-link {% if topic is defined and topic.slug == t.slug %}active{% endif %}">
-            {{ t.icon }} {{ t.title }}
-        </a>
-        {% endfor %}
-        <a href="/practice" class="nav-topic-link {% if page is defined and page == 'practice' %}active{% endif %}">🤖 Practice</a>
+    <div class="nav-actions">
+        <a href="/practice" class="nav-topic-link {% if page is defined and page == 'practice' %}active{% endif %}">Practice</a>
+        <a href="/live-interview" class="nav-topic-link {% if page is defined and page == 'live-interview' %}active{% endif %}">Live Interview</a>
     </div>
 </nav>
 

@@ -4,7 +4,7 @@
     "title": "Number of 1 Bits",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/number-of-1-bits/",
-    "problem_statement": "Implement the problem \"Number of 1 Bits\" using a standard topic-specific approach.",
+    "problem_statement": "Return the number of 1 bits in the binary representation of an unsigned integer.",
     "examples": [
         {
             "input": "Example input",
@@ -13,9 +13,10 @@
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁵",
+        "Values fit in 32-bit integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use bitwise operations for efficient computation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

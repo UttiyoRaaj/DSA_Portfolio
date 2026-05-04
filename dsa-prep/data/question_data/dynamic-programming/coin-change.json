@@ -4,18 +4,19 @@
     "title": "Coin Change",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/coin-change/",
-    "problem_statement": "Implement the problem \"Coin Change\" using a standard topic-specific approach.",
+    "problem_statement": "Given a set of coin denominations and a target amount, find the fewest coins needed to make the amount.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "coins = [1,2,5], amount = 11",
+            "output": "3",
+            "explanation": "Use 5+5+1 for the fewest coins."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 1000",
+        "Values fit in 32-bit integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Break down into subproblems and use memoization or tabulation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        int[] dp = new int[amount + 1];\n        Arrays.fill(dp, amount + 1);\n        dp[0] = 0;\n        for (int coin : coins) {\n            for (int i = coin; i <= amount; i++) {\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n            }\n        }\n        return dp[amount] > amount ? -1 : dp[amount];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "How do you identify the DP state?",
+            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "Why memoize or tabulate?",
+            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
         }
     ]
 }

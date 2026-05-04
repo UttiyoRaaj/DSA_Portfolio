@@ -4,18 +4,19 @@
     "title": "Invert Binary Tree",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/invert-binary-tree/",
-    "problem_statement": "Implement the problem \"Invert Binary Tree\" using a standard topic-specific approach.",
+    "problem_statement": "Invert a binary tree by swapping left and right children.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [4,2,7,1,3,6,9]",
+            "output": "[4,7,2,9,6,3,1]",
+            "explanation": "Invert the left and right subtrees."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁴",
+        "Tree nodes contain integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Traverse recursively or iteratively, combining subtree results.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public TreeNode invertTree(TreeNode root) {\n        if (root == null) return null;\n        TreeNode left = invertTree(root.left);\n        TreeNode right = invertTree(root.right);\n        root.left = right;\n        root.right = left;\n        return root;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

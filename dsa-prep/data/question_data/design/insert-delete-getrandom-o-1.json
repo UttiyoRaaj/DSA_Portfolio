@@ -4,7 +4,7 @@
     "title": "Insert Delete GetRandom O(1)",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/insert-delete-getrandom-o-1/",
-    "problem_statement": "Implement the problem \"Insert Delete GetRandom O(1)\" using a standard topic-specific approach.",
+    "problem_statement": "Design a data structure that supports insert, delete, and getRandom in average O(1) time.",
     "examples": [
         {
             "input": "Example input",
@@ -13,9 +13,10 @@
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "Operations up to 10⁵",
+        "Keys/values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Choose data structures that optimize for the required operations.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class RandomizedSet {\n    Map<Integer, Integer> map;\n    List<Integer> list;\n    Random rand;\n    public RandomizedSet() {\n        map = new HashMap<>();\n        list = new ArrayList<>();\n        rand = new Random();\n    }\n    public boolean insert(int val) {\n        if (map.containsKey(val)) return false;\n        map.put(val, list.size());\n        list.add(val);\n        return true;\n    }\n    public boolean remove(int val) {\n        if (!map.containsKey(val)) return false;\n        int idx = map.get(val);\n        int last = list.get(list.size() - 1);\n        list.set(idx, last);\n        map.put(last, idx);\n        list.remove(list.size() - 1);\n        map.remove(val);\n        return true;\n    }\n    public int getRandom() {\n        return list.get(rand.nextInt(list.size()));\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

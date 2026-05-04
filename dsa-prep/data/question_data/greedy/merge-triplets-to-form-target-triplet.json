@@ -4,7 +4,7 @@
     "title": "Merge Triplets to Form Target Triplet",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/merge-triplets-to-form-target-triplet/",
-    "problem_statement": "Implement the problem \"Merge Triplets to Form Target Triplet\" using a standard topic-specific approach.",
+    "problem_statement": "Check whether you can form a target triplet by merging selected triplets component-wise.",
     "examples": [
         {
             "input": "Example input",
@@ -13,9 +13,10 @@
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁵",
+        "Values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Make locally optimal choices that lead to global optimum.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

@@ -4,18 +4,19 @@
     "title": "Gas Station",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/gas-station/",
-    "problem_statement": "Implement the problem \"Gas Station\" using a standard topic-specific approach.",
+    "problem_statement": "Find the starting gas station index from which you can complete the circuit given gas and costs.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "gas = [1,2,3,4,5], cost = [3,4,5,1,2]",
+            "output": "3",
+            "explanation": "Start at station 3 to complete the circuit."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁵",
+        "Values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Make locally optimal choices that lead to global optimum.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

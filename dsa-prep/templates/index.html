@@ -5,13 +5,13 @@
 {% block head %}
 <style>
     .hero {
-        padding: 5rem 3rem 4rem;
+        padding: 4.5rem 3rem 3rem;
         max-width: 900px;
         margin: 0 auto;
     }
 
     .hero-eyebrow {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--font-mono);
         font-size: 0.75rem;
         letter-spacing: 0.15em;
         color: var(--accent);
@@ -30,11 +30,11 @@
     }
 
     .hero-title {
-        font-family: 'Syne', sans-serif;
+        font-family: var(--font-heading);
         font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        line-height: 1.05;
-        letter-spacing: -0.03em;
+        font-weight: 700;
+        line-height: 1.12;
+        letter-spacing: 0;
         margin-bottom: 1.5rem;
         color: var(--text);
         text-shadow: 0 1px 1px rgba(92,64,42,0.12);
@@ -51,7 +51,7 @@
     .hero-stats {
         display: flex;
         gap: 2.5rem;
-        margin-bottom: 4rem;
+        margin-bottom: 3rem;
     }
 
     .stat {
@@ -61,9 +61,9 @@
     }
 
     .stat-num {
-        font-family: 'Syne', sans-serif;
+        font-family: var(--font-heading);
         font-size: 2rem;
-        font-weight: 800;
+        font-weight: 700;
         color: var(--accent);
         line-height: 1;
     }
@@ -84,160 +84,144 @@
         margin-bottom: 4rem;
     }
 
-    /* TOPICS GRID */
+    /* TOPICS DIRECTORY */
     .topics-section {
-        padding: 0 3rem 5rem;
-        max-width: 900px;
+        padding: 3rem 3rem 5rem;
+        max-width: 980px;
         margin: 0 auto;
     }
 
-    .topics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1rem;
-    }
-
-    .topic-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 1.5rem;
-        text-decoration: none;
-        color: var(--text);
-        transition: all 0.25s;
-        position: relative;
-        overflow: hidden;
-        display: block;
-    }
-
-    .topic-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: var(--topic-color, var(--accent));
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s;
-    }
-
-    .topic-card:hover::before { transform: scaleX(1); }
-
-    .topic-card:hover {
-        border-color: var(--border2);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-
-    .topic-card-top {
+    .topics-header {
         display: flex;
-        align-items: flex-start;
         justify-content: space-between;
+        align-items: end;
+        gap: 1rem;
         margin-bottom: 1rem;
     }
 
-    .topic-icon-wrap {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
+    .topics-heading {
+        font-family: var(--font-heading);
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: 0;
+    }
+
+    .topics-note {
+        color: var(--text3);
+        font-size: 0.82rem;
+        line-height: 1.5;
+        max-width: 320px;
+        text-align: right;
+    }
+
+    .topics-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+    }
+
+    .topic-row {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.8rem 0.9rem;
+        text-decoration: none;
+        color: var(--text);
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 62px;
+    }
+
+    .topic-row::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--topic-color, var(--accent));
+        opacity: 0.8;
+    }
+
+    .topic-row:hover {
+        border-color: var(--border2);
+        background: #fffaf2;
+        transform: translateX(2px);
+    }
+
+    .topic-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        background: color-mix(in srgb, var(--topic-color, var(--accent)) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--topic-color, var(--accent)) 34%, transparent);
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .topic-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .topic-row-title {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.95rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 1.25;
+    }
+
+    .topic-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.35rem;
+    }
+
+    .topic-progress-track {
+        height: 4px;
+        border-radius: 999px;
         background: var(--bg2);
-        border: 1px solid var(--border);
+        flex: 1;
+        overflow: hidden;
+        border: 1px solid rgba(92,64,42,0.08);
+    }
+
+    .topic-progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: var(--topic-color, var(--accent));
+        opacity: 0.75;
     }
 
     .topic-count {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.7rem;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
         color: var(--text3);
-        background: var(--bg2);
-        border: 1px solid var(--border);
-        padding: 0.2rem 0.5rem;
-        border-radius: 4px;
-    }
-
-    .topic-card-title {
-        font-family: 'Syne', sans-serif;
-        font-weight: 700;
-        font-size: 1.05rem;
-        margin-bottom: 0.4rem;
-    }
-
-    .topic-card-desc {
-        font-size: 0.78rem;
-        color: var(--text3);
-        line-height: 1.5;
-    }
-
-    .topic-q-preview {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
-    }
-
-    .topic-q-chip {
-        font-size: 0.7rem;
-        color: var(--text3);
-        background: var(--bg2);
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        border: 1px solid var(--border);
-    }
-
-    /* FEATURES */
-    .features-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-bottom: 4rem;
-    }
-
-    .feature {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1.25rem;
-    }
-
-    .feature-icon {
-        font-size: 1.5rem;
-        margin-bottom: 0.75rem;
-        display: block;
-    }
-
-    .feature-title {
-        font-family: 'Syne', sans-serif;
-        font-weight: 700;
-        font-size: 0.9rem;
-        margin-bottom: 0.4rem;
-    }
-
-    .feature-desc {
-        font-size: 0.78rem;
-        color: var(--text3);
-        line-height: 1.55;
-    }
-
-    .feature-link {
-        display: inline-flex;
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--accent);
-        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     @media (max-width: 640px) {
         .hero, .topics-section { padding-left: 1.25rem; padding-right: 1.25rem; }
         .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
         .features-row { grid-template-columns: 1fr; }
+        .topics-header { align-items: start; flex-direction: column; }
+        .topics-note { text-align: left; }
+        .topics-list { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -252,104 +236,43 @@
 
     <div class="hero-stats">
         <div class="stat">
-            <span class="stat-num">{{ topics | length }}</span>
+            <span class="stat-num">{{ stats.total_topics }}</span>
             <span class="stat-label">Topics</span>
         </div>
         <div class="stat">
-            <span class="stat-num">{% set total = namespace(count=0) %}{% for t in topics %}{% set total.count = total.count + t.questions|length %}{% endfor %}{{ total.count }}</span>
+            <span class="stat-num">{{ stats.total_questions }}</span>
             <span class="stat-label">Questions</span>
         </div>
         <div class="stat">
-            <span class="stat-num">Java</span>
-            <span class="stat-label">Language</span>
-        </div>
-        <div class="stat">
-            <span class="stat-num">4.5y</span>
-            <span class="stat-label">Exp Level</span>
-        </div>
-    </div>
-
-    <div class="features-row">
-        <div class="feature">
-            <span class="feature-icon">🎯</span>
-            <div class="feature-title">Approach Evolution</div>
-            <div class="feature-desc">Every solution shows the full journey from O(n²) brute force to O(n) optimal — just like a real whiteboard interview.</div>
-        </div>
-        <div class="feature">
-            <span class="feature-icon">🧠</span>
-            <div class="feature-title">Intuition First</div>
-            <div class="feature-desc">Before any code, understand <em>why</em> the optimal approach works. Build the mental model, not memorization.</div>
-        </div>
-        <div class="feature">
-            <span class="feature-icon">💬</span>
-            <div class="feature-title">Interview Q&A</div>
-            <div class="feature-desc">Real follow-up questions interviewers ask — with crisp, confident answers that show depth of understanding.</div>
-        </div>
-        <div class="feature">
-            <span class="feature-icon">🤖</span>
-            <div class="feature-title">Mock Interview Mode</div>
-            <div class="feature-desc">Practice with a one-to-one interview flow, a live code editor, followups, and a final review report.</div>
-            <a href="/practice" class="feature-link">Start practice</a>
+            <span class="stat-num">{{ stats.completed_questions }}</span>
+            <span class="stat-label">Completed</span>
         </div>
     </div>
 </div>
 
-<div class="glow-divider" style="max-width:860px; margin: 0 auto 0;"></div>
-
 <div class="topics-section">
-    <div class="section-label" style="margin-bottom: 1.5rem;">Topics</div>
-    <div class="topics-grid">
+    <div class="topics-header">
+        <div>
+            <div class="section-label" style="margin-bottom: 0.45rem;">Topics</div>
+            <h2 class="topics-heading">Choose one pattern to practice</h2>
+        </div>
+        <p class="topics-note">A quieter list for scanning quickly. Pick a topic and jump straight into its questions.</p>
+    </div>
+    <div class="topics-list">
         {% for topic in topics %}
-        <a href="/topic/{{ topic.slug }}" class="topic-card" style="--topic-color: {{ topic.color }}">
-            <div class="topic-card-top">
-                <div class="topic-icon-wrap">{{ topic.icon }}</div>
-                <span class="topic-count">{{ topic.questions|length }} / {{ topic.total }}</span>
+        <a href="/topic/{{ topic.slug }}" class="topic-row" style="--topic-color: {{ topic.color }}">
+            <div class="topic-mark">{{ topic.icon }}</div>
+            <div class="topic-main">
+                <div class="topic-row-title">{{ topic.title }}</div>
+                <div class="topic-progress">
+                    <div class="topic-progress-track">
+                        <div class="topic-progress-fill" style="width: {% if topic.questions|length %}{{ (topic.completed_count / topic.questions|length * 100) | round(0, 'floor') }}{% else %}0{% endif %}%"></div>
+                    </div>
+                    <span class="topic-count">{{ topic.completed_count }}/{{ topic.questions|length }} done</span>
+                </div>
             </div>
-            <div class="topic-card-title">{{ topic.title }}</div>
-            <div class="topic-card-desc">
-                {% if topic.slug == 'arrays-hashing' %}Core data structure patterns, frequency maps, prefix sums & two-pointer techniques.
-                {% else %}Curated problems covering the essential patterns.{% endif %}
-            </div>
-            {% if topic.questions %}
-            <div class="topic-q-preview">
-                {% for q in topic.questions[:3] %}
-                <span class="topic-q-chip">{{ q.title }}</span>
-                {% endfor %}
-                {% if topic.questions|length > 3 %}
-                <span class="topic-q-chip">+{{ topic.questions|length - 3 }} more</span>
-                {% endif %}
-            </div>
-            {% endif %}
         </a>
         {% endfor %}
-
-        <!-- Coming soon placeholder -->
-        <div class="topic-card" style="opacity: 0.4; pointer-events: none;">
-            <div class="topic-card-top">
-                <div class="topic-icon-wrap">🌀</div>
-                <span class="topic-count">0 / 8</span>
-            </div>
-            <div class="topic-card-title">Two Pointers</div>
-            <div class="feature-desc" style="font-size:0.78rem; color: var(--text3); margin-top:0.25rem;">Coming soon...</div>
-        </div>
-
-        <div class="topic-card" style="opacity: 0.4; pointer-events: none;">
-            <div class="topic-card-top">
-                <div class="topic-icon-wrap">🪟</div>
-                <span class="topic-count">0 / 6</span>
-            </div>
-            <div class="topic-card-title">Sliding Window</div>
-            <div class="feature-desc" style="font-size:0.78rem; color: var(--text3); margin-top:0.25rem;">Coming soon...</div>
-        </div>
-
-        <div class="topic-card" style="opacity: 0.4; pointer-events: none;">
-            <div class="topic-card-top">
-                <div class="topic-icon-wrap">🌳</div>
-                <span class="topic-count">0 / 15</span>
-            </div>
-            <div class="topic-card-title">Trees</div>
-            <div class="feature-desc" style="font-size:0.78rem; color: var(--text3); margin-top:0.25rem;">Coming soon...</div>
-        </div>
     </div>
 </div>
 {% endblock %}

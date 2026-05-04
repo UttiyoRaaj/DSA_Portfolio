@@ -4,18 +4,19 @@
     "title": "Course Schedule II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/course-schedule-ii/",
-    "problem_statement": "Implement the problem \"Course Schedule II\" using a standard topic-specific approach.",
+    "problem_statement": "Return a valid order to finish all courses given prerequisite pairs or an empty list if impossible.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "numCourses = 2, prerequisites = [[1,0]]",
+            "output": "[0,1]",
+            "explanation": "Return a valid course ordering."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 100",
+        "0 ≤ edges ≤ n*(n-1)/2"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "When should you use BFS vs DFS?",
+            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you avoid revisiting nodes?",
+            "a": "Mark visited nodes or use a visited set during traversal."
         }
     ]
 }

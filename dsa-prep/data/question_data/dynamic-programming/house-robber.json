@@ -4,18 +4,19 @@
     "title": "House Robber",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/house-robber/",
-    "problem_statement": "Implement the problem \"House Robber\" using a standard topic-specific approach.",
+    "problem_statement": "Maximize the amount of money robbed from a line of houses without robbing adjacent houses.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [1,2,3,1]",
+            "output": "4",
+            "explanation": "Rob houses 1 and 3 for maximum value."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 1000",
+        "Values fit in 32-bit integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Break down into subproblems and use memoization or tabulation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 0) return 0;\n        int prev1 = 0;\n        int prev2 = 0;\n        for (int num : nums) {\n            int temp = prev1;\n            prev1 = Math.max(prev2 + num, prev1);\n            prev2 = temp;\n        }\n        return prev1;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "How do you identify the DP state?",
+            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "Why memoize or tabulate?",
+            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
         }
     ]
 }

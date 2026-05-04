@@ -4,18 +4,19 @@
     "title": "Binary Tree Level Order Traversal",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
-    "problem_statement": "Implement the problem \"Binary Tree Level Order Traversal\" using a standard topic-specific approach.",
+    "problem_statement": "Return the level order traversal of a binary tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [3,9,20,null,null,15,7]",
+            "output": "[[3],[9,20],[15,7]]",
+            "explanation": "Traverse level by level."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁴",
+        "Tree nodes contain integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Traverse recursively or iteratively, combining subtree results.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> res = new ArrayList<>();\n        if (root == null) return res;\n        Queue<TreeNode> q = new LinkedList<>();\n        q.add(root);\n        while (!q.isEmpty()) {\n            int size = q.size();\n            List<Integer> level = new ArrayList<>();\n            for (int i = 0; i < size; i++) {\n                TreeNode node = q.poll();\n                level.add(node.val);\n                if (node.left != null) q.add(node.left);\n                if (node.right != null) q.add(node.right);\n            }\n            res.add(level);\n        }\n        return res;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

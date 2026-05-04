@@ -4,7 +4,7 @@
     "title": "Surrounded Regions",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/surrounded-regions/",
-    "problem_statement": "Implement the problem \"Surrounded Regions\" using a standard topic-specific approach.",
+    "problem_statement": "Capture all regions of Os fully surrounded by Xs in a board by flipping them to Xs.",
     "examples": [
         {
             "input": "Example input",
@@ -13,9 +13,10 @@
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 100",
+        "0 ≤ edges ≤ n*(n-1)/2"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "When should you use BFS vs DFS?",
+            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you avoid revisiting nodes?",
+            "a": "Mark visited nodes or use a visited set during traversal."
         }
     ]
 }

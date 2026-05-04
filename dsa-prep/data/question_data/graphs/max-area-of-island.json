@@ -4,18 +4,19 @@
     "title": "Max Area of Island",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/max-area-of-island/",
-    "problem_statement": "Implement the problem \"Max Area of Island\" using a standard topic-specific approach.",
+    "problem_statement": "Return the maximum area of an island in a binary grid, where islands are groups of connected 1s.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "grid = [[0,0,1,0,0],[0,1,0,1,0],[0,1,1,1,0]]",
+            "output": "6",
+            "explanation": "The largest island has area 6."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 100",
+        "0 ≤ edges ≤ n*(n-1)/2"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "When should you use BFS vs DFS?",
+            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you avoid revisiting nodes?",
+            "a": "Mark visited nodes or use a visited set during traversal."
         }
     ]
 }

@@ -4,7 +4,7 @@
     "title": "3Sum",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/3sum/",
-    "problem_statement": "Implement the problem \"3Sum\" using a standard topic-specific approach.",
+    "problem_statement": "Return all unique triplets in the array that add up to zero.",
     "examples": [
         {
             "input": "Example input",
@@ -13,9 +13,10 @@
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁵",
+        "Values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use two pointers to scan from ends or different positions.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

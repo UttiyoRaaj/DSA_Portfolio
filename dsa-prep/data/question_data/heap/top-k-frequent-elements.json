@@ -4,18 +4,19 @@
     "title": "Top K Frequent Elements",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/top-k-frequent-elements/",
-    "problem_statement": "Implement the problem \"Top K Frequent Elements\" using a standard topic-specific approach.",
+    "problem_statement": "Return the k most frequent elements from an array.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [1,1,1,2,2,3], k = 2",
+            "output": "[1,2]",
+            "explanation": "Elements 1 and 2 are the most frequent."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁵",
+        "Values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use priority queues for efficient min/max operations.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public int[] topKFrequent(int[] nums, int k) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1);\n        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[1] - a[1]);\n        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {\n            pq.add(new int[]{entry.getKey(), entry.getValue()});\n        }\n        int[] res = new int[k];\n        for (int i = 0; i < k; i++) res[i] = pq.poll()[0];\n        return res;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

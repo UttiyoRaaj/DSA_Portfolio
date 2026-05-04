@@ -4,7 +4,7 @@
     "title": "Longest Increasing Subsequence",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
-    "problem_statement": "Implement the problem \"Longest Increasing Subsequence\" using a standard topic-specific approach.",
+    "problem_statement": "Find the length of the longest strictly increasing subsequence in an integer array.",
     "examples": [
         {
             "input": "Example input",
@@ -13,9 +13,10 @@
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 1000",
+        "Values fit in 32-bit integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Break down into subproblems and use memoization or tabulation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        int[] dp = new int[nums.length];\n        Arrays.fill(dp, 1);\n        for (int i = 1; i < nums.length; i++) {\n            for (int j = 0; j < i; j++) {\n                if (nums[i] > nums[j]) {\n                    dp[i] = Math.max(dp[i], dp[j] + 1);\n                }\n            }\n        }\n        int max = 0;\n        for (int val : dp) {\n            max = Math.max(max, val);\n        }\n        return max;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "How do you identify the DP state?",
+            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "Why memoize or tabulate?",
+            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
         }
     ]
 }

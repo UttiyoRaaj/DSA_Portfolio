@@ -4,18 +4,19 @@
     "title": "Climbing Stairs",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/climbing-stairs/",
-    "problem_statement": "Implement the problem \"Climbing Stairs\" using a standard topic-specific approach.",
+    "problem_statement": "Count the distinct ways to climb n stairs if you can take 1 or 2 steps each time.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 3",
+            "output": "3",
+            "explanation": "Three ways: 1+1+1, 1+2, 2+1."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 1000",
+        "Values fit in 32-bit integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Break down into subproblems and use memoization or tabulation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public int climbStairs(int n) {\n        if (n <= 1) return 1;\n        int[] dp = new int[n + 1];\n        dp[0] = 1;\n        dp[1] = 1;\n        for (int i = 2; i <= n; i++) {\n            dp[i] = dp[i - 1] + dp[i - 2];\n        }\n        return dp[n];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "How do you identify the DP state?",
+            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "Why memoize or tabulate?",
+            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
         }
     ]
 }

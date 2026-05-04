@@ -4,18 +4,19 @@
     "title": "Longest Subarray with Ones After Replacement",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/longest-subarray-with-ones-after-replacement/",
-    "problem_statement": "Implement the problem \"Longest Subarray with Ones After Replacement\" using a standard topic-specific approach.",
+    "problem_statement": "Return the longest subarray containing only 1s after replacing up to k zeros.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2",
+            "output": "6",
+            "explanation": "Replace two 0s to get six 1s."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 10⁵",
+        "Values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Maintain a window over the array, adjusting boundaries.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

@@ -4,18 +4,19 @@
     "title": "Design File System",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/design-file-system/",
-    "problem_statement": "Implement the problem \"Design File System\" using a standard topic-specific approach.",
+    "problem_statement": "Design a file system that supports creating paths with values and retrieving values using path strings.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "createPath(\"/a\", 1), get(\"/a\")",
+            "output": "1",
+            "explanation": "Support createPath and get operations."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "Operations up to 10⁵",
+        "Keys/values within standard ranges"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Choose data structures that optimize for the required operations.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class FileSystem {\n    Map<String, Integer> map;\n    public FileSystem() {\n        map = new HashMap<>();\n    }\n    public boolean createPath(String path, int value) {\n        if (map.containsKey(path)) return false;\n        int lastSlash = path.lastIndexOf('/');\n        if (lastSlash > 0) {\n            String parent = path.substring(0, lastSlash);\n            if (!map.containsKey(parent)) return false;\n        }\n        map.put(path, value);\n        return true;\n    }\n    public int get(String path) {\n        return map.getOrDefault(path, -1);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

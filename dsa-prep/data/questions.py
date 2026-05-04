@@ -131,4 +131,8 @@ def _load_topics() -> list[dict]:
     return topics
 
 
-TOPICS = _load_topics()
+def get_topics() -> list[dict]:
+    return _load_topics()
+
+
+TOPICS = get_topics()

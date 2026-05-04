@@ -4,18 +4,19 @@
     "title": "Word Break",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/word-break/",
-    "problem_statement": "Implement the problem \"Word Break\" using a standard topic-specific approach.",
+    "problem_statement": "Determine whether the string can be segmented into a sequence of one or more dictionary words.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "s = \"leetcode\", wordDict = [\"leet\",\"code\"]",
+            "output": "true",
+            "explanation": "The string can be segmented as leet code."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "1 ≤ n ≤ 1000",
+        "Values fit in 32-bit integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Break down into subproblems and use memoization or tabulation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -30,12 +31,12 @@
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "How do you identify the DP state?",
+            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "Why memoize or tabulate?",
+            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
         }
     ]
 }

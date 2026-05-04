@@ -4,18 +4,19 @@
     "title": "Reorder List",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/reorder-list/",
-    "problem_statement": "Implement the problem \"Reorder List\" using a standard topic-specific approach.",
+    "problem_statement": "Reorder a linked list to L0→Ln→L1→Ln-1… in-place.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "head = [1,2,3,4]",
+            "output": "[1,4,2,3]",
+            "explanation": "Reorder to L0→Ln→L1→Ln-1→..."
         }
     ],
     "constraints": [
-        "Constraints will be added."
+        "0 ≤ n ≤ 10⁴",
+        "List nodes contain integers"
     ],
-    "intuition": "Key intuition and reasoning for the problem will be added here.",
+    "intuition": "Use two pointers or dummy nodes for manipulation.",
     "approaches": [
         {
             "name": "Optimal Solution",
@@ -25,17 +26,17 @@
             "time": "",
             "space": "",
             "why_not": null,
-            "code": null
+            "code": "class Solution {\n    public void reorderList(ListNode head) {\n        if (head == null) return;\n        ListNode slow = head, fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        ListNode prev = null, curr = slow, tmp;\n        while (curr != null) {\n            tmp = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = tmp;\n        }\n        ListNode first = head, second = prev;\n        while (second.next != null) {\n            tmp = first.next;\n            first.next = second;\n            first = tmp;\n            tmp = second.next;\n            second.next = first;\n            second = tmp;\n        }\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Key interview question about this problem.",
-            "a": "Answer will be added here."
+            "q": "What is the key idea?",
+            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
         },
         {
-            "q": "Follow-up or edge-case question.",
-            "a": "Answer will be added here."
+            "q": "How do you handle edge cases?",
+            "a": "Check for empty or minimal input before applying the main algorithm."
         }
     ]
 }

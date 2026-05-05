@@ -1,42 +1,43 @@
 {
-    "id": 15,
-    "leetcode_number": null,
+    "id": 12,
+    "leetcode_number": 684,
     "title": "Redundant Connection (Union-Find)",
     "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/redundant-connection-union-find/",
-    "problem_statement": "Implement the problem \"Redundant Connection (Union-Find)\" using a standard topic-specific approach.",
+    "url": "https://leetcode.com/problems/redundant-connection/",
+    "problem_statement": "Return the edge that can be removed from a graph so the remaining edges form a tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "edges = [[1,2],[1,3],[2,3]]",
+            "output": "[2,3]",
+            "explanation": "Removing edge [2,3] eliminates the only cycle."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "3 <= edges.length <= 1000",
+        "edges[i].length == 2",
+        "1 <= edges[i][0], edges[i][1] <= edges.length"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Use union-find and return the first edge that connects nodes already in the same component.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Union-Find cycle detection",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "For each edge, if both endpoints share a root, that edge is redundant and forms a cycle.",
+            "time": "O(E * \u03b1(N))",
+            "space": "O(N)",
+            "why_not": "DFS cycle detection is possible but union-find directly identifies the redundant edge during insertion.",
+            "code": "class Solution {\n    public int[] findRedundantConnection(int[][] edges) {\n        int n = edges.length;\n        int[] parent = new int[n + 1];\n        for (int i = 1; i <= n; i++) parent[i] = i;\n        for (int[] edge : edges) {\n            int u = find(parent, edge[0]);\n            int v = find(parent, edge[1]);\n            if (u == v) return edge;\n            parent[u] = v;\n        }\n        return new int[0];\n    }\n    private int find(int[] parent, int x) {\n        return parent[x] == x ? x : (parent[x] = find(parent, parent[x]));\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why is the first cycle-causing edge the answer?",
+            "a": "Because the graph starts as a tree and only one extra edge creates exactly one cycle."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What does union-find detect every time?",
+            "a": "Whether two nodes are already connected through previous edges."
         }
     ]
 }

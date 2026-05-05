@@ -1,42 +1,42 @@
 {
     "id": 2,
-    "leetcode_number": null,
+    "leetcode_number": 134,
     "title": "Gas Station",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/gas-station/",
-    "problem_statement": "Find the starting gas station index from which you can complete the circuit given gas and costs.",
+    "problem_statement": "Find the starting gas station index from which you can complete the circuit around all stations once, or return -1 if impossible.",
     "examples": [
         {
             "input": "gas = [1,2,3,4,5], cost = [3,4,5,1,2]",
             "output": "3",
-            "explanation": "Start at station 3 to complete the circuit."
+            "explanation": "Starting at station 3 allows completing the circuit and returning to the start."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= gas.length == cost.length <= 10^5",
+        "0 <= gas[i], cost[i] <= 10^4"
     ],
-    "intuition": "Make locally optimal choices that lead to global optimum.",
+    "intuition": "Track net fuel and restart from the next station when the current route becomes impossible; the total net fuel determines feasibility.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "One-pass station scan",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Maintain total and current fuel balance while scanning stations; when the current balance drops below zero, reset the start point and continue.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Checking all start points is O(n^2) and unnecessary because a unique valid start exists if one exists.",
+            "code": "class Solution {\n    public int canCompleteCircuit(int[] gas, int[] cost) {\n        int total = 0, curr = 0, start = 0;\n        for (int i = 0; i < gas.length; i++) {\n            int diff = gas[i] - cost[i];\n            total += diff;\n            curr += diff;\n            if (curr < 0) {\n                start = i + 1;\n                curr = 0;\n            }\n        }\n        return total >= 0 ? start : -1;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why can you reset the start after a failed route?",
+            "a": "If the current route fails at i, none of the stations before i can be a valid start because they would also run out of fuel by i."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What does total fuel represent?",
+            "a": "The overall feasibility of completing the circuit; if total is negative, no solution exists."
         }
     ]
 }

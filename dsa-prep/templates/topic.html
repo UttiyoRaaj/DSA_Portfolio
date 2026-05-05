@@ -23,14 +23,16 @@
     }
 
     .topic-big-icon {
+        font-family: var(--font-topic);
         font-size: 2rem;
+        color: var(--accent);
     }
 
     .topic-hero-title {
-        font-family: 'Syne', sans-serif;
-        font-size: 2.25rem;
+        font-family: var(--font-topic);
+        font-size: 2.5rem;
         font-weight: 800;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.03em;
     }
 
     .topic-hero-sub {
@@ -116,14 +118,14 @@
         <div class="breadcrumb">
             <a href="/">Home</a>
             <span class="sep">›</span>
-            <span>{{ topic.title }}</span>
+            <span class="topic-link">{{ topic.title }}</span>
         </div>
         <div class="topic-title-row">
-            <span class="topic-big-icon">{{ topic.icon }}</span>
+            <span class="topic-big-icon">{{ topic.title[:1] }}</span>
             <h1 class="topic-hero-title">{{ topic.title }}</h1>
         </div>
         <p class="topic-hero-sub">
-            {{ topic.questions|length }} of {{ topic.total }} questions solved &mdash; Java solutions with full approach evolution
+            {{ topic.completed_count }} of {{ topic.total }} questions solved &mdash; Java solutions with full approach evolution
         </p>
     </div>
 </div>

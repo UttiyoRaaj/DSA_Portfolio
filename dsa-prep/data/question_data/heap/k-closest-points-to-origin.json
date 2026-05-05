@@ -1,42 +1,42 @@
 {
     "id": 8,
-    "leetcode_number": null,
+    "leetcode_number": 973,
     "title": "K Closest Points to Origin",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
     "problem_statement": "Return the k points closest to the origin by Euclidean distance.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "points = [[1,3],[-2,2]], k = 1",
+            "output": "[[-2,2]]",
+            "explanation": "The closest point to the origin is [-2,2]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= k <= points.length <= 10^5",
+        "-10^4 <= xi, yi <= 10^4"
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Use a max-heap sized k to keep the closest points seen so far by squared distance.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Max-heap of closest points",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use a max-heap to store the k closest points by squared distance, and replace the farthest when a closer point is found.",
+            "time": "O(n log k)",
+            "space": "O(k)",
+            "why_not": "Sorting all points is O(n log n), which is slower when k is much smaller than n.",
+            "code": "class Solution {\n    public int[][] kClosest(int[][] points, int k) {\n        PriorityQueue<int[]> heap = new PriorityQueue<>((a, b) -> Integer.compare(distance(b), distance(a)));\n        for (int[] point : points) {\n            heap.offer(point);\n            if (heap.size() > k) {\n                heap.poll();\n            }\n        }\n        int[][] result = new int[k][2];\n        for (int i = 0; i < k; i++) {\n            result[i] = heap.poll();\n        }\n        return result;\n    }\n    private int distance(int[] point) {\n        return point[0] * point[0] + point[1] * point[1];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use squared distance?",
+            "a": "Squared distance preserves ordering and avoids expensive square root calculations."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What if k equals points.length?",
+            "a": "Then all points are returned and no pruning is necessary."
         }
     ]
 }

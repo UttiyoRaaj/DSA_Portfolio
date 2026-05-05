@@ -1,42 +1,43 @@
 {
-    "id": 5,
-    "leetcode_number": null,
+    "id": 15,
+    "leetcode_number": 130,
     "title": "Surrounded Regions",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/surrounded-regions/",
-    "problem_statement": "Capture all regions of Os fully surrounded by Xs in a board by flipping them to Xs.",
+    "problem_statement": "Capture all O regions completely surrounded by X, leaving border-connected O regions unchanged.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "board = [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]",
+            "output": "[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]",
+            "explanation": "Only the O on the border remains because it reaches the edge."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "m == board.length",
+        "n == board[i].length",
+        "1 <= m, n <= 200"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Avoid capturing O regions connected to the border by marking them first, then flip remaining O cells.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Border DFS marking",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "DFS from border O cells to mark safe regions, then convert unmarked O to X while restoring safe cells.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "Scanning each region individually can mistake border-connected areas; reverse marking is more reliable.",
+            "code": "class Solution {\n    public void solve(char[][] board) {\n        int m = board.length, n = board[0].length;\n        for (int i = 0; i < m; i++) {\n            dfs(board, i, 0);\n            dfs(board, i, n - 1);\n        }\n        for (int j = 0; j < n; j++) {\n            dfs(board, 0, j);\n            dfs(board, m - 1, j);\n        }\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == 'O') board[i][j] = 'X';\n                if (board[i][j] == 'T') board[i][j] = 'O';\n            }\n        }\n    }\n    private void dfs(char[][] board, int i, int j) {\n        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != 'O') return;\n        board[i][j] = 'T';\n        dfs(board, i + 1, j);\n        dfs(board, i - 1, j);\n        dfs(board, i, j + 1);\n        dfs(board, i, j - 1);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why mark border-connected Os?",
+            "a": "Because only O regions not connected to the border should be flipped."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What placeholder character is used?",
+            "a": "A temporary marker like T distinguishes safe O cells during restoration."
         }
     ]
 }

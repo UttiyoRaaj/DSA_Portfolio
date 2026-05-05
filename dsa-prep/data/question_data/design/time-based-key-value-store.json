@@ -1,42 +1,43 @@
 {
     "id": 3,
-    "leetcode_number": null,
+    "leetcode_number": 981,
     "title": "Time Based Key-Value Store",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/time-based-key-value-store/",
-    "problem_statement": "Implement the problem \"Time Based Key-Value Store\" using a standard topic-specific approach.",
+    "problem_statement": "Implement a key-value store that can store multiple values for the same key at different timestamps and retrieve the value with the largest timestamp less than or equal to a given timestamp.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "set(\"foo\", \"bar\", 1), get(\"foo\", 1), get(\"foo\", 3), set(\"foo\", \"bar2\", 4), get(\"foo\", 4), get(\"foo\", 5)",
+            "output": "\"bar\", \"bar\", \"bar2\", \"bar2\"",
+            "explanation": "The store returns the most recent value at or before the requested timestamp."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "1 <= timestamp <= 10^7",
+        "At most 10^5 calls to set and get",
+        "All keys and values are lowercase strings"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Keep a sorted list of timestamped values for each key and use binary search to retrieve the most recent valid entry.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Binary Search on Timestamped Entries",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Store each key's values in a list sorted by timestamp. On get, binary search for the latest timestamp that does not exceed the query.",
+            "time": "O(log n) for get, O(1) amortized for set",
+            "space": "O(total number of set operations)",
+            "why_not": "A linear scan for each get would be too slow when many timestamped values exist for a key.",
+            "code": "class TimeMap {\n    private static class Entry {\n        int time;\n        String value;\n        Entry(int time, String value) { this.time = time; this.value = value; }\n    }\n\n    private Map<String, List<Entry>> map;\n\n    public TimeMap() {\n        map = new HashMap<>();\n    }\n\n    public void set(String key, String value, int timestamp) {\n        map.computeIfAbsent(key, k -> new ArrayList<>()).add(new Entry(timestamp, value));\n    }\n\n    public String get(String key, int timestamp) {\n        List<Entry> list = map.getOrDefault(key, Collections.emptyList());\n        int left = 0, right = list.size() - 1;\n        String result = \"\";\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (list.get(mid).time <= timestamp) {\n                result = list.get(mid).value;\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        return result;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you retrieve the correct historical value?",
+            "a": "Binary search the sorted list of timestamped entries to find the most recent timestamp that is <= the requested timestamp."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why store values per key in a list?",
+            "a": "A list preserves chronological order and allows efficient binary search for historical lookups."
         }
     ]
 }

@@ -1,42 +1,41 @@
 {
-    "id": 9,
-    "leetcode_number": null,
+    "id": 8,
+    "leetcode_number": 235,
     "title": "Lowest Common Ancestor of a BST",
-    "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-bst/",
-    "problem_statement": "Find the lowest common ancestor of two nodes in a BST.",
+    "difficulty": "Easy",
+    "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+    "problem_statement": "Find the lowest common ancestor of two nodes in a binary search tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8",
+            "output": "6",
+            "explanation": "6 is the lowest node that has both 2 and 8 as descendants."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "All node values are unique and p, q exist in the tree."
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Use BST ordering: if both nodes are less than root, go left; if both are greater, go right.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "BST property traversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Walk down the tree until the split point or root equals one of the nodes.",
+            "time": "O(h)",
+            "space": "O(1)",
+            "why_not": "General binary tree LCA methods work but are more expensive than using BST properties.",
+            "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (root != null) {\n            if (p.val < root.val && q.val < root.val) {\n                root = root.left;\n            } else if (p.val > root.val && q.val > root.val) {\n                root = root.right;\n            } else {\n                return root;\n            }\n        }\n        return null;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What indicates the split point?",
+            "a": "When one node is on the left and the other is on the right, or one equals the current root."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why is BST ordering important?",
+            "a": "It lets you choose the correct subtree without exploring both sides."
         }
     ]
 }

@@ -1,42 +1,43 @@
 {
-    "id": 11,
-    "leetcode_number": null,
+    "id": 17,
+    "leetcode_number": 127,
     "title": "Word Ladder",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/word-ladder/",
-    "problem_statement": "Return the length of the shortest transformation sequence from beginWord to endWord by changing one letter at a time.",
+    "problem_statement": "Return the length of the shortest transformation sequence from beginWord to endWord using one-letter intermediate words from a dictionary.",
     "examples": [
         {
             "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
             "output": "5",
-            "explanation": "Shortest transformation length is 5."
+            "explanation": "One shortest sequence is hit -> hot -> dot -> dog -> cog."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= wordList.length <= 5000",
+        "beginWord.length == endWord.length",
+        "All words contain only lowercase letters."
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Use BFS on the word graph where edges connect words that differ by one letter, and stop when endWord is reached.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Single-direction BFS",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Generate neighbors by changing one letter at a time and search breadth-first for the target word.",
+            "time": "O(N * L^2)",
+            "space": "O(N * L)",
+            "why_not": "DFS may find longer paths and is inefficient for shortest sequence search.",
+            "code": "class Solution {\n    public int ladderLength(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        if (!dict.contains(endWord)) return 0;\n        Queue<String> queue = new ArrayDeque<>();\n        queue.offer(beginWord);\n        int steps = 1;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            for (int i = 0; i < size; i++) {\n                String word = queue.poll();\n                if (word.equals(endWord)) return steps;\n                char[] arr = word.toCharArray();\n                for (int j = 0; j < arr.length; j++) {\n                    char original = arr[j];\n                    for (char c = 'a'; c <= 'z'; c++) {\n                        arr[j] = c;\n                        String next = new String(arr);\n                        if (dict.remove(next)) queue.offer(next);\n                    }\n                    arr[j] = original;\n                }\n            }\n            steps++;\n        }\n        return 0;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why remove words from the dictionary once used?",
+            "a": "To avoid revisiting and keep BFS efficient."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What does each BFS layer represent?",
+            "a": "One additional transformation step."
         }
     ]
 }

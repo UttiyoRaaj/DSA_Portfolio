@@ -1,42 +1,42 @@
 {
     "id": 19,
-    "leetcode_number": null,
+    "leetcode_number": 115,
     "title": "Distinct Subsequences",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/distinct-subsequences/",
     "problem_statement": "Count the number of distinct ways to form string t from string s by deleting characters without changing order.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "s = \"rabbbit\", t = \"rabbit\"",
+            "output": "3",
+            "explanation": "Three subsequences of s match t."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= s.length, t.length <= 1000",
+        "Answers fit in a 32-bit integer"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Use DP over prefixes of s and t and count matching subsequences incrementally.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "2D DP on prefix lengths",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "dp[i][j] counts the ways to form t[0..j-1] from s[0..i-1], updating by matching or skipping characters.",
+            "time": "O(m * n)",
+            "space": "O(n)",
+            "why_not": "A naive recursive solution is too slow due to repeated subproblems.",
+            "code": "class Solution {\n    public int numDistinct(String s, String t) {\n        int m = s.length(), n = t.length();\n        int[] dp = new int[n + 1];\n        dp[0] = 1;\n        for (int i = 1; i <= m; i++) {\n            for (int j = n; j >= 1; j--) {\n                if (s.charAt(i - 1) == t.charAt(j - 1)) {\n                    dp[j] += dp[j - 1];\n                }\n            }\n        }\n        return dp[n];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "What does dp[j] represent when using 1D optimization?",
+            "a": "The number of ways to match the first j characters of t using the processed prefix of s."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "Why iterate j backward?",
+            "a": "To avoid overwriting dp values needed for the current row when using a single array."
         }
     ]
 }

@@ -1,42 +1,42 @@
 {
     "id": 1,
-    "leetcode_number": null,
+    "leetcode_number": 121,
     "title": "Best Time to Buy and Sell Stock",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
-    "problem_statement": "Maximize profit from a single buy-sell transaction on stock prices.",
+    "problem_statement": "Maximize profit from a single buy-sell transaction on stock prices by choosing one day to buy and one later day to sell.",
     "examples": [
         {
             "input": "prices = [7,1,5,3,6,4]",
             "output": "5",
-            "explanation": "Buy at 1, sell at 6 for profit 5."
+            "explanation": "Buy on day 2 (price 1) and sell on day 5 (price 6) for profit 5."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= prices.length <= 10^5",
+        "0 <= prices[i] <= 10^4"
     ],
-    "intuition": "Make locally optimal choices that lead to global optimum.",
+    "intuition": "Track the minimum buy price seen so far and compute the maximum profit with each possible sell day.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Single pass tracking",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Iterate once, update the lowest price and calculate the best possible profit at each step.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Brute force checks all pairs in O(n^2) but the best trade depends only on the minimum past price.",
+            "code": "class Solution {\n    public int maxProfit(int[] prices) {\n        int minPrice = Integer.MAX_VALUE;\n        int maxProfit = 0;\n        for (int price : prices) {\n            minPrice = Math.min(minPrice, price);\n            maxProfit = Math.max(maxProfit, price - minPrice);\n        }\n        return maxProfit;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why is a single pass enough?",
+            "a": "Keeping the lowest buy price and current maximum profit is sufficient to evaluate every sell day."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What if prices only decrease?",
+            "a": "The algorithm returns 0 because no positive profit opportunity exists."
         }
     ]
 }

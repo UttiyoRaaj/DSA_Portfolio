@@ -1,42 +1,42 @@
 {
     "id": 3,
-    "leetcode_number": null,
+    "leetcode_number": 435,
     "title": "Non-overlapping Intervals",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/non-overlapping-intervals/",
-    "problem_statement": "Remove the minimum number of intervals to make the rest non-overlapping.",
+    "problem_statement": "Given a list of intervals, return the minimum number of intervals you need to remove to make the rest non-overlapping.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "intervals = [[1,2],[2,3],[3,4],[1,3]]",
+            "output": "1",
+            "explanation": "Remove [1,3] to eliminate overlap and keep the rest."
         }
     ],
     "constraints": [
-        "1 ≤ intervals.length ≤ 10⁵",
-        "intervals[i].length == 2"
+        "1 <= intervals.length <= 10^5",
+        "-10^6 <= start < end <= 10^6"
     ],
-    "intuition": "Sort intervals and process sequentially.",
+    "intuition": "Greedily keep intervals with the earliest end time to maximize the number of non-overlapping intervals.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Greedy by end time",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Sort intervals by end time, keep the current interval if it does not overlap, and count removals otherwise.",
+            "time": "O(n log n)",
+            "space": "O(1)",
+            "why_not": "Brute force over subsets is exponential and not feasible for large n.",
+            "code": "class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        Arrays.sort(intervals, Comparator.comparingInt(a -> a[1]));\n        int removals = 0;\n        int end = intervals[0][1];\n        for (int i = 1; i < intervals.length; i++) {\n            if (intervals[i][0] < end) {\n                removals++;\n            } else {\n                end = intervals[i][1];\n            }\n        }\n        return removals;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why sort by end time?",
+            "a": "Earliest finishing intervals leave the most room for subsequent intervals."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What indicates an overlap?",
+            "a": "An interval overlaps if its start is less than the last kept interval\u2019s end."
         }
     ]
 }

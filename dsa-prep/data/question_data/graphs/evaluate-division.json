@@ -1,42 +1,43 @@
 {
-    "id": 13,
-    "leetcode_number": null,
+    "id": 6,
+    "leetcode_number": 399,
     "title": "Evaluate Division",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/evaluate-division/",
-    "problem_statement": "Evaluate division queries given equations relating variable ratios.",
+    "problem_statement": "Evaluate division expressions given equations as ratios between variables.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "equations = [[\"a\",\"b\"],[\"b\",\"c\"]], values = [2.0,3.0], queries = [[\"a\",\"c\"],[\"b\",\"a\"],[\"a\",\"e\"]]",
+            "output": "[6.0,0.5,-1.0]",
+            "explanation": "a/b=2 and b/c=3 so a/c=6; b/a=0.5; a/e is unknown."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= equations.length <= 20",
+        "0.0 < values[i] <= 20.0",
+        "1 <= queries.length <= 20"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Build a weighted graph where edges represent division ratios and answer queries via DFS/BFS over the product of weights.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Graph traversal with weight multiplication",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use adjacency lists storing ratios, then search for a path between variables and accumulate the product.",
+            "time": "O(Q * (V + E))",
+            "space": "O(V + E)",
+            "why_not": "Floyd-Warshall is overkill for this small-scale graph query problem.",
+            "code": "class Solution {\n    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {\n        Map<String, Map<String, Double>> graph = new HashMap<>();\n        for (int i = 0; i < equations.size(); i++) {\n            String u = equations.get(i).get(0);\n            String v = equations.get(i).get(1);\n            graph.computeIfAbsent(u, k -> new HashMap<>()).put(v, values[i]);\n            graph.computeIfAbsent(v, k -> new HashMap<>()).put(u, 1.0 / values[i]);\n        }\n        double[] res = new double[queries.size()];\n        for (int i = 0; i < queries.size(); i++) {\n            res[i] = dfs(graph, queries.get(i).get(0), queries.get(i).get(1), 1.0, new HashSet<>());\n        }\n        return res;\n    }\n    private double dfs(Map<String, Map<String, Double>> graph, String curr, String target, double acc, Set<String> seen) {\n        if (!graph.containsKey(curr)) return -1.0;\n        if (curr.equals(target)) return acc;\n        seen.add(curr);\n        for (var entry : graph.get(curr).entrySet()) {\n            if (seen.contains(entry.getKey())) continue;\n            double result = dfs(graph, entry.getKey(), target, acc * entry.getValue(), seen);\n            if (result != -1.0) return result;\n        }\n        return -1.0;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "How do you encode a/b ratio in a graph?",
+            "a": "As a directed edge with weight equal to the ratio, plus the reverse edge with reciprocal weight."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What indicates no valid answer?",
+            "a": "If either variable is missing or there is no path between them, return -1.0."
         }
     ]
 }

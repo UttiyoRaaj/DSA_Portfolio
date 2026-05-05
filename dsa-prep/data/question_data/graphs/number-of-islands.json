@@ -1,42 +1,43 @@
 {
-    "id": 1,
-    "leetcode_number": null,
+    "id": 10,
+    "leetcode_number": 200,
     "title": "Number of Islands",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/number-of-islands/",
-    "problem_statement": "Count the distinct islands in a grid, where islands are regions of adjacent 1s.",
+    "problem_statement": "Count islands in a grid where 1s represent land and 0s represent water, with adjacent land connected horizontally or vertically.",
     "examples": [
         {
-            "input": "grid = [[\"1\",\"1\",\"0\"],[\"1\",\"0\",\"0\"],[\"0\",\"0\",\"1\"]]",
-            "output": "2",
-            "explanation": "There are two separate islands."
+            "input": "grid = [[1,1,0,0],[1,1,0,0],[0,0,1,0],[0,0,0,1]]",
+            "output": "3",
+            "explanation": "There are three separate islands."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "m == grid.length",
+        "n == grid[i].length",
+        "1 <= m, n <= 300"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Traverse each unvisited land cell with DFS/BFS and mark visited cells as part of the same island.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Grid DFS traversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "For each 1 cell, flood-fill the island and increment the island count.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "Union-find works too, but DFS is simpler for counting islands in a grid.",
+            "code": "class Solution {\n    public int numIslands(char[][] grid) {\n        int count = 0;\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == '1') {\n                    count++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        return count;\n    }\n    private void dfs(char[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] != '1') return;\n        grid[i][j] = '0';\n        dfs(grid, i + 1, j);\n        dfs(grid, i - 1, j);\n        dfs(grid, i, j + 1);\n        dfs(grid, i, j - 1);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why change land cells to water after visiting?",
+            "a": "To prevent revisiting the same island and to mark visited cells."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What count does the algorithm return?",
+            "a": "The number of connected components of land in the grid."
         }
     ]
 }

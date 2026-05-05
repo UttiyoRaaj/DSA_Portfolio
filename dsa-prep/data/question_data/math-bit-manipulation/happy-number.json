@@ -1,42 +1,41 @@
 {
     "id": 5,
-    "leetcode_number": null,
+    "leetcode_number": 202,
     "title": "Happy Number",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/happy-number/",
-    "problem_statement": "Determine whether a number eventually reaches 1 when replaced by the sum of squares of its digits.",
+    "problem_statement": "Determine whether repeatedly replacing a number with the sum of the squares of its digits eventually reaches 1.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 19",
+            "output": "true",
+            "explanation": "19 -> 82 -> 68 -> 100 -> 1, so it is a happy number."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values fit in 32-bit integers"
+        "1 <= n <= 2^31 - 1"
     ],
-    "intuition": "Use bitwise operations for efficient computation.",
+    "intuition": "Use cycle detection to identify if the sequence reaches 1 or loops indefinitely.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Fast and slow pointers",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute the next number repeatedly with two pointers; if they meet at 1 return true, otherwise detect a loop.",
+            "time": "O(log n) per step",
+            "space": "O(1)",
+            "why_not": "A hash set also detects cycles but uses extra memory.",
+            "code": "class Solution {\n    public boolean isHappy(int n) {\n        int slow = n;\n        int fast = next(n);\n        while (fast != 1 && slow != fast) {\n            slow = next(slow);\n            fast = next(next(fast));\n        }\n        return fast == 1;\n    }\n\n    private int next(int x) {\n        int sum = 0;\n        while (x > 0) {\n            int digit = x % 10;\n            sum += digit * digit;\n            x /= 10;\n        }\n        return sum;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use two pointers?",
+            "a": "To detect a cycle in the transformation sequence without extra space."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What indicates a happy number?",
+            "a": "The sequence reaches 1 before a cycle is detected."
         }
     ]
 }

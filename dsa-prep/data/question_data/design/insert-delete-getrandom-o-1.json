@@ -1,42 +1,43 @@
 {
     "id": 9,
-    "leetcode_number": null,
+    "leetcode_number": 380,
     "title": "Insert Delete GetRandom O(1)",
     "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/insert-delete-getrandom-o-1/",
+    "url": "https://leetcode.com/problems/insert-delete-getrandom-o1/",
     "problem_statement": "Design a data structure that supports insert, delete, and getRandom in average O(1) time.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "insert(1), insert(2), getRandom(), remove(1), insert(2), getRandom()",
+            "output": "true, true, 1 or 2, true, false, 2",
+            "explanation": "Insert and remove use a hash map and list, while getRandom returns any element with equal probability."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "1 <= val <= 10^9",
+        "At most 10^4 operations",
+        "getRandom is only called when the set is non-empty"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Use a list for random access and a hash map from value to index to support constant-time remove by swapping the deleted element with the list tail.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "ArrayList plus HashMap",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class RandomizedSet {\n    Map<Integer, Integer> map;\n    List<Integer> list;\n    Random rand;\n    public RandomizedSet() {\n        map = new HashMap<>();\n        list = new ArrayList<>();\n        rand = new Random();\n    }\n    public boolean insert(int val) {\n        if (map.containsKey(val)) return false;\n        map.put(val, list.size());\n        list.add(val);\n        return true;\n    }\n    public boolean remove(int val) {\n        if (!map.containsKey(val)) return false;\n        int idx = map.get(val);\n        int last = list.get(list.size() - 1);\n        list.set(idx, last);\n        map.put(last, idx);\n        list.remove(list.size() - 1);\n        map.remove(val);\n        return true;\n    }\n    public int getRandom() {\n        return list.get(rand.nextInt(list.size()));\n    }\n}"
+            "description": "Keep values in a list and store their indices in a map. Remove by swapping the target with the last element, update the map, and pop from the list.",
+            "time": "O(1) average for insert/remove/getRandom",
+            "space": "O(n)",
+            "why_not": "A balanced tree can support delete and insert but cannot provide uniform random access in O(1).",
+            "code": "class RandomizedSet {\n    private Map<Integer, Integer> map;\n    private List<Integer> list;\n    private Random rand;\n\n    public RandomizedSet() {\n        map = new HashMap<>();\n        list = new ArrayList<>();\n        rand = new Random();\n    }\n\n    public boolean insert(int val) {\n        if (map.containsKey(val)) return false;\n        map.put(val, list.size());\n        list.add(val);\n        return true;\n    }\n\n    public boolean remove(int val) {\n        if (!map.containsKey(val)) return false;\n        int idx = map.get(val);\n        int last = list.get(list.size() - 1);\n        list.set(idx, last);\n        map.put(last, idx);\n        list.remove(list.size() - 1);\n        map.remove(val);\n        return true;\n    }\n\n    public int getRandom() {\n        return list.get(rand.nextInt(list.size()));\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How does removal stay O(1)?",
+            "a": "Swap the element to remove with the last element in the list, update the index map, and pop the list tail."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How does getRandom remain uniform?",
+            "a": "Pick a random index from 0 to list.size()-1 so every stored element has equal probability."
         }
     ]
 }

@@ -1,42 +1,42 @@
 {
-    "id": 5,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 322,
     "title": "Coin Change",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/coin-change/",
-    "problem_statement": "Given a set of coin denominations and a target amount, find the fewest coins needed to make the amount.",
+    "problem_statement": "Given coins of different values and a total amount, compute the fewest number of coins needed to make that amount or return -1 if impossible.",
     "examples": [
         {
             "input": "coins = [1,2,5], amount = 11",
             "output": "3",
-            "explanation": "Use 5+5+1 for the fewest coins."
+            "explanation": "11 = 5 + 5 + 1."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= coins.length <= 12",
+        "1 <= amount <= 10^4"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Use DP to build the minimum coins for each amount from 0 to target.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Unbounded Knapsack DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
+            "description": "Iterate through coins and amounts to compute the minimum coin count for every intermediate sum.",
+            "time": "O(n * amount)",
+            "space": "O(amount)",
+            "why_not": "Greedy is not always correct for arbitrary coin sets.",
             "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        int[] dp = new int[amount + 1];\n        Arrays.fill(dp, amount + 1);\n        dp[0] = 0;\n        for (int coin : coins) {\n            for (int i = coin; i <= amount; i++) {\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n            }\n        }\n        return dp[amount] > amount ? -1 : dp[amount];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "Why use amount+1 as initial dp values?",
+            "a": "Because it represents an impossible large count and simplifies the minimum comparison."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "Can greedy work for all coin sets?",
+            "a": "No, greedy only works for canonical currency systems; DP is needed for arbitrary coin values."
         }
     ]
 }

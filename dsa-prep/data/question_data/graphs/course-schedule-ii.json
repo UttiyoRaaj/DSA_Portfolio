@@ -1,42 +1,43 @@
 {
-    "id": 9,
-    "leetcode_number": null,
+    "id": 4,
+    "leetcode_number": 210,
     "title": "Course Schedule II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/course-schedule-ii/",
-    "problem_statement": "Return a valid order to finish all courses given prerequisite pairs or an empty list if impossible.",
+    "problem_statement": "Return a valid ordering of courses given prerequisites, or an empty array if no order exists.",
     "examples": [
         {
-            "input": "numCourses = 2, prerequisites = [[1,0]]",
-            "output": "[0,1]",
-            "explanation": "Return a valid course ordering."
+            "input": "numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]",
+            "output": "[0,1,2,3] or [0,2,1,3]",
+            "explanation": "Courses 0 must be taken first, then 1 and 2 before 3."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= numCourses <= 2000",
+        "0 <= prerequisites.length <= numCourses * (numCourses - 1)",
+        "prerequisites[i].length == 2"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Perform topological sort on the directed graph of prerequisites to detect cycles and determine order.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Kahn\u2019s algorithm for topological sort",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute in-degrees, enqueue zero in-degree nodes, and build the order while checking for cycles.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "why_not": "DFS works too, but Kahn\u2019s algorithm directly detects invalid course graphs by leftover nodes.",
+            "code": "class Solution {\n    public int[] findOrder(int numCourses, int[][] prerequisites) {\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>());\n        int[] indegree = new int[numCourses];\n        for (int[] pre : prerequisites) {\n            graph.get(pre[1]).add(pre[0]);\n            indegree[pre[0]]++;\n        }\n        Queue<Integer> queue = new ArrayDeque<>();\n        for (int i = 0; i < numCourses; i++) if (indegree[i] == 0) queue.offer(i);\n        int[] order = new int[numCourses];\n        int idx = 0;\n        while (!queue.isEmpty()) {\n            int course = queue.poll();\n            order[idx++] = course;\n            for (int next : graph.get(course)) {\n                if (--indegree[next] == 0) queue.offer(next);\n            }\n        }\n        return idx == numCourses ? order : new int[0];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "How can you detect a cycle in prerequisites?",
+            "a": "If topological sort finishes with fewer than numCourses nodes, a cycle exists."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What is the role of indegree?",
+            "a": "Indegree counts prerequisites remaining before a course can be taken."
         }
     ]
 }

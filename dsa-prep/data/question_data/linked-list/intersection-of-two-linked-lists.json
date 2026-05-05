@@ -1,42 +1,42 @@
 {
-    "id": 9,
-    "leetcode_number": null,
+    "id": 6,
+    "leetcode_number": 160,
     "title": "Intersection of Two Linked Lists",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/intersection-of-two-linked-lists/",
-    "problem_statement": "Return the node where two singly linked lists intersect, or null if no intersection exists.",
+    "problem_statement": "Find the node where two singly linked lists intersect, or return null if they do not.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "listA = [4,1,8,4,5], listB = [5,6,1,8,4,5]",
+            "output": "8",
+            "explanation": "The lists intersect at the node with value 8."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "The number of nodes is in the range [0, 10^5]",
+        "1 <= Node.val <= 10^5"
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Use two pointers that traverse both lists; when one pointer finishes, switch it to the other list.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer switching",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Traverse both lists with two pointers. After reaching the end, switch to the other list so they align at the intersection.",
+            "time": "O(n + m)",
+            "space": "O(1)",
+            "why_not": "A hash set solution works but uses extra memory.",
+            "code": "class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        ListNode a = headA;\n        ListNode b = headB;\n        while (a != b) {\n            a = (a == null) ? headB : a.next;\n            b = (b == null) ? headA : b.next;\n        }\n        return a;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why switch pointers when they reach the end?",
+            "a": "Switching equalizes path lengths so both pointers traverse the same total distance."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What if there is no intersection?",
+            "a": "Both pointers will become null and the loop ends."
         }
     ]
 }

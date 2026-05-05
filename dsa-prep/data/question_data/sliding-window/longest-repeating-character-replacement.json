@@ -1,42 +1,43 @@
 {
-    "id": 2,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 424,
     "title": "Longest Repeating Character Replacement",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/longest-repeating-character-replacement/",
-    "problem_statement": "Find the length of the longest substring achievable by replacing up to k characters.",
+    "problem_statement": "Given a string and an integer k, return the length of the longest substring you can get by replacing at most k characters to make all characters the same.",
     "examples": [
         {
-            "input": "s = \"AABABBA\", k = 1",
+            "input": "s = \"ABAB\", k = 2",
             "output": "4",
-            "explanation": "Replace one A with B to get BBBB."
+            "explanation": "Replace both Bs with As to get \"AAAA\"."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= s.length <= 10^5",
+        "s consists of uppercase English letters.",
+        "0 <= k <= s.length"
     ],
-    "intuition": "Maintain a window over the array, adjusting boundaries.",
+    "intuition": "Use a sliding window that maintains counts and the frequency of the most common character.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Sliding window with max frequency",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Expand the window while the number of replacements needed exceeds k, and keep track of the longest valid window.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Checking all substrings is too slow at O(n^2).",
+            "code": "class Solution {\n    public int characterReplacement(String s, int k) {\n        int[] count = new int[26];\n        int maxCount = 0;\n        int left = 0;\n        int result = 0;\n        for (int right = 0; right < s.length(); right++) {\n            count[s.charAt(right) - 'A']++;\n            maxCount = Math.max(maxCount, count[s.charAt(right) - 'A']);\n            while (right - left + 1 - maxCount > k) {\n                count[s.charAt(left) - 'A']--;\n                left++;\n            }\n            result = Math.max(result, right - left + 1);\n        }\n        return result;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why do we keep maxCount even when the window shrinks?",
+            "a": "It still produces the correct longest valid window because a larger window will not be missed."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What is the window validity condition?",
+            "a": "The number of replacements needed is window length minus the most frequent character count."
         }
     ]
 }

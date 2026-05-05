@@ -1,42 +1,41 @@
 {
-    "id": 1,
-    "leetcode_number": null,
+    "id": 5,
+    "leetcode_number": 125,
     "title": "Valid Palindrome",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/valid-palindrome/",
-    "problem_statement": "Determine whether a string is a palindrome after removing non-alphanumeric characters and ignoring case.",
+    "problem_statement": "Determine if a string is a palindrome considering only alphanumeric characters and ignoring case.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "s = \"A man, a plan, a canal: Panama\"",
+            "output": "true",
+            "explanation": "After removing non-alphanumeric characters and ignoring case, the string is a palindrome."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= s.length <= 2 * 10^5"
     ],
-    "intuition": "Use two pointers to scan from ends or different positions.",
+    "intuition": "Use two pointers to compare valid characters from both ends, skipping non-alphanumeric characters.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer palindrome check",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Move left and right pointers inward while skipping invalid characters and comparing lowercase values.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Building a filtered string uses extra space unnecessarily.",
+            "code": "class Solution {\n    public boolean isPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        while (left < right) {\n            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) left++;\n            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) right--;\n            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What characters are ignored?",
+            "a": "Non-alphanumeric characters like punctuation and spaces are ignored."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How is case handled?",
+            "a": "Compare characters in lowercase form."
         }
     ]
 }

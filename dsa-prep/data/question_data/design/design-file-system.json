@@ -1,42 +1,43 @@
 {
     "id": 6,
-    "leetcode_number": null,
+    "leetcode_number": 1166,
     "title": "Design File System",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/design-file-system/",
-    "problem_statement": "Design a file system that supports creating paths with values and retrieving values using path strings.",
+    "problem_statement": "Design a file system that allows creating new file paths with values and retrieving values by path. createPath should succeed only if the parent path exists and the path does not already exist.",
     "examples": [
         {
-            "input": "createPath(\"/a\", 1), get(\"/a\")",
-            "output": "1",
-            "explanation": "Support createPath and get operations."
+            "input": "createPath(\"/a\", 1) -> true; get(\"/a\") -> 1; createPath(\"/a/b\", 2) -> true; get(\"/a/b\") -> 2",
+            "output": "true, 1, true, 2",
+            "explanation": "Paths are only created when their parent path exists and stored values can be retrieved by exact path."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "1 <= path.length <= 100",
+        "Paths consist of \"/\" and lowercase English letters",
+        "At most 10^4 calls to createPath and get"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Store each valid path in a map and validate parent existence by checking the prefix before insertion.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "HashMap with Parent Validation",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class FileSystem {\n    Map<String, Integer> map;\n    public FileSystem() {\n        map = new HashMap<>();\n    }\n    public boolean createPath(String path, int value) {\n        if (map.containsKey(path)) return false;\n        int lastSlash = path.lastIndexOf('/');\n        if (lastSlash > 0) {\n            String parent = path.substring(0, lastSlash);\n            if (!map.containsKey(parent)) return false;\n        }\n        map.put(path, value);\n        return true;\n    }\n    public int get(String path) {\n        return map.getOrDefault(path, -1);\n    }\n}"
+            "description": "Map every created path to its value and ensure a new path is only inserted when its immediate parent path already exists.",
+            "time": "O(L) per operation",
+            "space": "O(n * L)",
+            "why_not": "A trie is possible, but a hash map is simpler and efficient for exact path lookups.",
+            "code": "class FileSystem {\n    private final Map<String, Integer> map;\n\n    public FileSystem() {\n        map = new HashMap<>();\n        map.put(\"\", -1); // root placeholder\n    }\n\n    public boolean createPath(String path, int value) {\n        if (path.isEmpty() || path.equals(\"/\") || map.containsKey(path)) {\n            return false;\n        }\n        int lastSlash = path.lastIndexOf('/');\n        String parent = path.substring(0, lastSlash);\n        if (!map.containsKey(parent)) {\n            return false;\n        }\n        map.put(path, value);\n        return true;\n    }\n\n    public int get(String path) {\n        return map.getOrDefault(path, -1);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you ensure a new path is valid?",
+            "a": "Verify the path does not already exist and that its parent path is present in the map before inserting it."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why use a map instead of a tree?",
+            "a": "A hash map provides direct path lookups with simple parent checks and is fast enough for exact path queries."
         }
     ]
 }

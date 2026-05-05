@@ -1,42 +1,42 @@
 {
     "id": 4,
-    "leetcode_number": null,
+    "leetcode_number": 1046,
     "title": "Last Stone Weight",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/last-stone-weight/",
-    "problem_statement": "Simulate smashing the two heaviest stones until at most one remains and return its weight.",
+    "problem_statement": "Smash the two heaviest stones until at most one remains, and return its weight.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "stones = [2,7,4,1,8,1]",
+            "output": "1",
+            "explanation": "Smash 8 and 7 => 1, then 4 and 2 => 2, then 2 and 1 => 1."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= stones.length <= 30",
+        "1 <= stones[i] <= 1000"
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Always smash the two heaviest stones, so use a max-heap to efficiently retrieve them.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Max-heap simulation",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Push all stones into a max-heap, repeatedly pop the two largest, and push the difference if nonzero.",
+            "time": "O(n log n)",
+            "space": "O(n)",
+            "why_not": "Sorting each round is slower than using a heap to maintain the heaviest stones.",
+            "code": "class Solution {\n    public int lastStoneWeight(int[] stones) {\n        PriorityQueue<Integer> heap = new PriorityQueue<>(Comparator.reverseOrder());\n        for (int stone : stones) heap.offer(stone);\n        while (heap.size() > 1) {\n            int a = heap.poll();\n            int b = heap.poll();\n            if (a != b) heap.offer(a - b);\n        }\n        return heap.isEmpty() ? 0 : heap.peek();\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use a max-heap?",
+            "a": "The two heaviest stones are needed each round, so a max-heap gives them efficiently."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What happens when the two stones are equal?",
+            "a": "Both are destroyed and no stone is pushed back into the heap."
         }
     ]
 }

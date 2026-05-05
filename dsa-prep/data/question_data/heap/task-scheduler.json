@@ -1,42 +1,42 @@
 {
     "id": 5,
-    "leetcode_number": null,
+    "leetcode_number": 621,
     "title": "Task Scheduler",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/task-scheduler/",
-    "problem_statement": "Schedule tasks with cooling intervals and return the minimum number of intervals required to finish all tasks.",
+    "problem_statement": "Schedule tasks so the same type is separated by at least n intervals, minimizing total intervals including idle time.",
     "examples": [
         {
             "input": "tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 2",
             "output": "8",
-            "explanation": "Schedule with cooldown between same tasks."
+            "explanation": "One optimal schedule is A B idle A B idle A B."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= tasks.length <= 10^4",
+        "n is in the range [0, 100]"
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Always execute the most frequent available task when possible, and insert idle intervals only when forced by the cooldown.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Max-heap with cooldown",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use a max-heap of task counts and temporarily hold tasks in a cooldown queue for n intervals before reusing them.",
+            "time": "O(n log k)",
+            "space": "O(k)",
+            "why_not": "Simple greedy without cooldown tracking may violate the required gap between same tasks.",
+            "code": "class Solution {\n    public int leastInterval(char[] tasks, int n) {\n        int[] freq = new int[26];\n        for (char t : tasks) freq[t - 'A']++;\n        PriorityQueue<Integer> heap = new PriorityQueue<>(Comparator.reverseOrder());\n        for (int f : freq) if (f > 0) heap.offer(f);\n        int time = 0;\n        while (!heap.isEmpty()) {\n            List<Integer> temp = new ArrayList<>();\n            int interval = 0;\n            for (int i = 0; i <= n; i++) {\n                if (!heap.isEmpty()) {\n                    temp.add(heap.poll() - 1);\n                    interval++;\n                }\n            }\n            for (int rem : temp) if (rem > 0) heap.offer(rem);\n            time += heap.isEmpty() ? interval : n + 1;\n        }\n        return time;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What determines the schedule length?",
+            "a": "The maximum count of a task and the required cooldown intervals."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why may idle time be needed?",
+            "a": "Because the same task cannot execute again until the cooldown has passed."
         }
     ]
 }

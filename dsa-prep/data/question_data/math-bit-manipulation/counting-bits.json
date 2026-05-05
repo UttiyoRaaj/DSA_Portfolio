@@ -1,42 +1,41 @@
 {
-    "id": 3,
-    "leetcode_number": null,
+    "id": 1,
+    "leetcode_number": 338,
     "title": "Counting Bits",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/counting-bits/",
-    "problem_statement": "Return an array where each element is the number of 1 bits in the binary representation of the corresponding index.",
+    "problem_statement": "Given a non-negative integer n, return an array of length n + 1 where each element is the number of 1 bits in the binary representation of its index.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 2",
+            "output": "[0,1,1]",
+            "explanation": "0 has 0 ones, 1 has 1 one, and 2 (10) has 1 one."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values fit in 32-bit integers"
+        "0 <= n <= 10^5"
     ],
-    "intuition": "Use bitwise operations for efficient computation.",
+    "intuition": "Build the answer incrementally by using previously computed bit counts and the lowest set bit property.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Dynamic programming with bit tricks",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use the relation countBits[i] = countBits[i & (i-1)] + 1 to compute counts efficiently.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Counting bits for each number separately is slower at O(n log n).",
+            "code": "class Solution {\n    public int[] countBits(int n) {\n        int[] ans = new int[n + 1];\n        for (int i = 1; i <= n; i++) {\n            ans[i] = ans[i & (i - 1)] + 1;\n        }\n        return ans;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What trick speeds up counting bits?",
+            "a": "Use the operation i & (i-1) to remove the lowest set bit and reuse previous results."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why is this O(n)?",
+            "a": "Each number is processed once, and the bit trick reduces the work per number."
         }
     ]
 }

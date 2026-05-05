@@ -1,42 +1,42 @@
 {
     "id": 4,
-    "leetcode_number": null,
+    "leetcode_number": 763,
     "title": "Partition Labels",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/partition-labels/",
-    "problem_statement": "Partition a string into as many parts as possible so that each letter appears in at most one part.",
+    "problem_statement": "Partition a string into the maximum number of segments such that each letter appears in at most one segment.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "s = \"ababcbacadefegdehijhklij\"",
+            "output": "[9,7,8]",
+            "explanation": "The partitions are \"ababcbaca\", \"defegde\", and \"hijhklij\"."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= s.length <= 500",
+        "s consists of lowercase English letters."
     ],
-    "intuition": "Make locally optimal choices that lead to global optimum.",
+    "intuition": "Use the last occurrence of each character to extend the current partition until it can safely end.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Greedy partition by last occurrence",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Record the last index of every character, then scan and grow the current partition until the current position reaches the furthest last index in the segment.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Trying all partitions is exponential; greedy based on last occurrences produces the maximum number of valid partitions.",
+            "code": "class Solution {\n    public List<Integer> partitionLabels(String s) {\n        int[] last = new int[26];\n        for (int i = 0; i < s.length(); i++) {\n            last[s.charAt(i) - 'a'] = i;\n        }\n        List<Integer> result = new ArrayList<>();\n        int start = 0, end = 0;\n        for (int i = 0; i < s.length(); i++) {\n            end = Math.max(end, last[s.charAt(i) - 'a']);\n            if (i == end) {\n                result.add(end - start + 1);\n                start = i + 1;\n            }\n        }\n        return result;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why track the last occurrence of each character?",
+            "a": "It ensures that a partition does not end before all instances of a character are included."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Can the greedy solution fail?",
+            "a": "No, because extending the partition to the furthest last occurrence is always safe and maximizes the number of segments."
         }
     ]
 }

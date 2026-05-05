@@ -1,42 +1,42 @@
 {
-    "id": 6,
-    "leetcode_number": null,
+    "id": 16,
+    "leetcode_number": 300,
     "title": "Longest Increasing Subsequence",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
     "problem_statement": "Find the length of the longest strictly increasing subsequence in an integer array.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [10,9,2,5,3,7,101,18]",
+            "output": "4",
+            "explanation": "One LIS is [2,3,7,101]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= nums.length <= 2500",
+        "-10^4 <= nums[i] <= 10^4"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Use patience sorting with binary search to maintain smallest endings for increasing subsequences.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "DP with binary search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        int[] dp = new int[nums.length];\n        Arrays.fill(dp, 1);\n        for (int i = 1; i < nums.length; i++) {\n            for (int j = 0; j < i; j++) {\n                if (nums[i] > nums[j]) {\n                    dp[i] = Math.max(dp[i], dp[j] + 1);\n                }\n            }\n        }\n        int max = 0;\n        for (int val : dp) {\n            max = Math.max(max, val);\n        }\n        return max;\n    }\n}"
+            "description": "Maintain a tails array where tails[len] is the smallest ending value of an increasing subsequence of length len+1.",
+            "time": "O(n log n)",
+            "space": "O(n)",
+            "why_not": "Simple O(n^2) DP is easier but too slow for large inputs.",
+            "code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        int[] tails = new int[nums.length];\n        int size = 0;\n        for (int num : nums) {\n            int i = Arrays.binarySearch(tails, 0, size, num);\n            if (i < 0) i = -(i + 1);\n            tails[i] = num;\n            if (i == size) size++;\n        }\n        return size;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "What is the tails array in LIS?",
+            "a": "It stores the smallest possible tail value for increasing subsequences of each length."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "Why use binary search?",
+            "a": "To find where the current number can extend or replace an existing subsequence in O(log n) time."
         }
     ]
 }

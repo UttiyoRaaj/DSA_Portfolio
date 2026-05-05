@@ -1,42 +1,41 @@
 {
-    "id": 10,
-    "leetcode_number": null,
+    "id": 2,
+    "leetcode_number": 124,
     "title": "Binary Tree Maximum Path Sum",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
-    "problem_statement": "Return the maximum path sum of any path in a binary tree.",
+    "problem_statement": "Find the maximum path sum in a binary tree where the path may start and end at any node.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [1,2,3]",
+            "output": "6",
+            "explanation": "The path 2 -> 1 -> 3 has sum 6."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "The number of nodes is in the range [1, 3 * 10^4]"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Use recursion to compute maximum gain from each subtree and update a global max path sum.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Post-order recursion with global max",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute the maximum path sum that extends upward from each node while tracking the best path through the node.",
+            "time": "O(n)",
+            "space": "O(h)",
+            "why_not": "Trying to compute all paths explicitly is exponential in the worst case.",
+            "code": "class Solution {\n    private int maxSum = Integer.MIN_VALUE;\n\n    public int maxPathSum(TreeNode root) {\n        dfs(root);\n        return maxSum;\n    }\n\n    private int dfs(TreeNode node) {\n        if (node == null) return 0;\n        int left = Math.max(0, dfs(node.left));\n        int right = Math.max(0, dfs(node.right));\n        maxSum = Math.max(maxSum, node.val + left + right);\n        return node.val + Math.max(left, right);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why ignore negative gains?",
+            "a": "Because a path can stop before a negative subtree and avoid reducing the sum."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What does the recursive helper return?",
+            "a": "The max path sum from the current node to any leaf in one direction."
         }
     ]
 }

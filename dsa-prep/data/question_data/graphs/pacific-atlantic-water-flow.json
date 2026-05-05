@@ -1,42 +1,43 @@
 {
-    "id": 4,
-    "leetcode_number": null,
+    "id": 11,
+    "leetcode_number": 417,
     "title": "Pacific Atlantic Water Flow",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
-    "problem_statement": "Find grid cells where water can flow to both the Pacific and Atlantic oceans given height constraints.",
+    "problem_statement": "Find all coordinates where water can flow to both the Pacific and Atlantic oceans in a height grid.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]",
+            "output": "[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]",
+            "explanation": "These cells can reach both oceans via non-increasing height paths."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "m == heights.length",
+        "n == heights[i].length",
+        "1 <= m, n <= 150"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Run two BFS/DFS passes from the ocean borders and intersect reachable cells from both origins.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Bidirectional ocean BFS",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Start from Pacific-border cells and Atlantic-border cells separately, then collect cells reachable in both searches.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "A naive check from each cell would be too slow; reverse reachability is much faster.",
+            "code": "class Solution {\n    public List<List<Integer>> pacificAtlantic(int[][] heights) {\n        int m = heights.length, n = heights[0].length;\n        boolean[][] pac = new boolean[m][n];\n        boolean[][] atl = new boolean[m][n];\n        for (int i = 0; i < m; i++) {\n            dfs(heights, pac, i, 0);\n            dfs(heights, atl, i, n - 1);\n        }\n        for (int j = 0; j < n; j++) {\n            dfs(heights, pac, 0, j);\n            dfs(heights, atl, m - 1, j);\n        }\n        List<List<Integer>> ans = new ArrayList<>();\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (pac[i][j] && atl[i][j]) ans.add(Arrays.asList(i, j));\n            }\n        }\n        return ans;\n    }\n    private void dfs(int[][] heights, boolean[][] visited, int i, int j) {\n        if (visited[i][j]) return;\n        visited[i][j] = true;\n        int m = heights.length, n = heights[0].length;\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        for (int[] d : dirs) {\n            int ni = i + d[0], nj = j + d[1];\n            if (ni >= 0 && ni < m && nj >= 0 && nj < n && !visited[ni][nj] && heights[ni][nj] >= heights[i][j]) {\n                dfs(heights, visited, ni, nj);\n            }\n        }\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why traverse from oceans instead of from each cell?",
+            "a": "Reverse traversal avoids repeated expensive path searches and naturally enforces non-decreasing height."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What condition allows water to flow to a neighbor?",
+            "a": "Neighbor height must be >= current height when searching backward from the ocean."
         }
     ]
 }

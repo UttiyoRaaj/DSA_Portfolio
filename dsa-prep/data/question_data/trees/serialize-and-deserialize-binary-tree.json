@@ -1,42 +1,41 @@
 {
     "id": 12,
-    "leetcode_number": null,
+    "leetcode_number": 297,
     "title": "Serialize and Deserialize Binary Tree",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/",
-    "problem_statement": "Design methods to serialize and deserialize a binary tree to and from a string.",
+    "problem_statement": "Design algorithms to serialize a binary tree to a string and deserialize it back to the original tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [1,2,3,null,null,4,5]",
+            "output": "[1,2,3,null,null,4,5]",
+            "explanation": "The serialized string can be used to reconstruct the same tree."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "The number of nodes is in the range [0, 10^4]"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Use preorder traversal with null markers to uniquely encode the tree structure.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Preorder serialization with null markers",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Serialize using DFS and \"null\" placeholders, then deserialize by reading values in the same order.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Level order serialization is also valid, but preorder is straightforward for recursion.",
+            "code": "public class Codec {\n    private static final String SEP = \",\";\n    private static final String NULL = \"#\";\n\n    public String serialize(TreeNode root) {\n        StringBuilder sb = new StringBuilder();\n        buildString(root, sb);\n        return sb.toString();\n    }\n\n    private void buildString(TreeNode node, StringBuilder sb) {\n        if (node == null) {\n            sb.append(NULL).append(SEP);\n            return;\n        }\n        sb.append(node.val).append(SEP);\n        buildString(node.left, sb);\n        buildString(node.right, sb);\n    }\n\n    public TreeNode deserialize(String data) {\n        Queue<String> nodes = new ArrayDeque<>(Arrays.asList(data.split(SEP)));\n        return buildTree(nodes);\n    }\n\n    private TreeNode buildTree(Queue<String> nodes) {\n        String val = nodes.poll();\n        if (val.equals(NULL)) return null;\n        TreeNode node = new TreeNode(Integer.parseInt(val));\n        node.left = buildTree(nodes);\n        node.right = buildTree(nodes);\n        return node;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why include null markers?",
+            "a": "They preserve tree structure and distinguish missing children."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How does deserialization proceed?",
+            "a": "It reads the serialized tokens in order and reconstructs nodes recursively."
         }
     ]
 }

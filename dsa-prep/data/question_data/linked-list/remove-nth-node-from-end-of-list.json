@@ -1,42 +1,42 @@
 {
     "id": 4,
-    "leetcode_number": null,
+    "leetcode_number": 19,
     "title": "Remove Nth Node From End of List",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
-    "problem_statement": "Remove the nth node from the end of a linked list and return the new head.",
+    "problem_statement": "Remove the nth node from the end of a linked list in one pass and return the head.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "head = [1,2,3,4,5], n = 2",
+            "output": "[1,2,3,5]",
+            "explanation": "The 2nd node from the end is 4, which is removed."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "The number of nodes is in the range [1, 30]",
+        "1 <= n <= size of list"
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Use two pointers separated by n nodes so the second pointer lands on the node before the target.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer one-pass",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Advance the first pointer n+1 times, then move both pointers until first reaches the end.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Measuring list length then removing requires two separate passes, but it still works if needed.",
+            "code": "class Solution {\n    public ListNode removeNthFromEnd(ListNode head, int n) {\n        ListNode dummy = new ListNode(0);\n        dummy.next = head;\n        ListNode first = dummy;\n        ListNode second = dummy;\n        for (int i = 0; i <= n; i++) {\n            first = first.next;\n        }\n        while (first != null) {\n            first = first.next;\n            second = second.next;\n        }\n        second.next = second.next.next;\n        return dummy.next;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use a dummy node?",
+            "a": "It handles removal of the head cleanly when n equals list length."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How many passes does this use?",
+            "a": "One pass after the initial pointer gap setup."
         }
     ]
 }

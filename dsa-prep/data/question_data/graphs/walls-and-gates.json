@@ -1,42 +1,43 @@
 {
-    "id": 7,
-    "leetcode_number": null,
+    "id": 16,
+    "leetcode_number": 286,
     "title": "Walls and Gates",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/walls-and-gates/",
-    "problem_statement": "Fill each empty room with its distance to the nearest gate in a grid of rooms, walls, and gates.",
+    "problem_statement": "Fill each empty room with the distance to its nearest gate in a grid with walls, gates, and empty rooms.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "rooms = [[2147483647,-1,0,2147483647],[2147483647,2147483647,2147483647,-1],[2147483647,-1,2147483647,-1],[0,-1,2147483647,2147483647]]",
+            "output": "[[3,-1,0,1],[2,2,1,-1],[1,-1,2,-1],[0,-1,3,4]]",
+            "explanation": "Distances propagate outward from gates to nearest reachable empty rooms."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "m == rooms.length",
+        "n == rooms[i].length",
+        "1 <= m, n <= 100"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Use multi-source BFS from all gates simultaneously to compute minimum distance to each room.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Multi-source BFS from gates",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Enqueue all gate positions first and expand outward, setting distance only once for each empty room.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "Running BFS from every room separately would be much less efficient.",
+            "code": "class Solution {\n    public void wallsAndGates(int[][] rooms) {\n        int m = rooms.length, n = rooms[0].length;\n        Queue<int[]> q = new ArrayDeque<>();\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (rooms[i][j] == 0) q.offer(new int[]{i, j});\n            }\n        }\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        while (!q.isEmpty()) {\n            int[] cell = q.poll();\n            for (int[] d : dirs) {\n                int ni = cell[0] + d[0], nj = cell[1] + d[1];\n                if (ni >= 0 && ni < m && nj >= 0 && nj < n && rooms[ni][nj] == Integer.MAX_VALUE) {\n                    rooms[ni][nj] = rooms[cell[0]][cell[1]] + 1;\n                    q.offer(new int[]{ni, nj});\n                }\n            }\n        }\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why start BFS from gates?",
+            "a": "Because gates are the sources of minimum distances for adjacent rooms."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What is Integer.MAX_VALUE used for?",
+            "a": "It denotes an empty room that has not yet been reached by a gate."
         }
     ]
 }

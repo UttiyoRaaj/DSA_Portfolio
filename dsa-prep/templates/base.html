@@ -5,31 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}DSA Interview Prep{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Dancing+Script:wght@500;600;700&family=Lora:wght@400;500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <style>
         :root {
-            --bg: #f2e6d7;
-            --bg2: #efe3d0;
-            --bg3: #e3d1be;
-            --surface: #fff7eb;
-            --surface2: #f2e2cd;
-            --border: rgba(92,64,42,0.16);
-            --border2: rgba(92,64,42,0.28);
-            --text: #3d2b1f;
-            --text2: #5a4634;
-            --text3: #7b6451;
-            --accent: #a76f2a;
-            --accent2: #8b5f25;
+            --bg: #fbf7ef;
+            --bg2: #f5efe6;
+            --bg3: #efe4d8;
+            --surface: #ffffff;
+            --surface2: #fcf6ee;
+            --border: rgba(117,90,69,0.14);
+            --border2: rgba(117,90,69,0.24);
+            --text: #3b2b1b;
+            --text2: #5d4632;
+            --text3: #7d6954;
+            --accent: #905f30;
+            --accent2: #775131;
             --green: #2f6f41;
-            --yellow: #b57e18;
-            --orange: #d16d19;
-            --red: #9b2f1d;
+            --yellow: #b78b25;
+            --orange: #c57a2a;
+            --red: #a54939;
             --easy: #2f6f41;
-            --medium: #b57e18;
-            --hard: #9b2f1d;
-            --font-heading: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --medium: #b78b25;
+            --hard: #a54939;
+            --font-heading: 'Dancing Script', cursive;
+            --font-logo: 'Cormorant Garamond', serif;
+            --font-topic: 'Chalkboard Regular', 'Patrick Hand', 'Comic Sans MS', 'Comic Sans', cursive;
+            --font-body: 'Lora', serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
 
@@ -39,7 +42,7 @@
 
         body {
             font-family: var(--font-body);
-            background: linear-gradient(180deg, #f9f1e6 0%, #f2e6d7 100%);
+            background: linear-gradient(180deg, #fcf7ef 0%, #f8ede1 100%);
             color: var(--text);
             min-height: 100vh;
             line-height: 1.7;
@@ -75,9 +78,9 @@
         }
 
         .nav-logo {
-            font-family: var(--font-heading);
+            font-family: var(--font-logo);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--accent);
             text-decoration: none;
             letter-spacing: 0;
@@ -575,6 +578,8 @@
         }
 
         .breadcrumb a { color: var(--text3); text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a.topic-link,
+        .breadcrumb span.topic-link { font-family: var(--font-topic); font-weight: 700; color: var(--text); }
         .breadcrumb a:hover { color: var(--text); }
         .breadcrumb .sep { color: var(--text3); }
 
@@ -654,7 +659,7 @@
 <nav>
     <a href="/" class="nav-logo">
         <div class="dot"></div>
-        DSA PREP
+        Master DSA
     </a>
     <div class="nav-actions">
         <a href="/practice" class="nav-topic-link {% if page is defined and page == 'practice' %}active{% endif %}">Practice</a>

@@ -1,42 +1,42 @@
 {
-    "id": 3,
-    "leetcode_number": null,
+    "id": 9,
+    "leetcode_number": 143,
     "title": "Reorder List",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/reorder-list/",
-    "problem_statement": "Reorder a linked list to L0→Ln→L1→Ln-1… in-place.",
+    "problem_statement": "Reorder a linked list to alternate nodes from the start and end of the list.",
     "examples": [
         {
             "input": "head = [1,2,3,4]",
             "output": "[1,4,2,3]",
-            "explanation": "Reorder to L0→Ln→L1→Ln-1→..."
+            "explanation": "The list is reordered to bring the last node after the first, then the second-last after the second."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "The number of nodes is in the range [1, 5 * 10^4]",
+        "-1000 <= Node.val <= 1000"
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Split the list, reverse the second half, then merge the two halves alternately.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Split, reverse, merge",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public void reorderList(ListNode head) {\n        if (head == null) return;\n        ListNode slow = head, fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        ListNode prev = null, curr = slow, tmp;\n        while (curr != null) {\n            tmp = curr.next;\n            curr.next = prev;\n            prev = curr;\n            curr = tmp;\n        }\n        ListNode first = head, second = prev;\n        while (second.next != null) {\n            tmp = first.next;\n            first.next = second;\n            first = tmp;\n            tmp = second.next;\n            second.next = first;\n            second = tmp;\n        }\n    }\n}"
+            "description": "Use fast/slow pointers to find the midpoint, reverse the second half, and weave the two halves together.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Using extra arrays simplifies implementation but uses additional space.",
+            "code": "class Solution {\n    public void reorderList(ListNode head) {\n        if (head == null || head.next == null) return;\n        ListNode slow = head, fast = head;\n        while (fast.next != null && fast.next.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n        }\n        ListNode second = reverse(slow.next);\n        slow.next = null;\n        ListNode first = head;\n        while (second != null) {\n            ListNode temp1 = first.next;\n            ListNode temp2 = second.next;\n            first.next = second;\n            second.next = temp1;\n            first = temp1;\n            second = temp2;\n        }\n    }\n\n    private ListNode reverse(ListNode head) {\n        ListNode prev = null;\n        while (head != null) {\n            ListNode next = head.next;\n            head.next = prev;\n            prev = head;\n            head = next;\n        }\n        return prev;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you find the midpoint?",
+            "a": "Use slow and fast pointers to split the list into two halves."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why reverse the second half?",
+            "a": "Reversing enables alternating nodes from the end without random access."
         }
     ]
 }

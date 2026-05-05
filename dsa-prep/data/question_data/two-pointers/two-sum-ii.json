@@ -1,42 +1,43 @@
 {
-    "id": 2,
-    "leetcode_number": null,
-    "title": "Two Sum II",
+    "id": 1,
+    "leetcode_number": 167,
+    "title": "Two Sum II - Input Array Is Sorted",
     "difficulty": "Easy",
-    "url": "https://leetcode.com/problems/two-sum-ii/",
-    "problem_statement": "Given an array of integers and a target, return indices of two numbers that add up to the target.",
+    "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+    "problem_statement": "Given a sorted array, find two numbers that add up to a target and return their 1-based indices.",
     "examples": [
         {
             "input": "numbers = [2,7,11,15], target = 9",
             "output": "[1,2]",
-            "explanation": "Return 1-indexed indices of the pair."
+            "explanation": "2 + 7 = 9, so return indices 1 and 2."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "2 <= numbers.length <= 3 * 10^4",
+        "-1000 <= numbers[i] <= 1000",
+        "numbers is sorted in non-decreasing order."
     ],
-    "intuition": "Use two pointers to scan from ends or different positions.",
+    "intuition": "Use a left and right pointer moving inward to find the target sum in the sorted array.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Start with pointers at both ends and adjust them based on whether the current sum is too low or too high.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Using a hash map is unnecessary given the sorted property.",
+            "code": "class Solution {\n    public int[] twoSum(int[] numbers, int target) {\n        int left = 0, right = numbers.length - 1;\n        while (left < right) {\n            int sum = numbers[left] + numbers[right];\n            if (sum == target) {\n                return new int[]{left + 1, right + 1};\n            }\n            if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return new int[]{-1, -1};\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What property makes two pointers effective here?",
+            "a": "The input array is sorted, so moving pointers changes the sum predictably."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What happens when the sum is too large?",
+            "a": "Move the right pointer left to reduce the sum."
         }
     ]
 }

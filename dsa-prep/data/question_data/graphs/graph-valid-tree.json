@@ -1,42 +1,43 @@
 {
-    "id": 10,
-    "leetcode_number": null,
+    "id": 7,
+    "leetcode_number": 261,
     "title": "Graph Valid Tree",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/graph-valid-tree/",
-    "problem_statement": "Determine whether an undirected graph with n nodes and edges forms a valid tree.",
+    "problem_statement": "Check whether the undirected graph with n nodes and given edges forms a valid tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]",
+            "output": "true",
+            "explanation": "The graph is connected and acyclic, so it is a valid tree."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= n <= 2000",
+        "0 <= edges.length <= 5000",
+        "edges[i].length == 2"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "A valid tree has exactly n-1 edges and is connected; use union-find or BFS to verify both conditions.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Union-Find cycle detection",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Union endpoints of each edge and check for cycles or missing connectivity by comparing component count.",
+            "time": "O(E * \u03b1(N))",
+            "space": "O(N)",
+            "why_not": "Counting edges alone is insufficient without verifying connectivity.",
+            "code": "class Solution {\n    public boolean validTree(int n, int[][] edges) {\n        if (edges.length != n - 1) return false;\n        int[] parent = new int[n];\n        for (int i = 0; i < n; i++) parent[i] = i;\n        for (int[] edge : edges) {\n            int a = find(parent, edge[0]);\n            int b = find(parent, edge[1]);\n            if (a == b) return false;\n            parent[a] = b;\n        }\n        return true;\n    }\n    private int find(int[] parent, int x) {\n        return parent[x] == x ? x : (parent[x] = find(parent, parent[x]));\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why must a tree have n-1 edges?",
+            "a": "Connected n nodes require at least n-1 edges, and any extra edge creates a cycle."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "How can a graph fail to be a tree despite having n-1 edges?",
+            "a": "It may be disconnected, so checking both edges count and connectivity is necessary."
         }
     ]
 }

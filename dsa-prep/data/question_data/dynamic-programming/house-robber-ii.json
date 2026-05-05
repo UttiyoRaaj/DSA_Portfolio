@@ -1,42 +1,42 @@
 {
-    "id": 3,
-    "leetcode_number": null,
+    "id": 10,
+    "leetcode_number": 213,
     "title": "House Robber II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/house-robber-ii/",
-    "problem_statement": "Maximize the amount robbed from a circular arrangement of houses without robbing two adjacent houses.",
+    "problem_statement": "Extend House Robber to a circular street where the first and last houses are adjacent.",
     "examples": [
         {
             "input": "nums = [2,3,2]",
             "output": "3",
-            "explanation": "Choose the best circular arrangement without adjacent houses."
+            "explanation": "Rob house 2 for 3."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= nums.length <= 100",
+        "0 <= nums[i] <= 1000"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Solve two linear House Robber variations excluding either the first or last house.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pass DP for circular array",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute the best robbery excluding the first house and excluding the last house, then take the maximum.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Trying all circular combinations would be inefficient; reduce to linear cases instead.",
+            "code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 1) return nums[0];\n        return Math.max(robRange(nums, 0, nums.length - 2), robRange(nums, 1, nums.length - 1));\n    }\n\n    private int robRange(int[] nums, int start, int end) {\n        int prev = 0, curr = 0;\n        for (int i = start; i <= end; i++) {\n            int next = Math.max(curr, prev + nums[i]);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "Why split the circular problem into two ranges?",
+            "a": "Because either the first or last house must be excluded to avoid the circular adjacency conflict."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "What if nums has only one house?",
+            "a": "Return its value directly because there is no adjacency restriction beyond itself."
         }
     ]
 }

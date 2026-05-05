@@ -1,42 +1,41 @@
 {
-    "id": 1,
-    "leetcode_number": null,
+    "id": 4,
+    "leetcode_number": 371,
     "title": "Sum of Two Integers",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/sum-of-two-integers/",
-    "problem_statement": "Compute the sum of two integers without using + or - operators.",
+    "problem_statement": "Calculate the sum of two integers without using the + or - operators.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "a = 1, b = 2",
+            "output": "3",
+            "explanation": "1 + 2 equals 3 using bitwise addition."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values fit in 32-bit integers"
+        "-1000 <= a, b <= 1000"
     ],
-    "intuition": "Use bitwise operations for efficient computation.",
+    "intuition": "Use XOR for partial sums and AND shifted left for carries until no carry remains.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Bitwise addition loop",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute the sum without carry using XOR, compute carry using AND, then repeat with carry shifted left.",
+            "time": "O(1)",
+            "space": "O(1)",
+            "why_not": "Using arithmetic operators violates the problem constraints.",
+            "code": "class Solution {\n    public int getSum(int a, int b) {\n        while (b != 0) {\n            int carry = (a & b) << 1;\n            a = a ^ b;\n            b = carry;\n        }\n        return a;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does XOR compute when adding bits?",
+            "a": "It computes the sum bit without carry."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How is carry represented?",
+            "a": "Carry is the AND of the bits, shifted left one position."
         }
     ]
 }

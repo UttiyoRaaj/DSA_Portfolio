@@ -1,42 +1,42 @@
 {
-    "id": 1,
-    "leetcode_number": null,
+    "id": 7,
+    "leetcode_number": 20,
     "title": "Valid Parentheses",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/valid-parentheses/",
-    "problem_statement": "Determine whether the input string of brackets is valid and properly closed.",
+    "problem_statement": "Given a string containing parentheses, determine if the input is valid with correctly matched pairs.",
     "examples": [
         {
             "input": "s = \"()[]{}\"",
             "output": "true",
-            "explanation": "All brackets are valid and properly nested."
+            "explanation": "Each opening bracket has a matching closing bracket in the correct order."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= s.length <= 10^4",
+        "s consists of parentheses characters only."
     ],
-    "intuition": "Use stacks for LIFO operations and monotonic properties.",
+    "intuition": "Use a stack to match each closing bracket with the most recent opening bracket.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Stack matching",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public boolean isValid(String s) {\n        Stack<Character> stack = new Stack<>();\n        for (char c : s.toCharArray()) {\n            if (c == '(' || c == '{' || c == '[') {\n                stack.push(c);\n            } else {\n                if (stack.isEmpty()) return false;\n                char top = stack.pop();\n                if ((c == ')' && top != '(') || (c == '}' && top != '{') || (c == ']' && top != '[')) {\n                    return false;\n                }\n            }\n        }\n        return stack.isEmpty();\n    }\n}"
+            "description": "Push opening brackets onto a stack and pop when a matching closing bracket appears.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Counting brackets without order fails to detect nesting errors.",
+            "code": "class Solution {\n    public boolean isValid(String s) {\n        Deque<Character> stack = new ArrayDeque<>();\n        for (char c : s.toCharArray()) {\n            if (c == '(') stack.push(')');\n            else if (c == '[') stack.push(']');\n            else if (c == '{') stack.push('}');\n            else if (stack.isEmpty() || stack.pop() != c) return false;\n        }\n        return stack.isEmpty();\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why push expected closing brackets?",
+            "a": "It simplifies the comparison when a closing bracket appears."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What indicates an invalid string?",
+            "a": "A closing bracket mismatching the stack top or remaining unmatched opening brackets."
         }
     ]
 }

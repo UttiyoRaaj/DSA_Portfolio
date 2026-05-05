@@ -1,42 +1,43 @@
 {
     "id": 5,
-    "leetcode_number": null,
+    "leetcode_number": 355,
     "title": "Design Twitter",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/design-twitter/",
-    "problem_statement": "Design a simple social media service supporting posting tweets, following users, and retrieving a user’s news feed.",
+    "problem_statement": "Design a simplified social media service that supports posting tweets, following/unfollowing users, and retrieving the 10 most recent tweets in a user's news feed.",
     "examples": [
         {
-            "input": "postTweet(1, 5), follow(1,2), getNewsFeed(1)",
-            "output": "[5]",
-            "explanation": "Return user 1’s news feed after posting and following."
+            "input": "postTweet(1, 5), postTweet(2, 6), follow(1, 2), getNewsFeed(1)",
+            "output": "[6, 5]",
+            "explanation": "User 1 follows user 2 and sees the two most recent tweets from themselves and user 2."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "1 <= userId <= 500",
+        "At most 10^4 total operations",
+        "Each user's feed returns at most 10 tweets"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Track each user's tweets with timestamps and maintain each user's followee set so news feed retrieval can merge the latest tweets efficiently.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Timestamped Tweets with Followee Set",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Store user tweets with a global timestamp, maintain follow relationships, and use a priority queue to collect the most recent tweets from followed users.",
+            "time": "O(F * log T + K log F) for feed retrieval",
+            "space": "O(n + m)",
+            "why_not": "Storing a global sorted feed is expensive and harder to maintain when users follow or unfollow others dynamically.",
+            "code": "class Twitter {\n    private static class Tweet {\n        int id;\n        int time;\n        Tweet(int id, int time) { this.id = id; this.time = time; }\n    }\n\n    private int timestamp;\n    private Map<Integer, Set<Integer>> follows;\n    private Map<Integer, List<Tweet>> tweets;\n\n    public Twitter() {\n        timestamp = 0;\n        follows = new HashMap<>();\n        tweets = new HashMap<>();\n    }\n\n    public void postTweet(int userId, int tweetId) {\n        tweets.computeIfAbsent(userId, k -> new ArrayList<>()).add(new Tweet(tweetId, timestamp++));\n        follows.computeIfAbsent(userId, k -> new HashSet<>()).add(userId);\n    }\n\n    public List<Integer> getNewsFeed(int userId) {\n        PriorityQueue<Tweet> pq = new PriorityQueue<>((a, b) -> b.time - a.time);\n        Set<Integer> users = follows.getOrDefault(userId, Set.of(userId));\n        for (int uid : users) {\n            List<Tweet> list = tweets.getOrDefault(uid, Collections.emptyList());\n            for (int i = list.size() - 1; i >= 0 && i >= list.size() - 10; i--) {\n                pq.offer(list.get(i));\n            }\n        }\n        List<Integer> feed = new ArrayList<>();\n        while (!pq.isEmpty() && feed.size() < 10) {\n            feed.add(pq.poll().id);\n        }\n        return feed;\n    }\n\n    public void follow(int followerId, int followeeId) {\n        follows.computeIfAbsent(followerId, k -> new HashSet<>()).add(followeeId);\n    }\n\n    public void unfollow(int followerId, int followeeId) {\n        if (followerId != followeeId) {\n            Set<Integer> set = follows.get(followerId);\n            if (set != null) {\n                set.remove(followeeId);\n            }\n        }\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you build a news feed efficiently?",
+            "a": "Store tweets per user with timestamps and merge the latest tweets from followed users when building the feed."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What data structures support the follow/unfollow operations?",
+            "a": "Use a set of followees for each user so add, remove, and membership checks stay efficient."
         }
     ]
 }

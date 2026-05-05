@@ -1,42 +1,41 @@
 {
-    "id": 8,
-    "leetcode_number": null,
+    "id": 7,
+    "leetcode_number": 230,
     "title": "Kth Smallest Element in a BST",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
-    "problem_statement": "Return the kth smallest element in a binary search tree.",
+    "problem_statement": "Return the kth smallest value in a binary search tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [3,1,4,null,2], k = 1",
+            "output": "1",
+            "explanation": "Inorder traversal yields [1,2,3,4], so the smallest element is 1."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "The number of nodes is in the range [1, 10^4]"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Use inorder traversal to visit BST nodes in sorted order and return the kth visited node.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Inorder traversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Traverse the tree in order and stop when the kth smallest node is reached.",
+            "time": "O(h + k)",
+            "space": "O(h)",
+            "why_not": "Collecting all values uses extra space and is not necessary if k is small.",
+            "code": "class Solution {\n    private int count = 0;\n    private int result = 0;\n\n    public int kthSmallest(TreeNode root, int k) {\n        inorder(root, k);\n        return result;\n    }\n\n    private void inorder(TreeNode node, int k) {\n        if (node == null) return;\n        inorder(node.left, k);\n        if (++count == k) {\n            result = node.val;\n            return;\n        }\n        inorder(node.right, k);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why is inorder traversal used?",
+            "a": "It visits BST values in ascending order."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Can traversal stop early?",
+            "a": "Yes, once the kth smallest element is found."
         }
     ]
 }

@@ -1,42 +1,43 @@
 {
     "id": 6,
-    "leetcode_number": null,
+    "leetcode_number": 45,
     "title": "Jump Game II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/jump-game-ii/",
-    "problem_statement": "Return the minimum number of jumps needed to reach the last index.",
+    "problem_statement": "Return the minimum number of jumps needed to reach the last index of the array, where each element indicates the maximum jump length from that position.",
     "examples": [
         {
             "input": "nums = [2,3,1,1,4]",
             "output": "2",
-            "explanation": "Minimum jumps to reach the end."
+            "explanation": "Jump from index 0 to 1, then from 1 to 4."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= nums.length <= 10^5",
+        "0 <= nums[i] <= 10^5",
+        "It is guaranteed that you can reach the last index."
     ],
-    "intuition": "Make locally optimal choices that lead to global optimum.",
+    "intuition": "Greedily choose the farthest reachable position within the current range and take a jump when that range ends.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Greedy range expansion",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Track the current end of the jump range and the farthest reachable next position, then increment jumps when the current range is exhausted.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "DP is possible but less efficient because greedy directly yields the minimum number of jumps for this reachable array.",
+            "code": "class Solution {\n    public int jump(int[] nums) {\n        int jumps = 0, currentEnd = 0, farthest = 0;\n        for (int i = 0; i < nums.length - 1; i++) {\n            farthest = Math.max(farthest, i + nums[i]);\n            if (i == currentEnd) {\n                jumps++;\n                currentEnd = farthest;\n            }\n        }\n        return jumps;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why does the greedy range method work?",
+            "a": "Because taking the farthest reachable step within each jump range minimizes the total number of jumps."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What triggers a jump count increase?",
+            "a": "When the current traversal index reaches the end of the current jump range."
         }
     ]
 }

@@ -1,42 +1,41 @@
 {
     "id": 2,
-    "leetcode_number": null,
+    "leetcode_number": 191,
     "title": "Number of 1 Bits",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/number-of-1-bits/",
-    "problem_statement": "Return the number of 1 bits in the binary representation of an unsigned integer.",
+    "problem_statement": "Write a function that returns the number of \u20191\u2032 bits in the binary representation of a 32-bit unsigned integer.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 11",
+            "output": "3",
+            "explanation": "11 is 1011 in binary, which has three 1 bits."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values fit in 32-bit integers"
+        "The input must be a 32-bit unsigned integer."
     ],
-    "intuition": "Use bitwise operations for efficient computation.",
+    "intuition": "Use a bitwise trick that clears the lowest set bit repeatedly until the number becomes zero.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Brian Kernighan\u2019s algorithm",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Count bits by repeatedly flipping the lowest set bit with n &= (n - 1).",
+            "time": "O(k) where k is the number of set bits",
+            "space": "O(1)",
+            "why_not": "Checking each bit with a mask is O(32), which is okay but less elegant than the bit-clearing trick.",
+            "code": "class Solution {\n    public int hammingWeight(int n) {\n        int count = 0;\n        while (n != 0) {\n            count++;\n            n &= (n - 1);\n        }\n        return count;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does n &= (n - 1) do?",
+            "a": "It removes the lowest set bit from n, reducing the count of ones by one."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why is this efficient for sparse bitsets?",
+            "a": "It runs in time proportional to the number of set bits, not the fixed bit width."
         }
     ]
 }

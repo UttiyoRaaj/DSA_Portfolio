@@ -1,42 +1,42 @@
 {
-    "id": 3,
-    "leetcode_number": null,
+    "id": 6,
+    "leetcode_number": 76,
     "title": "Minimum Window Substring",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/minimum-window-substring/",
-    "problem_statement": "Find the smallest substring containing all characters of t.",
+    "problem_statement": "Find the smallest substring of s that contains all characters of t.",
     "examples": [
         {
             "input": "s = \"ADOBECODEBANC\", t = \"ABC\"",
-            "output": "BANC",
-            "explanation": "Smallest window containing A, B, and C."
+            "output": "\"BANC\"",
+            "explanation": "\"BANC\" is the smallest window containing A, B, and C."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= s.length, t.length <= 10^5",
+        "s and t consist of uppercase and lowercase English letters."
     ],
-    "intuition": "Maintain a window over the array, adjusting boundaries.",
+    "intuition": "Use a sliding window with character counts and expand/contract to find the smallest valid window.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer window with frequency counts",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Expand the right pointer until the window is valid, then move the left pointer to shrink it while maintaining validity.",
+            "time": "O(n + m)",
+            "space": "O(1)",
+            "why_not": "Checking every possible window is O(n^2) and too slow.",
+            "code": "class Solution {\n    public String minWindow(String s, String t) {\n        if (s.length() < t.length()) return \"\";\n        int[] need = new int[128];\n        for (char c : t.toCharArray()) need[c]++;\n        int required = t.length();\n        int left = 0;\n        int minLen = Integer.MAX_VALUE;\n        int start = 0;\n        for (int right = 0; right < s.length(); right++) {\n            if (need[s.charAt(right)] > 0) required--;\n            need[s.charAt(right)]--;\n            while (required == 0) {\n                if (right - left + 1 < minLen) {\n                    minLen = right - left + 1;\n                    start = left;\n                }\n                need[s.charAt(left)]++;\n                if (need[s.charAt(left)] > 0) required++;\n                left++;\n            }\n        }\n        return minLen == Integer.MAX_VALUE ? \"\" : s.substring(start, start + minLen);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you know the window is valid?",
+            "a": "All required characters are covered when required reaches zero."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What triggers contracting the window?",
+            "a": "Once the current window contains all target characters."
         }
     ]
 }

@@ -1,6 +1,6 @@
 {
     "id": 4,
-    "leetcode_number": null,
+    "leetcode_number": 22,
     "title": "Generate Parentheses",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/generate-parentheses/",
@@ -8,35 +8,34 @@
     "examples": [
         {
             "input": "n = 3",
-            "output": "[\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\" ]",
-            "explanation": "Generate all valid parentheses."
+            "output": "[\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\"]",
+            "explanation": "All valid parentheses combinations are returned."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= n <= 8"
     ],
-    "intuition": "Use stacks for LIFO operations and monotonic properties.",
+    "intuition": "Use backtracking to build valid sequences by adding left and right parentheses with constraints.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Backtracking with constraints",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Track the number of left and right parentheses used and add a right parenthesis only when it keeps the prefix valid.",
+            "time": "O(Catalan(n))",
+            "space": "O(Catalan(n))",
+            "why_not": "Generating all strings and filtering is much less efficient.",
+            "code": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<String> result = new ArrayList<>();\n        backtrack(result, new StringBuilder(), 0, 0, n);\n        return result;\n    }\n\n    private void backtrack(List<String> result, StringBuilder current, int open, int close, int max) {\n        if (current.length() == max * 2) {\n            result.add(current.toString());\n            return;\n        }\n        if (open < max) {\n            current.append('(');\n            backtrack(result, current, open + 1, close, max);\n            current.deleteCharAt(current.length() - 1);\n        }\n        if (close < open) {\n            current.append(')');\n            backtrack(result, current, open, close + 1, max);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "When can you add a right parenthesis?",
+            "a": "Only when there are more open parentheses than closed ones so far."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What is the search space size?",
+            "a": "It corresponds to the nth Catalan number, representing valid sequences."
         }
     ]
 }

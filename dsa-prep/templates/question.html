@@ -24,12 +24,12 @@
     }
 
     .qs-title {
-        font-family: 'Syne', sans-serif;
-        font-size: 0.65rem;
+        font-family: var(--font-topic);
+        font-size: 1rem;
         font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--text3);
+        letter-spacing: 0.02em;
+        text-transform: none;
+        color: var(--text);
         padding: 0 1rem;
         margin-bottom: 0.75rem;
     }
@@ -38,8 +38,8 @@
         display: flex;
         align-items: center;
         gap: 0.6rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
+        padding: 0.55rem 1rem;
+        font-size: 0.84rem;
         color: var(--text3);
         text-decoration: none;
         transition: all 0.15s;
@@ -47,17 +47,31 @@
     }
 
     .qs-link:hover { color: var(--text2); background: var(--surface); }
-    .qs-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,217,255,0.05); }
+    .qs-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(144,95,48,0.08); }
 
     .qs-lc {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.65rem;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
         color: var(--text3);
         background: var(--surface);
-        padding: 0.1rem 0.3rem;
-        border-radius: 3px;
+        padding: 0.18rem 0.35rem;
+        border-radius: 6px;
         flex-shrink: 0;
     }
+
+    .q-difficulty {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        padding: 0.18rem 0.45rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        color: var(--text3);
+        white-space: nowrap;
+    }
+
+    .difficulty-easy { background: rgba(47,111,65,0.08); border-color: rgba(47,111,65,0.18); color: var(--easy); }
+    .difficulty-medium { background: rgba(183,139,37,0.08); border-color: rgba(183,139,37,0.18); color: var(--medium); }
+    .difficulty-hard { background: rgba(165,73,57,0.08); border-color: rgba(165,73,57,0.18); color: var(--hard); }
 
     /* MAIN */
     .q-main {
@@ -81,7 +95,7 @@
     }
 
     .q-number-badge {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--font-mono);
         font-size: 0.7rem;
         font-weight: 600;
         color: var(--text3);
@@ -92,11 +106,11 @@
     }
 
     .q-main-title {
-        font-family: 'Syne', sans-serif;
+        font-family: var(--font-heading);
         font-size: 2rem;
         font-weight: 800;
-        letter-spacing: -0.025em;
-        line-height: 1.15;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
         margin-bottom: 1rem;
     }
 
@@ -168,19 +182,130 @@
     }
 
     .optimal-glow::after {
-        content: '★ OPTIMAL';
+        content: 'OPTIMAL';
         position: absolute;
         top: -0.5rem;
         right: 1rem;
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--font-mono);
         font-size: 0.62rem;
         font-weight: 700;
         letter-spacing: 0.1em;
         color: var(--green);
-        background: rgba(16,185,129,0.1);
-        border: 1px solid rgba(16,185,129,0.3);
+        background: rgba(47,111,65,0.12);
+        border: 1px solid rgba(47,111,65,0.2);
         padding: 0.2rem 0.5rem;
         border-radius: 20px;
+    }
+
+    .progress-card {
+        background: rgba(255, 250, 244, 0.96);
+        border: 1px solid rgba(141, 116, 90, 0.16);
+        border-radius: 18px;
+        box-shadow: 0 18px 35px rgba(121, 91, 53, 0.08);
+        padding: 1.4rem 1.5rem;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .progress-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 22px 44px rgba(121, 91, 53, 0.1);
+    }
+
+    .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .status-option {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.65rem 0.95rem;
+        border-radius: 999px;
+        border: 1px solid rgba(141, 116, 90, 0.16);
+        background: rgba(255,255,255,0.92);
+        font-family: var(--font-body);
+        font-size: 0.92rem;
+        color: var(--text2);
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .status-option input {
+        accent-color: var(--accent);
+    }
+
+    .status-option:hover {
+        border-color: rgba(141, 116, 90, 0.24);
+        background: rgba(255,255,255,1);
+    }
+
+    .field-group {
+        display: grid;
+        gap: 0.45rem;
+        margin-bottom: 1rem;
+    }
+
+    .field-label {
+        font-family: var(--font-body);
+        font-size: 0.88rem;
+        color: var(--text3);
+        letter-spacing: 0.01em;
+    }
+
+    #progress-remarks {
+        width: 100%;
+        min-height: 120px;
+        border-radius: 16px;
+        border: 1px solid rgba(141, 116, 90, 0.16);
+        background: rgba(255, 251, 246, 0.96);
+        color: var(--text2);
+        font-family: var(--font-body);
+        font-size: 0.96rem;
+        line-height: 1.7;
+        padding: 1rem 1rem;
+        resize: vertical;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+    }
+
+    .progress-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .button {
+        background: linear-gradient(135deg, rgba(144,95,48,0.95), rgba(167,111,42,0.95));
+        border: none;
+        color: white;
+        padding: 0.82rem 1.25rem;
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(144,95,48,0.18);
+    }
+
+    .progress-feedback {
+        color: var(--accent);
+        font-size: 0.88rem;
+    }
+
+    .progress-meta {
+        font-size: 0.82rem;
+        color: var(--text3);
+        border-top: 1px solid rgba(141, 116, 90, 0.10);
+        padding-top: 0.85rem;
+        margin-top: 0.85rem;
     }
 
     @media (max-width: 900px) {
@@ -196,15 +321,13 @@
 
     <!-- Sidebar: all questions in topic -->
     <div class="q-sidebar">
-        <div class="qs-title">{{ topic.icon }} {{ topic.title }}</div>
+        <div class="qs-title">{{ topic.title }}</div>
         {% for q in topic.questions %}
         <a href="/question/{{ topic.slug }}/{{ loop.index0 }}"
            class="qs-link {% if loop.index0 == q_index %}active{% endif %}">
             {% if q.leetcode_number %}<span class="qs-lc">{{ q.leetcode_number }}</span>{% endif %}
             <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ q.title }}</span>
-            <span style="font-size:0.65rem; opacity:0.6; flex-shrink:0; font-family:'JetBrains Mono',monospace;">
-                {% if q.difficulty == 'Easy' %}🟢{% elif q.difficulty == 'Medium' %}🟡{% else %}🔴{% endif %}
-            </span>
+            <span class="q-difficulty difficulty-{{ q.difficulty | lower }}">{{ q.difficulty[0] }}</span>
         </a>
         {% endfor %}
     </div>
@@ -214,7 +337,7 @@
         <div class="breadcrumb">
             <a href="/">Home</a>
             <span class="sep">›</span>
-            <a href="/topic/{{ topic.slug }}">{{ topic.title }}</a>
+            <a href="/topic/{{ topic.slug }}" class="topic-link">{{ topic.title }}</a>
             <span class="sep">›</span>
             <span>{{ question.title }}</span>
         </div>
@@ -227,8 +350,9 @@
                 {% endif %}
                 <span class="badge badge-{{ question.difficulty | lower }}">{{ question.difficulty }}</span>
                 {% if question.url %}
-                <a href="{{ question.url }}" target="_blank" class="lc-link">↗ LeetCode</a>
+                <a href="{{ question.url }}" target="_blank" class="lc-link">LeetCode</a>
                 {% endif %}
+                <span id="progress-status-badge" class="badge badge-{{ question.progress.status | lower }}">{{ question.progress.status }}</span>
             </div>
             <h1 class="q-main-title">{{ question.title }}</h1>
         </div>
@@ -331,6 +455,37 @@
         </div>
         {% endif %}
 
+        <div class="section-block">
+            <div class="section-label">Study Notes</div>
+            <div class="card progress-card" id="progress-card" data-progress-key="{{ question.progress_key }}">
+                <div class="status-row">
+                    <label class="status-option">
+                        <input type="radio" name="question-status" value="Unsolved" {% if question.progress.status != 'Solved' %}checked{% endif %}>
+                        Unsolved
+                    </label>
+                    <label class="status-option">
+                        <input type="radio" name="question-status" value="Solved" {% if question.progress.status == 'Solved' %}checked{% endif %}>
+                        Solved
+                    </label>
+                    <label class="status-option tricky-option">
+                        <input type="checkbox" id="progress-tricky" {% if question.progress.tricky %}checked{% endif %}>
+                        Mark as tricky
+                    </label>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="progress-remarks">Remarks</label>
+                    <textarea id="progress-remarks" placeholder="Write notes or observations...">{{ question.progress.remarks }}</textarea>
+                </div>
+                <div class="progress-actions">
+                    <button id="save-progress" class="button" type="button">Save progress</button>
+                    <span id="progress-feedback" class="progress-feedback"></span>
+                </div>
+                <div class="progress-meta">
+                    Last updated: {% if question.progress.updated_at %}{{ question.progress.updated_at }} UTC{% else %}Not saved yet{% endif %}
+                </div>
+            </div>
+        </div>
+
         <!-- QUESTION NAV -->
         <div class="q-nav">
             {% if q_index > 0 %}
@@ -352,4 +507,54 @@
 
     </div><!-- /q-main -->
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const saveProgressButton = document.getElementById('save-progress');
+    const remarksField = document.getElementById('progress-remarks');
+    const progressFeedback = document.getElementById('progress-feedback');
+    const progressCard = document.getElementById('progress-card');
+
+    if (saveProgressButton && progressCard) {
+        const trickyCheckbox = document.getElementById('progress-tricky');
+        const statusBadge = document.getElementById('progress-status-badge');
+        const progressMeta = document.querySelector('.progress-meta');
+
+        saveProgressButton.addEventListener('click', async () => {
+            const progressKey = progressCard.dataset.progressKey;
+            const status = document.querySelector('input[name="question-status"]:checked')?.value || 'Unsolved';
+            const remarks = remarksField.value.trim();
+            const tricky = trickyCheckbox?.checked || false;
+            saveProgressButton.disabled = true;
+            progressFeedback.textContent = 'Saving…';
+
+            try {
+                const response = await fetch('/api/progress/' + encodeURIComponent(progressKey), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status, remarks, tricky }),
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    progressFeedback.textContent = 'Progress saved.';
+                    if (statusBadge) {
+                        statusBadge.textContent = result.progress.status;
+                        statusBadge.className = 'badge badge-' + result.progress.status.toLowerCase();
+                    }
+                    if (progressMeta && result.progress.updated_at) {
+                        progressMeta.textContent = 'Last updated: ' + result.progress.updated_at + ' UTC';
+                    }
+                } else {
+                    progressFeedback.textContent = 'Unable to save progress.';
+                }
+            } catch (error) {
+                progressFeedback.textContent = 'Unable to save progress.';
+            } finally {
+                saveProgressButton.disabled = false;
+                setTimeout(() => { progressFeedback.textContent = ''; }, 2500);
+            }
+        });
+    }
+</script>
 {% endblock %}

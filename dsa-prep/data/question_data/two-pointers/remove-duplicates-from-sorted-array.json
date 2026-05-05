@@ -1,42 +1,43 @@
 {
-    "id": 6,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 26,
     "title": "Remove Duplicates from Sorted Array",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
-    "problem_statement": "Remove duplicates in place and return the new length of the array.",
+    "problem_statement": "Remove duplicates in-place from a sorted array and return the length of the unique portion.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [0,0,1,1,1,2,2,3,3,4]",
+            "output": "5",
+            "explanation": "The first five elements become [0,1,2,3,4] after removal."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= nums.length <= 3 * 10^4",
+        "-100 <= nums[i] <= 100",
+        "nums is sorted in non-decreasing order."
     ],
-    "intuition": "Use two pointers to scan from ends or different positions.",
+    "intuition": "Use a slow pointer for placement and a fast pointer to scan duplicates.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer overwrite",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Keep one pointer for the next unique insert position and one pointer to scan through the array.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Using a set preserves order poorly and uses extra space.",
+            "code": "class Solution {\n    public int removeDuplicates(int[] nums) {\n        int i = 0;\n        for (int j = 1; j < nums.length; j++) {\n            if (nums[j] != nums[i]) {\n                nums[++i] = nums[j];\n            }\n        }\n        return i + 1;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does the slow pointer represent?",
+            "a": "The position of the last unique element kept so far."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why can duplicates be overwritten?",
+            "a": "Because the array is sorted, duplicate values are contiguous."
         }
     ]
 }

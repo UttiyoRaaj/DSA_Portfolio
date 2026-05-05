@@ -1,6 +1,6 @@
 {
     "id": 2,
-    "leetcode_number": null,
+    "leetcode_number": 347,
     "title": "Top K Frequent Elements",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/top-k-frequent-elements/",
@@ -9,34 +9,34 @@
         {
             "input": "nums = [1,1,1,2,2,3], k = 2",
             "output": "[1,2]",
-            "explanation": "Elements 1 and 2 are the most frequent."
+            "explanation": "1 and 2 are the two most frequent elements."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= nums.length <= 10^5",
+        "k is in the range [1, number of unique elements]"
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Count element frequencies and use a heap to maintain the k most frequent elements efficiently.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Frequency map + min-heap",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public int[] topKFrequent(int[] nums, int k) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1);\n        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[1] - a[1]);\n        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {\n            pq.add(new int[]{entry.getKey(), entry.getValue()});\n        }\n        int[] res = new int[k];\n        for (int i = 0; i < k; i++) res[i] = pq.poll()[0];\n        return res;\n    }\n}"
+            "description": "Build a frequency map and keep a min-heap of size k keyed by frequency, then extract the heap contents.",
+            "time": "O(n log k)",
+            "space": "O(n)",
+            "why_not": "Sorting all unique elements is O(n log n); heap-based selection is faster when k is small.",
+            "code": "class Solution {\n    public int[] topKFrequent(int[] nums, int k) {\n        Map<Integer, Integer> freq = new HashMap<>();\n        for (int num : nums) {\n            freq.put(num, freq.getOrDefault(num, 0) + 1);\n        }\n        PriorityQueue<int[]> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));\n        for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {\n            heap.offer(new int[]{entry.getKey(), entry.getValue()});\n            if (heap.size() > k) {\n                heap.poll();\n            }\n        }\n        int[] result = new int[k];\n        for (int i = k - 1; i >= 0; i--) {\n            result[i] = heap.poll()[0];\n        }\n        return result;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use a heap of size k?",
+            "a": "It keeps only the top k frequent elements and avoids storing more than necessary."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How do you choose the heap key?",
+            "a": "Use frequency as the comparison key so the least frequent among the top k is easy to remove."
         }
     ]
 }

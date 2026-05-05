@@ -1,42 +1,42 @@
 {
-    "id": 5,
-    "leetcode_number": null,
+    "id": 7,
+    "leetcode_number": 138,
     "title": "Copy List with Random Pointer",
-    "difficulty": "Hard",
+    "difficulty": "Medium",
     "url": "https://leetcode.com/problems/copy-list-with-random-pointer/",
-    "problem_statement": "Copy a linked list where each node has an extra random pointer in addition to the next pointer.",
+    "problem_statement": "Create a deep copy of a linked list where each node has a next pointer and a random pointer.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "head = [[7,null],[13,0],[11,4],[10,2],[1,0]]",
+            "output": "[[7,null],[13,0],[11,4],[10,2],[1,0]]",
+            "explanation": "The copied list should have the same values and random connections, but new nodes."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "0 <= Node.val <= 1000",
+        "Node.random is null or points to a node in the list."
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Copy nodes with a hash map or interleave copied nodes to preserve random pointers.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Interleave and separate",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Clone each node and insert it after the original, assign random pointers using the interleaved structure, then separate the copied list.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "A hashmap solution uses O(n) extra space even though an in-place approach exists.",
+            "code": "class Solution {\n    public Node copyRandomList(Node head) {\n        if (head == null) return null;\n        for (Node curr = head; curr != null; curr = curr.next.next) {\n            Node copy = new Node(curr.val);\n            copy.next = curr.next;\n            curr.next = copy;\n        }\n        for (Node curr = head; curr != null; curr = curr.next.next) {\n            if (curr.random != null) {\n                curr.next.random = curr.random.next;\n            }\n        }\n        Node pseudoHead = new Node(0);\n        Node copy = pseudoHead;\n        Node curr = head;\n        while (curr != null) {\n            copy.next = curr.next;\n            curr.next = curr.next.next;\n            curr = curr.next;\n            copy = copy.next;\n        }\n        return pseudoHead.next;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why interleave nodes?",
+            "a": "It allows assigning random pointers to copied nodes without extra mapping structures."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How do you restore the original list?",
+            "a": "Separate the combined list by rewiring next pointers for original and copied nodes."
         }
     ]
 }

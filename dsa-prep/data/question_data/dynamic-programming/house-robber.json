@@ -1,42 +1,42 @@
 {
-    "id": 2,
-    "leetcode_number": null,
+    "id": 8,
+    "leetcode_number": 198,
     "title": "House Robber",
-    "difficulty": "Easy",
+    "difficulty": "Medium",
     "url": "https://leetcode.com/problems/house-robber/",
-    "problem_statement": "Maximize the amount of money robbed from a line of houses without robbing adjacent houses.",
+    "problem_statement": "Given a list of non-negative integers representing money in houses, maximize robbery amount without robbing adjacent houses.",
     "examples": [
         {
             "input": "nums = [1,2,3,1]",
             "output": "4",
-            "explanation": "Rob houses 1 and 3 for maximum value."
+            "explanation": "Rob house 1 and 3 for 1 + 3 = 4."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= nums.length <= 100",
+        "0 <= nums[i] <= 400"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Decide for each house whether to rob it or skip it based on prior results.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Linear DP with constant space",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 0) return 0;\n        int prev1 = 0;\n        int prev2 = 0;\n        for (int num : nums) {\n            int temp = prev1;\n            prev1 = Math.max(prev2 + num, prev1);\n            prev2 = temp;\n        }\n        return prev1;\n    }\n}"
+            "description": "Track the best amount when robbing or skipping each house and update iteratively.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Brute forcing all subsets is exponential and unnecessary.",
+            "code": "class Solution {\n    public int rob(int[] nums) {\n        int prev = 0, curr = 0;\n        for (int num : nums) {\n            int next = Math.max(curr, prev + num);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "What recurrence does House Robber use?",
+            "a": "rob[i] = max(rob[i-1], rob[i-2] + nums[i]) because we cannot rob adjacent houses."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "How is space optimized?",
+            "a": "Only keep the last two best values instead of the full dp array."
         }
     ]
 }

@@ -1,42 +1,43 @@
 {
     "id": 8,
-    "leetcode_number": null,
+    "leetcode_number": 1268,
     "title": "Search Suggestions System",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/search-suggestions-system/",
-    "problem_statement": "Build a search suggestion system that returns up to three lexicographically sorted product names matching a search prefix.",
+    "problem_statement": "Build a search suggestion system that returns up to three lexicographically smallest product names that match each prefix of the search word.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "products = [\"mobile\",\"mouse\",\"moneypot\",\"monitor\",\"mousepad\"], searchWord = \"mouse\"",
+            "output": "[[\"mobile\",\"moneypot\",\"monitor\"],[\"mouse\",\"mousepad\"],[\"mouse\",\"mousepad\"],[\"mouse\",\"mousepad\"],[\"mouse\",\"mousepad\"]]",
+            "explanation": "At each typed prefix, return up to three matching products in sorted order."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "1 <= products.length <= 1000",
+        "1 <= searchWord.length <= 1000",
+        "All strings are lowercase English letters"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Sort products lexicographically and use binary search to find the first match for each prefix, then collect up to three candidates.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Sorted Products and Binary Search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
+            "description": "Sort the list of products once, then for each prefix find the lower bound and scan the next three products to form the suggestion list.",
+            "time": "O(n log n + m log n + 3m)",
+            "space": "O(n)",
+            "why_not": "A trie is also possible but sorting plus binary search is simpler and fast enough for the given constraints.",
             "code": "class Solution {\n    public List<List<String>> suggestedProducts(String[] products, String searchWord) {\n        Arrays.sort(products);\n        List<List<String>> res = new ArrayList<>();\n        String prefix = \"\";\n        for (char c : searchWord.toCharArray()) {\n            prefix += c;\n            List<String> list = new ArrayList<>();\n            int idx = Arrays.binarySearch(products, prefix);\n            if (idx < 0) idx = -idx - 1;\n            for (int i = idx; i < products.length && list.size() < 3; i++) {\n                if (products[i].startsWith(prefix)) list.add(products[i]);\n            }\n            res.add(list);\n        }\n        return res;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why sort the products first?",
+            "a": "Sorting ensures the matching suggestions are already in lexicographic order so only the first three candidates are needed for each prefix."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How do you find matches quickly?",
+            "a": "Use binary search on the sorted list to locate the first product whose prefix matches the current query prefix."
         }
     ]
 }

@@ -1,42 +1,42 @@
 {
-    "id": 1,
-    "leetcode_number": null,
+    "id": 2,
+    "leetcode_number": 208,
     "title": "Implement Trie (Prefix Tree)",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/implement-trie-prefix-tree/",
-    "problem_statement": "Implement a trie with insert, search, and startsWith operations.",
+    "problem_statement": "Implement a trie with insert, search, and startsWith methods.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "insert(\"apple\"), search(\"apple\"), search(\"app\"), startsWith(\"app\"), insert(\"app\"), search(\"app\")",
+            "output": "[null,true,false,true,null,true]",
+            "explanation": "The trie supports full and prefix searches separately."
         }
     ],
     "constraints": [
-        "1 ≤ words.length ≤ 10⁴",
-        "Words consist of lowercase letters"
+        "1 <= word.length, prefix.length <= 2000",
+        "At most 3 * 10^4 calls will be made."
     ],
-    "intuition": "Use prefix trees for efficient string operations.",
+    "intuition": "Use a fixed-size child array for each trie node and mark word endings.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Trie node array implementation",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Store characters in a tree of nodes with 26 children and a boolean to mark completed words.",
+            "time": "O(m) per operation, where m is word length",
+            "space": "O(n * L)",
+            "why_not": "Using hash-based prefix matching is harder to make efficient for many operations.",
+            "code": "class Trie {\n    private static class Node {\n        Node[] children = new Node[26];\n        boolean isEnd;\n    }\n\n    private final Node root;\n\n    public Trie() {\n        root = new Node();\n    }\n\n    public void insert(String word) {\n        Node node = root;\n        for (char c : word.toCharArray()) {\n            int idx = c - 'a';\n            if (node.children[idx] == null) {\n                node.children[idx] = new Node();\n            }\n            node = node.children[idx];\n        }\n        node.isEnd = true;\n    }\n\n    public boolean search(String word) {\n        Node node = find(word);\n        return node != null && node.isEnd;\n    }\n\n    public boolean startsWith(String prefix) {\n        return find(prefix) != null;\n    }\n\n    private Node find(String prefix) {\n        Node node = root;\n        for (char c : prefix.toCharArray()) {\n            int idx = c - 'a';\n            if (node.children[idx] == null) return null;\n            node = node.children[idx];\n        }\n        return node;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What is stored at each trie node?",
+            "a": "Child references for each letter and a flag indicating whether the path forms a complete word."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How is startsWith implemented?",
+            "a": "By checking whether the prefix path exists in the trie."
         }
     ]
 }

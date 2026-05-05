@@ -1,42 +1,41 @@
 {
-    "id": 13,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 105,
     "title": "Construct Binary Tree from Preorder and Inorder Traversal",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/",
-    "problem_statement": "Reconstruct a binary tree from its preorder and inorder traversals.",
+    "problem_statement": "Build a binary tree from its preorder and inorder traversal arrays.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]",
+            "output": "[3,9,20,null,null,15,7]",
+            "explanation": "The tree is reconstructed from preorder and inorder sequences."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "1 <= preorder.length == inorder.length <= 3000"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "The first preorder element is the root; use inorder to split left and right subtrees recursively.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Recursive reconstruction with index map",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use a hashmap for inorder indices and recursively build subtrees from preorder values.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Searching inorder for each root is O(n^2) and too slow.",
+            "code": "class Solution {\n    private Map<Integer, Integer> indexMap;\n    private int preorderIndex;\n\n    public TreeNode buildTree(int[] preorder, int[] inorder) {\n        preorderIndex = 0;\n        indexMap = new HashMap<>();\n        for (int i = 0; i < inorder.length; i++) {\n            indexMap.put(inorder[i], i);\n        }\n        return helper(preorder, 0, inorder.length - 1);\n    }\n\n    private TreeNode helper(int[] preorder, int left, int right) {\n        if (left > right) return null;\n        int rootVal = preorder[preorderIndex++];\n        TreeNode root = new TreeNode(rootVal);\n        int inorderIndex = indexMap.get(rootVal);\n        root.left = helper(preorder, left, inorderIndex - 1);\n        root.right = helper(preorder, inorderIndex + 1, right);\n        return root;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does preorder tell you?",
+            "a": "The root node value at each recursive step."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How does inorder help?",
+            "a": "It defines the boundary between left and right subtrees."
         }
     ]
 }

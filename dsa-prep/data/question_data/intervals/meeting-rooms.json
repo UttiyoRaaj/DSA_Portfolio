@@ -1,42 +1,42 @@
 {
     "id": 4,
-    "leetcode_number": null,
+    "leetcode_number": 252,
     "title": "Meeting Rooms",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/meeting-rooms/",
-    "problem_statement": "Determine if a person can attend all meetings given their time intervals.",
+    "problem_statement": "Given an array of meeting time intervals, determine if a person can attend all meetings without conflicts.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "intervals = [[0,30],[5,10],[15,20]]",
+            "output": "false",
+            "explanation": "Meeting [0,30] overlaps with [5,10], so not all meetings can be attended."
         }
     ],
     "constraints": [
-        "1 ≤ intervals.length ≤ 10⁵",
-        "intervals[i].length == 2"
+        "1 <= intervals.length <= 10^4",
+        "0 <= start < end <= 10^6"
     ],
-    "intuition": "Sort intervals and process sequentially.",
+    "intuition": "Sort meetings by start time and check whether any meeting begins before the previous one ends.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Sort and compare",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Sort intervals by start time, then verify that each meeting starts after the previous one ends.",
+            "time": "O(n log n)",
+            "space": "O(1)",
+            "why_not": "Checking every pair of meetings is O(n^2) and unnecessary after sorting.",
+            "code": "class Solution {\n    public boolean canAttendMeetings(int[][] intervals) {\n        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));\n        for (int i = 1; i < intervals.length; i++) {\n            if (intervals[i][0] < intervals[i - 1][1]) {\n                return false;\n            }\n        }\n        return true;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What is the main check?",
+            "a": "Ensure each meeting start time is not before the previous meeting end time."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What if there is only one meeting?",
+            "a": "Then the person can attend it with no conflicts."
         }
     ]
 }

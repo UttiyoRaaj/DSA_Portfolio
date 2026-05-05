@@ -1,42 +1,42 @@
 {
-    "id": 5,
-    "leetcode_number": null,
+    "id": 2,
+    "leetcode_number": 739,
     "title": "Daily Temperatures",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/daily-temperatures/",
-    "problem_statement": "Return the number of days until a warmer temperature for each day.",
+    "problem_statement": "Given daily temperatures, return an array where each element is the number of days until a warmer temperature.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "temperatures = [73,74,75,71,69,72,76,73]",
+            "output": "[1,1,4,2,1,1,0,0]",
+            "explanation": "Each day\u2019s answer is the days until a warmer temperature arrives."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= temperatures.length <= 10^5",
+        "30 <= temperatures[i] <= 100"
     ],
-    "intuition": "Use stacks for LIFO operations and monotonic properties.",
+    "intuition": "Use a stack to keep indices of unresolved temperatures, updating answers when a warmer day is found.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Monotonic decreasing stack",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Keep indices of temperatures in a stack sorted by temperature descending; when a warmer temperature appears, resolve previous days.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "A brute force nested loop is O(n^2) and too slow for large input.",
+            "code": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] answer = new int[n];\n        Deque<Integer> stack = new ArrayDeque<>();\n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {\n                int prev = stack.pop();\n                answer[prev] = i - prev;\n            }\n            stack.push(i);\n        }\n        return answer;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does the stack store?",
+            "a": "It stores indices of days whose warmer future day has not been found."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why is the stack monotonic?",
+            "a": "Because only cooler or equal temperature days remain unresolved."
         }
     ]
 }

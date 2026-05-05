@@ -1,42 +1,41 @@
 {
-    "id": 4,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 190,
     "title": "Reverse Bits",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/reverse-bits/",
-    "problem_statement": "Reverse the bits of a 32-bit unsigned integer.",
+    "problem_statement": "Reverse the bits of a given 32-bit unsigned integer.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 43261596",
+            "output": "964176192",
+            "explanation": "Binary 00000010100101000001111010011100 becomes 00111001011110000010100101000000."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values fit in 32-bit integers"
+        "The input is a 32-bit unsigned integer."
     ],
-    "intuition": "Use bitwise operations for efficient computation.",
+    "intuition": "Build the reversed result bit by bit by shifting and appending the lowest bit of the input.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Bitwise reverse with shifting",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Shift the result left and append the input\u2019s lowest bit, then shift the input right until all 32 bits are processed.",
+            "time": "O(32)",
+            "space": "O(1)",
+            "why_not": "Converting to string and reversing is unnecessary and slower than bit manipulation.",
+            "code": "class Solution {\n    public int reverseBits(int n) {\n        int result = 0;\n        for (int i = 0; i < 32; i++) {\n            result <<= 1;\n            result |= (n & 1);\n            n >>>= 1;\n        }\n        return result;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What kind of shift is used on n?",
+            "a": "Unsigned right shift (>>>) so zero bits are shifted in from the left."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why loop exactly 32 times?",
+            "a": "The input has 32 bits and every bit must be reversed."
         }
     ]
 }

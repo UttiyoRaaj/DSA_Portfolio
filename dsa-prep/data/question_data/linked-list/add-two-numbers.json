@@ -1,42 +1,42 @@
 {
-    "id": 6,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 2,
     "title": "Add Two Numbers",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/add-two-numbers/",
-    "problem_statement": "Add two numbers represented by linked lists where digits are stored in reverse order and return the sum as a linked list.",
+    "problem_statement": "Add two numbers represented by linked lists where each node stores a single digit in reverse order.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "l1 = [2,4,3], l2 = [5,6,4]",
+            "output": "[7,0,8]",
+            "explanation": "342 + 465 = 807, represented as [7,0,8]."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "The number of nodes in each list is in the range [1, 100]",
+        "0 <= Node.val <= 9"
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Simultaneously add digits with carry while walking both lists.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Digit-by-digit addition",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Traverse both lists in lockstep, sum digits plus carry, and append result nodes.",
+            "time": "O(max(n, m))",
+            "space": "O(max(n, m))",
+            "why_not": "Converting to integers may overflow and loses the linked list structure.",
+            "code": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0);\n        ListNode tail = dummy;\n        int carry = 0;\n        while (l1 != null || l2 != null || carry != 0) {\n            int sum = carry;\n            if (l1 != null) {\n                sum += l1.val;\n                l1 = l1.next;\n            }\n            if (l2 != null) {\n                sum += l2.val;\n                l2 = l2.next;\n            }\n            carry = sum / 10;\n            tail.next = new ListNode(sum % 10);\n            tail = tail.next;\n        }\n        return dummy.next;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How is carry handled?",
+            "a": "Compute carry as sum / 10 and propagate it to the next digit."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What if lists are different lengths?",
+            "a": "Continue processing the remaining digits of the longer list with carry."
         }
     ]
 }

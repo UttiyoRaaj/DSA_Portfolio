@@ -1,42 +1,42 @@
 {
     "id": 1,
-    "leetcode_number": null,
+    "leetcode_number": 206,
     "title": "Reverse Linked List",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/reverse-linked-list/",
-    "problem_statement": "Reverse a singly linked list.",
+    "problem_statement": "Reverse a singly linked list and return the reversed list.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "head = [1,2,3,4,5]",
+            "output": "[5,4,3,2,1]",
+            "explanation": "The linked list is reversed in-place."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "The number of nodes is in the range [0, 5000]",
+        "-5000 <= Node.val <= 5000"
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Iteratively reverse pointers by walking through the list while tracking the previous node.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Iterative pointer reversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use three pointers to reverse the list in a single pass with O(1) extra space.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "A naive recursive approach uses extra stack space and is unnecessary here.",
+            "code": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode current = head;\n        while (current != null) {\n            ListNode next = current.next;\n            current.next = prev;\n            prev = current;\n            current = next;\n        }\n        return prev;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What pointers do you need?",
+            "a": "Previous, current, and next pointers are enough to reverse the list."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Can this be done in-place?",
+            "a": "Yes, by changing next pointers without creating new nodes."
         }
     ]
 }

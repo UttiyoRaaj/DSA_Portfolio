@@ -1,42 +1,42 @@
 {
-    "id": 2,
-    "leetcode_number": null,
-    "title": "Add and Search Word",
+    "id": 1,
+    "leetcode_number": 211,
+    "title": "Add and Search Word - Data structure design",
     "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/add-and-search-word/",
-    "problem_statement": "Design a data structure that supports adding words and searching with dot wildcards.",
+    "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/",
+    "problem_statement": "Design a data structure that supports adding words and searching with support for dot \".\" wildcards.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "addWord(\"bad\"), addWord(\"dad\"), addWord(\"mad\"), search(\"pad\"), search(\"bad\"), search(\".ad\"), search(\"b..\")",
+            "output": "[null,null,null,false,true,true,true]",
+            "explanation": "Words are added, and searches use exact or wildcard matching."
         }
     ],
     "constraints": [
-        "1 ≤ words.length ≤ 10⁴",
-        "Words consist of lowercase letters"
+        "1 <= word.length <= 25",
+        "At most 3 * 10^4 calls will be made to addWord and search."
     ],
-    "intuition": "Use prefix trees for efficient string operations.",
+    "intuition": "Use a trie to store words and perform recursive search when wildcards appear.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Trie with recursive wildcard search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Store words in a trie and recursively explore all child nodes when encountering a dot wildcard.",
+            "time": "O(m * 26^k) in the worst case, where m is word length and k is number of wildcards",
+            "space": "O(n * L) for trie storage",
+            "why_not": "Using a list of words and checking each search is too slow for repeated wildcard queries.",
+            "code": "class WordDictionary {\n    private static class TrieNode {\n        TrieNode[] children = new TrieNode[26];\n        boolean isWord;\n    }\n\n    private final TrieNode root;\n\n    public WordDictionary() {\n        root = new TrieNode();\n    }\n\n    public void addWord(String word) {\n        TrieNode node = root;\n        for (char c : word.toCharArray()) {\n            int idx = c - 'a';\n            if (node.children[idx] == null) {\n                node.children[idx] = new TrieNode();\n            }\n            node = node.children[idx];\n        }\n        node.isWord = true;\n    }\n\n    public boolean search(String word) {\n        return searchFrom(root, word, 0);\n    }\n\n    private boolean searchFrom(TrieNode node, String word, int index) {\n        if (node == null) return false;\n        if (index == word.length()) return node.isWord;\n        char c = word.charAt(index);\n        if (c != '.') {\n            return searchFrom(node.children[c - 'a'], word, index + 1);\n        }\n        for (TrieNode child : node.children) {\n            if (child != null && searchFrom(child, word, index + 1)) {\n                return true;\n            }\n        }\n        return false;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use a trie for this problem?",
+            "a": "A trie stores words by prefix and allows efficient wildcard searches by exploring relevant branches."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How does the dot wildcard work?",
+            "a": "It matches any single letter, so the search branches into all child nodes at that position."
         }
     ]
 }

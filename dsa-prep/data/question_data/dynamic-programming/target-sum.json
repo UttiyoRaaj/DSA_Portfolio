@@ -1,42 +1,42 @@
 {
     "id": 20,
-    "leetcode_number": null,
+    "leetcode_number": 494,
     "title": "Target Sum",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/target-sum/",
-    "problem_statement": "Count the number of ways to assign plus or minus signs to array elements to reach a target sum.",
+    "problem_statement": "Given numbers and a target, count ways to assign + or - signs to each number to reach the target sum.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [1,1,1,1,1], target = 3",
+            "output": "5",
+            "explanation": "Five ways to reach 3 with signs."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= nums.length <= 20",
+        "0 <= nums[i] <= 1000"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Transform to a subset sum problem by solving for the sum of positive-assigned numbers.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Subset sum with offset",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use DP to count subsets whose sum equals (target + total)/2 when this value is an integer.",
+            "time": "O(n * sum)",
+            "space": "O(sum)",
+            "why_not": "Brute force sign assignments is O(2^n) and too slow for n=20.",
+            "code": "class Solution {\n    public int findTargetSumWays(int[] nums, int target) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum + target) % 2 != 0 || sum < Math.abs(target)) return 0;\n        int T = (sum + target) / 2;\n        int[] dp = new int[T + 1];\n        dp[0] = 1;\n        for (int num : nums) {\n            for (int j = T; j >= num; j--) {\n                dp[j] += dp[j - num];\n            }\n        }\n        return dp[T];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "How is Target Sum reduced to subset sum?",
+            "a": "Positive numbers minus negative numbers equals target, so the sum of positives becomes (total + target)/2."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "What invalidates a solution immediately?",
+            "a": "If total + target is odd or |target| > total, there is no valid assignment."
         }
     ]
 }

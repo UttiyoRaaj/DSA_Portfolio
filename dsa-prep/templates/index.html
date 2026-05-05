@@ -30,11 +30,11 @@
     }
 
     .hero-title {
-        font-family: var(--font-heading);
-        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-family: var(--font-logo);
+        font-size: clamp(3rem, 5vw, 4.5rem);
         font-weight: 700;
-        line-height: 1.12;
-        letter-spacing: 0;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
         margin-bottom: 1.5rem;
         color: var(--text);
         text-shadow: 0 1px 1px rgba(92,64,42,0.12);
@@ -49,9 +49,30 @@
     }
 
     .hero-stats {
-        display: flex;
-        gap: 2.5rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
         margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        padding: 1.1rem 1.25rem;
+        border-radius: 18px;
+        border: 1px solid rgba(141, 116, 90, 0.16);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 12px 28px rgba(121, 91, 53, 0.06);
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 32px rgba(121, 91, 53, 0.1);
+        border-color: rgba(141, 116, 90, 0.24);
     }
 
     .stat {
@@ -163,8 +184,8 @@
         background: color-mix(in srgb, var(--topic-color, var(--accent)) 14%, transparent);
         border: 1px solid color-mix(in srgb, var(--topic-color, var(--accent)) 34%, transparent);
         color: var(--text);
-        font-family: var(--font-mono);
-        font-size: 0.68rem;
+        font-family: var(--font-topic);
+        font-size: 0.82rem;
         font-weight: 700;
         flex-shrink: 0;
     }
@@ -175,9 +196,9 @@
     }
 
     .topic-row-title {
-        font-family: var(--font-heading);
+        font-family: var(--font-topic);
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 1rem;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -235,18 +256,30 @@
     </p>
 
     <div class="hero-stats">
-        <div class="stat">
-            <span class="stat-num">{{ stats.total_topics }}</span>
-            <span class="stat-label">Topics</span>
+        <div class="stat-card">
+            <div class="stat">
+                <span class="stat-num">{{ stats.total_topics }}</span>
+                <span class="stat-label">Topics</span>
+            </div>
         </div>
-        <div class="stat">
-            <span class="stat-num">{{ stats.total_questions }}</span>
-            <span class="stat-label">Questions</span>
+        <div class="stat-card">
+            <div class="stat">
+                <span class="stat-num">{{ stats.total_questions }}</span>
+                <span class="stat-label">Questions</span>
+            </div>
         </div>
-        <div class="stat">
-            <span class="stat-num">{{ stats.completed_questions }}</span>
-            <span class="stat-label">Completed</span>
-        </div>
+        <a href="/completed" class="stat-card">
+            <div class="stat">
+                <span class="stat-num">{{ stats.completed_questions }}</span>
+                <span class="stat-label">Completed</span>
+            </div>
+        </a>
+        <a href="/tricky" class="stat-card">
+            <div class="stat">
+                <span class="stat-num">{{ stats.tricky_questions }}</span>
+                <span class="stat-label">Tricky</span>
+            </div>
+        </a>
     </div>
 </div>
 
@@ -261,14 +294,14 @@
     <div class="topics-list">
         {% for topic in topics %}
         <a href="/topic/{{ topic.slug }}" class="topic-row" style="--topic-color: {{ topic.color }}">
-            <div class="topic-mark">{{ topic.icon }}</div>
+            <div class="topic-mark">{{ topic.title[:1] }}</div>
             <div class="topic-main">
                 <div class="topic-row-title">{{ topic.title }}</div>
                 <div class="topic-progress">
                     <div class="topic-progress-track">
-                        <div class="topic-progress-fill" style="width: {% if topic.questions|length %}{{ (topic.completed_count / topic.questions|length * 100) | round(0, 'floor') }}{% else %}0{% endif %}%"></div>
+                        <div class="topic-progress-fill" style="width: {% if topic.total %}{{ (topic.completed_count / topic.total * 100) | round(0, 'floor') }}{% else %}0{% endif %}%"></div>
                     </div>
-                    <span class="topic-count">{{ topic.completed_count }}/{{ topic.questions|length }} done</span>
+                    <span class="topic-count">{{ topic.completed_count }}/{{ topic.total }} done</span>
                 </div>
             </div>
         </a>

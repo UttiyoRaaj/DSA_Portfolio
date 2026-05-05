@@ -1,42 +1,42 @@
 {
-    "id": 10,
-    "leetcode_number": null,
+    "id": 5,
+    "leetcode_number": 91,
     "title": "Decode Ways",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/decode-ways/",
-    "problem_statement": "Given a string of digits, count the number of ways to decode it into letters using mapping 1->A to 26->Z.",
+    "problem_statement": "Given a digit string, count the number of ways to decode it using mapping 1->A, 2->B, ..., 26->Z.",
     "examples": [
         {
-            "input": "s = \"12\"",
-            "output": "2",
-            "explanation": "AB or L."
+            "input": "s = \"226\"",
+            "output": "3",
+            "explanation": "Decoded as \"BZ\", \"VF\", and \"BBF\"."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= s.length <= 100",
+        "s contains only digits and may include leading zeros"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "DP on string positions, considering one-digit and two-digit decode options.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Linear DP with small-state transitions",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Traverse the string and build the count of decodings using previous one and two positions.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Brute force decoding branches can explode exponentially.",
+            "code": "class Solution {\n    public int numDecodings(String s) {\n        if (s == null || s.isEmpty() || s.charAt(0) == '0') return 0;\n        int n = s.length();\n        int prev = 1, curr = 1;\n        for (int i = 1; i < n; i++) {\n            int temp = 0;\n            if (s.charAt(i) != '0') temp = curr;\n            int twoDigit = Integer.parseInt(s.substring(i - 1, i + 1));\n            if (twoDigit >= 10 && twoDigit <= 26) {\n                temp += prev;\n            }\n            prev = curr;\n            curr = temp;\n        }\n        return curr;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "How do zeros affect decode counts?",
+            "a": "A zero must be paired with a previous 1 or 2; standalone zeros are invalid."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "What are the DP transitions?",
+            "a": "dp[i] = dp[i-1] if current digit is valid + dp[i-2] if last two digits form a valid number."
         }
     ]
 }

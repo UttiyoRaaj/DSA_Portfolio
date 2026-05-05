@@ -1,42 +1,42 @@
 {
-    "id": 18,
-    "leetcode_number": null,
+    "id": 11,
+    "leetcode_number": 312,
     "title": "Burst Balloons",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/burst-balloons/",
-    "problem_statement": "Given balloons with values, maximize coins by bursting them in an order where each burst yields the product of adjacent balloon values.",
+    "problem_statement": "Given n balloons with values, burst them in an order that maximizes coins, where bursting balloon i gives coins = nums[left] * nums[i] * nums[right].",
     "examples": [
         {
-            "input": "nums = [3,1,5,8]",
+            "input": "nums = [3, 1, 5, 8]",
             "output": "167",
-            "explanation": "Maximum coins by bursting balloons optimally."
+            "explanation": "Optimal order yields 167 coins."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= nums.length <= 500",
+        "0 <= nums[i] <= 100"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Define subproblems over intervals and choose the last balloon burst in that interval.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Interval DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use DP over subarrays, choosing which balloon to burst last in each interval to accumulate maximum coins.",
+            "time": "O(n^3)",
+            "space": "O(n^2)",
+            "why_not": "Greedy fails because local best bursts can reduce future multipliers.",
+            "code": "class Solution {\n    public int maxCoins(int[] nums) {\n        int n = nums.length;\n        int[] arr = new int[n + 2];\n        arr[0] = 1;\n        arr[n + 1] = 1;\n        for (int i = 0; i < n; i++) arr[i + 1] = nums[i];\n        int[][] dp = new int[n + 2][n + 2];\n        for (int len = 1; len <= n; len++) {\n            for (int left = 1; left <= n - len + 1; left++) {\n                int right = left + len - 1;\n                for (int k = left; k <= right; k++) {\n                    dp[left][right] = Math.max(dp[left][right],\n                        dp[left][k - 1] + arr[left - 1] * arr[k] * arr[right + 1] + dp[k + 1][right]);\n                }\n            }\n        }\n        return dp[1][n];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "Why use interval DP for Burst Balloons?",
+            "a": "Because bursting one balloon affects the neighbors and the optimal result depends on subinterval choices."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "What is the DP state?",
+            "a": "dp[l][r] is the maximum coins achievable by bursting all balloons between l and r inclusive."
         }
     ]
 }

@@ -1,42 +1,42 @@
 {
-    "id": 7,
-    "leetcode_number": null,
+    "id": 5,
+    "leetcode_number": 643,
     "title": "Maximum Average Subarray I",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/maximum-average-subarray-i/",
-    "problem_statement": "Return the maximum average value of any contiguous subarray of length k.",
+    "problem_statement": "Find the maximum average value of a subarray with length k.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [1,12,-5,-6,50,3], k = 4",
+            "output": "12.75",
+            "explanation": "The subarray [12,-5,-6,50] has the highest average 12.75."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= k <= nums.length <= 10^5",
+        "-10^4 <= nums[i] <= 10^4"
     ],
-    "intuition": "Maintain a window over the array, adjusting boundaries.",
+    "intuition": "Use a fixed-size sliding window and maintain the sum as the window moves.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Sliding window sum",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute the sum of the first k elements, then update it by subtracting the leftmost element and adding the next element.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Recomputing the sum for each window from scratch is O(nk) and too slow.",
+            "code": "class Solution {\n    public double findMaxAverage(int[] nums, int k) {\n        double sum = 0;\n        for (int i = 0; i < k; i++) {\n            sum += nums[i];\n        }\n        double maxSum = sum;\n        for (int i = k; i < nums.length; i++) {\n            sum += nums[i] - nums[i - k];\n            maxSum = Math.max(maxSum, sum);\n        }\n        return maxSum / k;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why keep a rolling sum?",
+            "a": "It allows updating the window total in constant time for each move."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How do you compute the final average?",
+            "a": "Divide the maximum window sum by k."
         }
     ]
 }

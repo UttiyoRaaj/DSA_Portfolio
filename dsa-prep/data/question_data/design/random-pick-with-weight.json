@@ -1,42 +1,43 @@
 {
     "id": 7,
-    "leetcode_number": null,
+    "leetcode_number": 528,
     "title": "Random Pick with Weight",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/random-pick-with-weight/",
     "problem_statement": "Design a function that randomly picks an index from an array with probability proportional to its weight.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "w = [1, 3], pickIndex()",
+            "output": "0 with probability 0.25, 1 with probability 0.75",
+            "explanation": "Index 1 is three times more likely to be chosen because its weight is three times larger."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "1 <= w.length <= 10^4",
+        "1 <= w[i] <= 10^5",
+        "At most 10^4 calls to pickIndex"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Build a prefix sum array and use binary search on a random target to choose an index with probability proportional to weight.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Prefix Sum with Binary Search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    int[] prefix;\n    Random rand;\n    public Solution(int[] w) {\n        prefix = new int[w.length];\n        prefix[0] = w[0];\n        for (int i = 1; i < w.length; i++) prefix[i] = prefix[i-1] + w[i];\n        rand = new Random();\n    }\n    public int pickIndex() {\n        int target = rand.nextInt(prefix[prefix.length - 1]) + 1;\n        int left = 0, right = prefix.length - 1;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (prefix[mid] < target) left = mid + 1;\n            else right = mid;\n        }\n        return left;\n    }\n}"
+            "description": "Accumulate weights into a prefix sum array, generate a random number in [1, totalWeight], and binary search for the corresponding index.",
+            "time": "O(log n) per pickIndex call",
+            "space": "O(n)",
+            "why_not": "Repeatedly sampling from the original array would be too slow for large weight sums.",
+            "code": "class Solution {\n    private int[] prefix;\n    private int total;\n    private Random rand;\n\n    public Solution(int[] w) {\n        prefix = new int[w.length];\n        prefix[0] = w[0];\n        for (int i = 1; i < w.length; i++) prefix[i] = prefix[i-1] + w[i];\n        total = prefix[w.length - 1];\n        rand = new Random();\n    }\n\n    public int pickIndex() {\n        int target = rand.nextInt(total) + 1;\n        int left = 0, right = prefix.length - 1;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (prefix[mid] < target) left = mid + 1;\n            else right = mid;\n        }\n        return left;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use a prefix sum array?",
+            "a": "It converts weighted probabilities into contiguous intervals so a single random sample can choose an index efficiently."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why is binary search required?",
+            "a": "Binary search locates the interval that contains the random target in O(log n) time."
         }
     ]
 }

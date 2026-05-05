@@ -1,42 +1,41 @@
 {
-    "id": 11,
-    "leetcode_number": null,
+    "id": 4,
+    "leetcode_number": 1448,
     "title": "Count Good Nodes in Binary Tree",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/count-good-nodes-in-binary-tree/",
-    "problem_statement": "Count nodes that are greater than or equal to all values on the path from the root.",
+    "problem_statement": "Count nodes in a binary tree where the node value is at least the maximum value along the path from the root.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [3,1,4,3,null,1,5]",
+            "output": "4",
+            "explanation": "Good nodes are 3 (root), 4, 5, and 3 on the left branch."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "The number of nodes is in the range [1, 10^5]"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Traverse the tree while carrying the maximum value seen so far and count when a node is not smaller.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Preorder traversal with max tracking",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use recursion to pass the current path maximum and increment count when the current node is good.",
+            "time": "O(n)",
+            "space": "O(h)",
+            "why_not": "A bottom-up approach is possible but more complex for this condition.",
+            "code": "class Solution {\n    public int goodNodes(TreeNode root) {\n        return dfs(root, Integer.MIN_VALUE);\n    }\n\n    private int dfs(TreeNode node, int maxSoFar) {\n        if (node == null) return 0;\n        int count = 0;\n        if (node.val >= maxSoFar) {\n            count = 1;\n            maxSoFar = node.val;\n        }\n        count += dfs(node.left, maxSoFar);\n        count += dfs(node.right, maxSoFar);\n        return count;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What state is passed down during recursion?",
+            "a": "The maximum value from the root to the current node."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "When is a node counted?",
+            "a": "When its value is greater than or equal to the path maximum."
         }
     ]
 }

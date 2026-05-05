@@ -1,42 +1,43 @@
 {
     "id": 6,
-    "leetcode_number": null,
+    "leetcode_number": 23,
     "title": "Merge K Sorted Lists",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
-    "problem_statement": "Merge k sorted linked lists into one sorted list.",
+    "problem_statement": "Merge k sorted linked lists and return the merged sorted list.",
     "examples": [
         {
             "input": "lists = [[1,4,5],[1,3,4],[2,6]]",
             "output": "[1,1,2,3,4,4,5,6]",
-            "explanation": "Merge all sorted lists into one list."
+            "explanation": "All sorted lists are merged into a single sorted list."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "k == lists.length",
+        "0 <= k <= 10^4",
+        "-10^4 <= Node.val <= 10^4"
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Use a min-heap to repeatedly extract the smallest current node from all lists.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Heap-based merge",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Push the head of each list into a min-heap and repeatedly append the smallest node while pushing its successor.",
+            "time": "O(N log k) where N is total nodes",
+            "space": "O(k)",
+            "why_not": "Merging lists pairwise still works but can be slower than a single heap merge when k is large.",
+            "code": "class Solution {\n    public ListNode mergeKLists(ListNode[] lists) {\n        PriorityQueue<ListNode> heap = new PriorityQueue<>(Comparator.comparingInt(n -> n.val));\n        for (ListNode node : lists) {\n            if (node != null) heap.offer(node);\n        }\n        ListNode dummy = new ListNode(0);\n        ListNode tail = dummy;\n        while (!heap.isEmpty()) {\n            ListNode node = heap.poll();\n            tail.next = node;\n            tail = tail.next;\n            if (node.next != null) heap.offer(node.next);\n        }\n        return dummy.next;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does the heap store?",
+            "a": "It stores the current smallest node from each list so the next merged value is always minimal."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How is the result list built?",
+            "a": "By repeatedly polling the heap and attaching the smallest node to the merged output."
         }
     ]
 }

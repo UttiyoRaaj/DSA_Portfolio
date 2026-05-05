@@ -1,42 +1,42 @@
 {
-    "id": 12,
-    "leetcode_number": null,
+    "id": 17,
+    "leetcode_number": 64,
     "title": "Minimum Path Sum",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/minimum-path-sum/",
-    "problem_statement": "Find the minimum sum path from the top-left corner to the bottom-right corner of a grid moving only down or right.",
+    "problem_statement": "Find the minimum path sum from the top-left to bottom-right of a grid, moving only down or right.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "grid = [[1,3,1],[1,5,1],[4,2,1]]",
+            "output": "7",
+            "explanation": "The path 1->3->1->1->1 has the smallest sum."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= grid.length, grid[0].length <= 200",
+        "0 <= grid[i][j] <= 100"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Use DP to accumulate the smallest path sum to each cell from the start.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "2D grid DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Each cell stores the minimum sum to reach it from the top-left using only down/right moves.",
+            "time": "O(m * n)",
+            "space": "O(n)",
+            "why_not": "Searching all paths is exponential because there are many possible routes.",
+            "code": "class Solution {\n    public int minPathSum(int[][] grid) {\n        int m = grid.length, n = grid[0].length;\n        int[] dp = new int[n];\n        dp[0] = grid[0][0];\n        for (int j = 1; j < n; j++) dp[j] = dp[j - 1] + grid[0][j];\n        for (int i = 1; i < m; i++) {\n            dp[0] += grid[i][0];\n            for (int j = 1; j < n; j++) {\n                dp[j] = Math.min(dp[j - 1], dp[j]) + grid[i][j];\n            }\n        }\n        return dp[n - 1];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "What choices exist at each grid cell?",
+            "a": "You can only come from the top or left cell."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "How can space be reduced?",
+            "a": "Use a single row of DP values and update it in place."
         }
     ]
 }

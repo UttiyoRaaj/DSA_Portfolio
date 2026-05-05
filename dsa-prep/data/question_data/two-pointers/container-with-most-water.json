@@ -1,42 +1,42 @@
 {
-    "id": 4,
-    "leetcode_number": null,
+    "id": 2,
+    "leetcode_number": 11,
     "title": "Container With Most Water",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/container-with-most-water/",
-    "problem_statement": "Find the maximum area formed by vertical lines in the array.",
+    "problem_statement": "Given heights, find two lines that together with the x-axis form a container holding the most water.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "height = [1,8,6,2,5,4,8,3,7]",
+            "output": "49",
+            "explanation": "The maximum area is formed by lines at positions 1 and 8."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "2 <= height.length <= 10^5",
+        "0 <= height[i] <= 10^4"
     ],
-    "intuition": "Use two pointers to scan from ends or different positions.",
+    "intuition": "Use two pointers from both ends and move the pointer at the shorter line inward to try to increase area.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-pointer greedy",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Start with the widest container and shrink it, always moving the shorter side to possibly find a taller line.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Brute force checking all pairs is O(n^2) and too slow.",
+            "code": "class Solution {\n    public int maxArea(int[] height) {\n        int left = 0, right = height.length - 1;\n        int max = 0;\n        while (left < right) {\n            int width = right - left;\n            int minHeight = Math.min(height[left], height[right]);\n            max = Math.max(max, width * minHeight);\n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return max;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why move the shorter pointer?",
+            "a": "Because the area is limited by the shorter side and moving it may increase the height."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Is it safe to skip moving the taller pointer?",
+            "a": "Yes, moving the taller one cannot improve area if the shorter side remains the same."
         }
     ]
 }

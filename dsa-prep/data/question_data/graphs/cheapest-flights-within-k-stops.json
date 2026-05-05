@@ -1,42 +1,43 @@
 {
-    "id": 18,
-    "leetcode_number": null,
+    "id": 2,
+    "leetcode_number": 787,
     "title": "Cheapest Flights Within K Stops",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/",
-    "problem_statement": "Find the cheapest flight cost from source to destination with at most k stops.",
+    "problem_statement": "Find the minimum cost to travel from a source city to a destination city with at most K stops.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 1",
+            "output": "200",
+            "explanation": "Take 0->1->2 for cost 200 with one stop in city 1."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= n <= 100",
+        "0 <= flights.length <= 10000",
+        "0 <= k < n"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Use BFS-like search by stop count with cost tracking, or relax edges up to K+1 times to respect the stop limit.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Bellman-Ford with stop limit",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Relax all edges for up to K+1 rounds, tracking the minimum cost to each city without exceeding the stop limit.",
+            "time": "O(K * E)",
+            "space": "O(n)",
+            "why_not": "Dijkstra alone may violate the stop count; use a modified version or Bellman-Ford to enforce the bound.",
+            "code": "class Solution {\n    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {\n        int[] dist = new int[n];\n        Arrays.fill(dist, Integer.MAX_VALUE / 2);\n        dist[src] = 0;\n        for (int i = 0; i <= K; i++) {\n            int[] next = dist.clone();\n            for (int[] f : flights) {\n                int u = f[0], v = f[1], w = f[2];\n                next[v] = Math.min(next[v], dist[u] + w);\n            }\n            dist = next;\n        }\n        return dist[dst] >= Integer.MAX_VALUE / 2 ? -1 : dist[dst];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why use K+1 iterations?",
+            "a": "Each iteration adds one more flight edge, so K stops means K+1 flights maximum."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "What if a cheaper path uses more stops?",
+            "a": "It is invalid if it exceeds the allowed stop count, even if the cost is lower."
         }
     ]
 }

@@ -1,42 +1,42 @@
 {
     "id": 3,
-    "leetcode_number": null,
+    "leetcode_number": 295,
     "title": "Find Median from Data Stream",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/find-median-from-data-stream/",
-    "problem_statement": "Continuously add numbers from a stream and return the median after each insertion.",
+    "problem_statement": "Design a data structure that supports adding numbers and finding the median of all added numbers efficiently.",
     "examples": [
         {
             "input": "addNum(1), addNum(2), findMedian()",
             "output": "1.5",
-            "explanation": "Median of [1,2] is 1.5."
+            "explanation": "The median of [1,2] is 1.5."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "At most 10^5 calls will be made to addNum and findMedian.",
+        "-10^5 <= num <= 10^5"
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Maintain two heaps to split the stream into lower and upper halves and compute median from the tops.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Two-heap median maintenance",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Keep a max-heap for the lower half and a min-heap for the upper half, rebalance sizes after each insertion.",
+            "time": "O(log n) per insertion",
+            "space": "O(n)",
+            "why_not": "Sorting or maintaining a list is too slow for frequent updates; two heaps keep operations efficient.",
+            "code": "class MedianFinder {\n    private PriorityQueue<Integer> low;\n    private PriorityQueue<Integer> high;\n\n    public MedianFinder() {\n        low = new PriorityQueue<>(Comparator.reverseOrder());\n        high = new PriorityQueue<>();\n    }\n\n    public void addNum(int num) {\n        if (low.isEmpty() || num <= low.peek()) {\n            low.offer(num);\n        } else {\n            high.offer(num);\n        }\n        if (low.size() > high.size() + 1) {\n            high.offer(low.poll());\n        } else if (high.size() > low.size()) {\n            low.offer(high.poll());\n        }\n    }\n\n    public double findMedian() {\n        if (low.size() > high.size()) {\n            return low.peek();\n        }\n        return (low.peek() + high.peek()) / 2.0;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why use two heaps?",
+            "a": "To maintain the lower and upper halves separately so the median is quickly accessible."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How do you rebalance the heaps?",
+            "a": "Move the top element from the larger heap to the smaller heap when their sizes differ by more than one."
         }
     ]
 }

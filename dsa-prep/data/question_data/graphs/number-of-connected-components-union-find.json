@@ -1,42 +1,43 @@
 {
     "id": 14,
-    "leetcode_number": null,
+    "leetcode_number": 323,
     "title": "Number of Connected Components (Union-Find)",
     "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/number-of-connected-components-union-find/",
-    "problem_statement": "Implement the problem \"Number of Connected Components (Union-Find)\" using a standard topic-specific approach.",
+    "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/",
+    "problem_statement": "Count the number of connected components in an undirected graph with n nodes and given edges.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "n = 5, edges = [[0,1],[1,2],[3,4]]",
+            "output": "2",
+            "explanation": "There are two components: {0,1,2} and {3,4}."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= n <= 2000",
+        "0 <= edges.length <= n*(n-1)/2",
+        "edges[i].length == 2"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Use union-find to merge nodes connected by edges and count distinct roots for components.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Union-Find count",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Initialize each node as its own parent, union endpoints, then count unique parents after path compression.",
+            "time": "O(E * \u03b1(N))",
+            "space": "O(N)",
+            "why_not": "DFS/BFS also works, but union-find is simpler for repeated edge merges.",
+            "code": "class Solution {\n    public int countComponents(int n, int[][] edges) {\n        int[] parent = new int[n];\n        for (int i = 0; i < n; i++) parent[i] = i;\n        for (int[] edge : edges) {\n            union(parent, edge[0], edge[1]);\n        }\n        int count = 0;\n        for (int i = 0; i < n; i++) if (find(parent, i) == i) count++;\n        return count;\n    }\n    private int find(int[] parent, int x) {\n        return parent[x] == x ? x : (parent[x] = find(parent, parent[x]));\n    }\n    private void union(int[] parent, int a, int b) {\n        parent[find(parent, a)] = find(parent, b);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "What does each root represent after union operations?",
+            "a": "A root identifies one connected component."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "How does path compression help?",
+            "a": "It flattens the parent tree, improving future find operations."
         }
     ]
 }

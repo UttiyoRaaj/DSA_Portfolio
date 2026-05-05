@@ -1,6 +1,6 @@
 {
-    "id": 1,
-    "leetcode_number": null,
+    "id": 2,
+    "leetcode_number": 70,
     "title": "Climbing Stairs",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/climbing-stairs/",
@@ -13,30 +13,29 @@
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= n <= 45"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "This is Fibonacci-style DP: ways(n)=ways(n-1)+ways(n-2).",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Bottom-up DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public int climbStairs(int n) {\n        if (n <= 1) return 1;\n        int[] dp = new int[n + 1];\n        dp[0] = 1;\n        dp[1] = 1;\n        for (int i = 2; i <= n; i++) {\n            dp[i] = dp[i - 1] + dp[i - 2];\n        }\n        return dp[n];\n    }\n}"
+            "description": "Use an array or two variables to build the count of ways iteratively.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Recursive solutions without memoization are exponential.",
+            "code": "class Solution {\n    public int climbStairs(int n) {\n        if (n <= 1) return 1;\n        int a = 1, b = 1;\n        for (int i = 2; i <= n; i++) {\n            int c = a + b;\n            a = b;\n            b = c;\n        }\n        return b;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "What recurrence defines climbStairs?",
+            "a": "ways(n) = ways(n-1) + ways(n-2), because the last step can be 1 or 2."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "How can space be optimized?",
+            "a": "Only the previous two values are needed, so constant space suffices."
         }
     ]
 }

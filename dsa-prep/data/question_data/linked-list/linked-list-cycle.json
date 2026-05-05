@@ -1,42 +1,42 @@
 {
-    "id": 7,
-    "leetcode_number": null,
+    "id": 5,
+    "leetcode_number": 141,
     "title": "Linked List Cycle",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/linked-list-cycle/",
-    "problem_statement": "Detect whether a linked list contains a cycle.",
+    "problem_statement": "Detect whether a linked list has a cycle in it.",
     "examples": [
         {
             "input": "head = [3,2,0,-4], pos = 1",
             "output": "true",
-            "explanation": "There is a cycle in the list."
+            "explanation": "The tail connects to the second node, forming a cycle."
         }
     ],
     "constraints": [
-        "0 ≤ n ≤ 10⁴",
-        "List nodes contain integers"
+        "The number of nodes is in the range [0, 10^4]",
+        "-10^5 <= Node.val <= 10^5"
     ],
-    "intuition": "Use two pointers or dummy nodes for manipulation.",
+    "intuition": "Use fast and slow pointers to detect a cycle without extra memory.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Floyd\u2019s cycle detection",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public boolean hasCycle(ListNode head) {\n        if (head == null) return false;\n        ListNode slow = head;\n        ListNode fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n            if (slow == fast) return true;\n        }\n        return false;\n    }\n}"
+            "description": "Move one pointer by one step and another by two steps; if they meet, a cycle exists.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Hash set detection uses O(n) space, while two pointers are more efficient.",
+            "code": "class Solution {\n    public boolean hasCycle(ListNode head) {\n        ListNode slow = head;\n        ListNode fast = head;\n        while (fast != null && fast.next != null) {\n            slow = slow.next;\n            fast = fast.next.next;\n            if (slow == fast) {\n                return true;\n            }\n        }\n        return false;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why does the fast pointer help?",
+            "a": "It closes the gap when a cycle exists, eventually meeting the slow pointer."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What is the space complexity?",
+            "a": "O(1), because no extra data structures are needed."
         }
     ]
 }

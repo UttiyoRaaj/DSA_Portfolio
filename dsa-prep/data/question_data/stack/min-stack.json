@@ -1,42 +1,42 @@
 {
-    "id": 2,
-    "leetcode_number": null,
+    "id": 6,
+    "leetcode_number": 155,
     "title": "Min Stack",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/min-stack/",
     "problem_statement": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "push(-2), push(0), push(-3), getMin(), pop(), top(), getMin()",
+            "output": "[-3,0,-2]",
+            "explanation": "After popping -3, the minimum is -2."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "-2^31 <= val <= 2^31 - 1",
+        "At most 3 * 10^4 calls will be made."
     ],
-    "intuition": "Use stacks for LIFO operations and monotonic properties.",
+    "intuition": "Track the current minimum at each stack level using an auxiliary stack or paired values.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Stack of pairs or dual stacks",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Maintain the current minimum alongside each value so getMin can return it instantly.",
+            "time": "O(1) per operation",
+            "space": "O(n)",
+            "why_not": "Searching the stack for the minimum each time is O(n) and too slow.",
+            "code": "class MinStack {\n    private Deque<int[]> stack;\n\n    public MinStack() {\n        stack = new ArrayDeque<>();\n    }\n\n    public void push(int val) {\n        if (stack.isEmpty()) {\n            stack.push(new int[]{val, val});\n        } else {\n            stack.push(new int[]{val, Math.min(val, stack.peek()[1])});\n        }\n    }\n\n    public void pop() {\n        stack.pop();\n    }\n\n    public int top() {\n        return stack.peek()[0];\n    }\n\n    public int getMin() {\n        return stack.peek()[1];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you retrieve the minimum in O(1)?",
+            "a": "Store the minimum with each pushed element."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What happens when popping?",
+            "a": "The minimum automatically reverts to the next stored minimum."
         }
     ]
 }

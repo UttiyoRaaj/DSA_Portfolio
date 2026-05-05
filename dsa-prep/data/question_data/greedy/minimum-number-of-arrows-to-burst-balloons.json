@@ -1,42 +1,43 @@
 {
     "id": 5,
-    "leetcode_number": null,
+    "leetcode_number": 452,
     "title": "Minimum Number of Arrows to Burst Balloons",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",
-    "problem_statement": "Find the minimum number of arrows needed to burst all balloons represented as intervals.",
+    "problem_statement": "Find the minimum number of arrows required to burst all balloons represented by horizontal intervals.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "points = [[10,16],[2,8],[1,6],[7,12]]",
+            "output": "2",
+            "explanation": "One arrow at x = 6 bursts [2,8] and [1,6], another at x = 11 bursts [10,16] and [7,12]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "0 <= points.length <= 10^5",
+        "points[i].length == 2",
+        "-2^31 <= points[i][0] < points[i][1] <= 2^31-1"
     ],
-    "intuition": "Make locally optimal choices that lead to global optimum.",
+    "intuition": "Sort by interval end and greedily shoot arrows at the earliest possible end point without missing overlapping intervals.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Greedy interval scheduling",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Sort balloons by end coordinate, place an arrow at each interval end, and skip all intervals that overlap with that arrow.",
+            "time": "O(n log n)",
+            "space": "O(1)",
+            "why_not": "Brute force checking all arrow placements is too expensive; the greedy choice on interval end is optimal for minimizing arrows.",
+            "code": "class Solution {\n    public int findMinArrowShots(int[][] points) {\n        if (points.length == 0) return 0;\n        Arrays.sort(points, Comparator.comparingInt(a -> a[1]));\n        int arrows = 1;\n        int currentEnd = points[0][1];\n        for (int i = 1; i < points.length; i++) {\n            if (points[i][0] > currentEnd) {\n                arrows++;\n                currentEnd = points[i][1];\n            }\n        }\n        return arrows;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why sort by end coordinate?",
+            "a": "It allows one arrow to cover the maximum number of overlapping intervals by shooting at the earliest finish point."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What if intervals are non-overlapping?",
+            "a": "Each non-overlapping balloon requires a separate arrow."
         }
     ]
 }

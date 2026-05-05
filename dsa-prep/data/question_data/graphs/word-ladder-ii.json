@@ -1,42 +1,43 @@
 {
-    "id": 12,
-    "leetcode_number": null,
+    "id": 18,
+    "leetcode_number": 126,
     "title": "Word Ladder II",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/word-ladder-ii/",
-    "problem_statement": "Find all shortest transformation sequences from beginWord to endWord using a word list.",
+    "problem_statement": "Return all shortest transformation sequences from beginWord to endWord using a dictionary of words.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
+            "output": "[[\"hit\",\"hot\",\"dot\",\"dog\",\"cog\"],[\"hit\",\"hot\",\"lot\",\"log\",\"cog\"]]",
+            "explanation": "There are two shortest transformation sequences."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= wordList.length <= 5000",
+        "1 <= beginWord.length <= 10",
+        "All words are the same length and lowercase."
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Find shortest path length with BFS, then backtrack through a parent graph to build all minimum sequences.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "BFS + backtracking",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Build neighbor relationships at shortest distances with BFS, then DFS from endWord to beginWord through valid predecessors.",
+            "time": "O(N * L^2 + output)",
+            "space": "O(N * L)",
+            "why_not": "A naive DFS can generate non-shortest sequences and is too slow for all shortest paths.",
+            "code": "class Solution {\n    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        List<List<String>> results = new ArrayList<>();\n        if (!dict.contains(endWord)) return results;\n        Map<String, List<String>> children = new HashMap<>();\n        Set<String> start = new HashSet<>();\n        start.add(beginWord);\n        bfs(dict, start, endWord, children, false);\n        LinkedList<String> path = new LinkedList<>();\n        path.add(beginWord);\n        dfs(beginWord, endWord, children, path, results);\n        return results;\n    }\n    private boolean bfs(Set<String> dict, Set<String> start, String end, Map<String, List<String>> children, boolean reverse) {\n        if (start.isEmpty()) return false;\n        if (start.contains(end)) return true;\n        if (start.size() > dict.size()) return bfs(dict, dict, end, children, !reverse);\n        dict.removeAll(start);\n        Set<String> nextLevel = new HashSet<>();\n        boolean found = false;\n        for (String word : start) {\n            char[] arr = word.toCharArray();\n            for (int i = 0; i < arr.length; i++) {\n                char old = arr[i];\n                for (char c = 'a'; c <= 'z'; c++) {\n                    if (c == old) continue;\n                    arr[i] = c;\n                    String target = new String(arr);\n                    if (!dict.contains(target)) continue;\n                    nextLevel.add(target);\n                    String key = reverse ? target : word;\n                    String val = reverse ? word : target;\n                    children.computeIfAbsent(key, k -> new ArrayList<>()).add(val);\n                    if (target.equals(end)) found = true;\n                }\n                arr[i] = old;\n            }\n        }\n        return found || bfs(dict, nextLevel, end, children, reverse);\n    }\n    private void dfs(String word, String end, Map<String, List<String>> children, LinkedList<String> path, List<List<String>> results) {\n        if (word.equals(end)) {\n            results.add(new ArrayList<>(path));\n            return;\n        }\n        if (!children.containsKey(word)) return;\n        for (String nxt : children.get(word)) {\n            path.add(nxt);\n            dfs(nxt, end, children, path, results);\n            path.removeLast();\n        }\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "What is the two-phase strategy?",
+            "a": "Use BFS to determine shortest distances, then backtrack to build all paths constrained to those distances."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "Why not use BFS alone?",
+            "a": "BFS finds distance but does not enumerate all shortest sequences without parent tracking."
         }
     ]
 }

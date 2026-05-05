@@ -1,42 +1,43 @@
 {
-    "id": 8,
-    "leetcode_number": null,
+    "id": 4,
+    "leetcode_number": 1004,
     "title": "Longest Subarray with Ones After Replacement",
     "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/longest-subarray-with-ones-after-replacement/",
-    "problem_statement": "Return the longest subarray containing only 1s after replacing up to k zeros.",
+    "url": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+    "problem_statement": "Return the longest subarray containing only 1s after replacing at most k zeros with ones.",
     "examples": [
         {
             "input": "nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2",
             "output": "6",
-            "explanation": "Replace two 0s to get six 1s."
+            "explanation": "Replace two zeros to get the subarray [1,1,1,0,0,1,1,1,1]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= nums.length <= 10^5",
+        "nums[i] is 0 or 1",
+        "0 <= k <= nums.length"
     ],
-    "intuition": "Maintain a window over the array, adjusting boundaries.",
+    "intuition": "Use a sliding window that counts zeros and shrinks when there are too many replacements required.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Sliding window with zero count",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Expand the window while counting zeros, and move the left boundary when zero count exceeds k.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Trying all subarrays is O(n^2) and too slow for large arrays.",
+            "code": "class Solution {\n    public int longestOnes(int[] nums, int k) {\n        int left = 0;\n        int zeros = 0;\n        int maxLen = 0;\n        for (int right = 0; right < nums.length; right++) {\n            if (nums[right] == 0) zeros++;\n            while (zeros > k) {\n                if (nums[left] == 0) zeros--;\n                left++;\n            }\n            maxLen = Math.max(maxLen, right - left + 1);\n        }\n        return maxLen;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does the zero count represent?",
+            "a": "The number of replacements needed to make the current window all ones."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "When do you slide the left pointer?",
+            "a": "When zeros exceed k and the window is no longer valid."
         }
     ]
 }

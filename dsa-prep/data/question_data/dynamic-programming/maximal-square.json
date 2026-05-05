@@ -1,42 +1,41 @@
 {
-    "id": 13,
-    "leetcode_number": null,
+    "id": 15,
+    "leetcode_number": 221,
     "title": "Maximal Square",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/maximal-square/",
-    "problem_statement": "Find the largest square of 1s in a binary matrix and return its area.",
+    "problem_statement": "Given a binary matrix, find the largest square containing only 1s and return its area.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "matrix = [[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]",
+            "output": "4",
+            "explanation": "The largest square has side length 2."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= matrix.length, matrix[0].length <= 300"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Each cell is the bottom-right corner of a square whose size depends on its top, left, and top-left neighbors.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "DP for square sizes",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "dp[i][j] stores the side length of the largest square ending at cell (i,j).",
+            "time": "O(m * n)",
+            "space": "O(n)",
+            "why_not": "Searching all squares directly would be too slow.",
+            "code": "class Solution {\n    public int maximalSquare(char[][] matrix) {\n        int m = matrix.length, n = matrix[0].length;\n        int[] dp = new int[n + 1];\n        int maxSide = 0, prev = 0;\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                int temp = dp[j];\n                if (matrix[i - 1][j - 1] == '1') {\n                    dp[j] = Math.min(Math.min(dp[j - 1], dp[j]), prev) + 1;\n                    maxSide = Math.max(maxSide, dp[j]);\n                } else {\n                    dp[j] = 0;\n                }\n                prev = temp;\n            }\n        }\n        return maxSide * maxSide;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "What is the state transition for maximal square?",
+            "a": "If matrix[i][j] == 1, dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "Why does this work?",
+            "a": "A square ending at the current cell can extend only as far as all three neighboring squares allow."
         }
     ]
 }

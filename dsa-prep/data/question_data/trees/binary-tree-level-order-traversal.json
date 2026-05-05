@@ -1,42 +1,41 @@
 {
-    "id": 6,
-    "leetcode_number": null,
+    "id": 1,
+    "leetcode_number": 102,
     "title": "Binary Tree Level Order Traversal",
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
-    "problem_statement": "Return the level order traversal of a binary tree.",
+    "problem_statement": "Return the level order traversal of a binary tree\u2019s node values.",
     "examples": [
         {
             "input": "root = [3,9,20,null,null,15,7]",
             "output": "[[3],[9,20],[15,7]]",
-            "explanation": "Traverse level by level."
+            "explanation": "Nodes are grouped by distance from the root."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "The number of nodes is in the range [0, 2000]"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Use a queue to traverse the tree breadth-first and collect nodes layer by layer.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Breadth-first search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> res = new ArrayList<>();\n        if (root == null) return res;\n        Queue<TreeNode> q = new LinkedList<>();\n        q.add(root);\n        while (!q.isEmpty()) {\n            int size = q.size();\n            List<Integer> level = new ArrayList<>();\n            for (int i = 0; i < size; i++) {\n                TreeNode node = q.poll();\n                level.add(node.val);\n                if (node.left != null) q.add(node.left);\n                if (node.right != null) q.add(node.right);\n            }\n            res.add(level);\n        }\n        return res;\n    }\n}"
+            "description": "Use a queue and process one level at a time, collecting values for each level before moving on.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Recursive DFS does not naturally group nodes by level without extra bookkeeping.",
+            "code": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        Queue<TreeNode> queue = new ArrayDeque<>();\n        queue.offer(root);\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            List<Integer> level = new ArrayList<>();\n            for (int i = 0; i < size; i++) {\n                TreeNode node = queue.poll();\n                level.add(node.val);\n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            result.add(level);\n        }\n        return result;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What data structure supports level order traversal?",
+            "a": "A queue supports breadth-first traversal across tree levels."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "How do you know when a level ends?",
+            "a": "By processing a fixed number of nodes equal to the current queue size."
         }
     ]
 }

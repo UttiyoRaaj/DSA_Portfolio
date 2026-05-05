@@ -1,42 +1,43 @@
 {
     "id": 2,
-    "leetcode_number": null,
+    "leetcode_number": 460,
     "title": "LFU Cache",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/lfu-cache/",
-    "problem_statement": "Design and implement a Least Frequently Used (LFU) cache with get and put operations in O(1) time.",
+    "problem_statement": "Design and implement a Least Frequently Used (LFU) cache with get and put operations in O(1) time. When capacity is reached, evict the least frequently used key; if multiple keys have the same frequency, evict the least recently used among them.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "LFUCache cache = new LFUCache(2); cache.put(1, 1); cache.put(2, 2); cache.get(1); cache.put(3, 3); cache.get(2); cache.get(3);",
+            "output": "1, -1, 3",
+            "explanation": "Key 2 is evicted because key 1 is used more frequently before inserting key 3."
         }
     ],
     "constraints": [
-        "Operations up to 10⁵",
-        "Keys/values within standard ranges"
+        "0 <= capacity <= 10^4",
+        "At most 10^5 calls to get and put",
+        "0 <= key, value <= 10^9"
     ],
-    "intuition": "Choose data structures that optimize for the required operations.",
+    "intuition": "Track each key's frequency and maintain a bucketed list of keys by frequency so the least frequently used key can be found in constant time.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Frequency buckets with LinkedHashSet",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use a map from key to value, a map from key to frequency, and a map from frequency to an ordered set of keys. Update frequency buckets on each access and evict from the lowest-frequency bucket when needed.",
+            "time": "O(1) amortized for get and put",
+            "space": "O(capacity)",
+            "why_not": "A priority queue would require O(log n) updates for every frequency change.",
+            "code": "class LFUCache {\n    private int capacity;\n    private int minFreq;\n    private Map<Integer, Integer> values;\n    private Map<Integer, Integer> counts;\n    private Map<Integer, LinkedHashSet<Integer>> lists;\n\n    public LFUCache(int capacity) {\n        this.capacity = capacity;\n        this.minFreq = 0;\n        values = new HashMap<>();\n        counts = new HashMap<>();\n        lists = new HashMap<>();\n        lists.put(1, new LinkedHashSet<>());\n    }\n\n    public int get(int key) {\n        if (!values.containsKey(key)) return -1;\n        int count = counts.get(key);\n        lists.get(count).remove(key);\n        if (lists.get(count).isEmpty() && count == minFreq) {\n            minFreq++;\n        }\n        counts.put(key, count + 1);\n        lists.computeIfAbsent(count + 1, k -> new LinkedHashSet<>()).add(key);\n        return values.get(key);\n    }\n\n    public void put(int key, int value) {\n        if (capacity <= 0) return;\n        if (values.containsKey(key)) {\n            values.put(key, value);\n            get(key);\n            return;\n        }\n        if (values.size() >= capacity) {\n            int evict = lists.get(minFreq).iterator().next();\n            lists.get(minFreq).remove(evict);\n            values.remove(evict);\n            counts.remove(evict);\n        }\n        values.put(key, value);\n        counts.put(key, 1);\n        minFreq = 1;\n        lists.computeIfAbsent(1, k -> new LinkedHashSet<>()).add(key);\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "How do you choose the key to evict?",
+            "a": "Evict the key with the lowest access frequency, breaking ties by removing the least recently used key in that frequency bucket."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why track min frequency?",
+            "a": "Keeping the current minimum frequency lets you find the eviction bucket in constant time."
         }
     ]
 }

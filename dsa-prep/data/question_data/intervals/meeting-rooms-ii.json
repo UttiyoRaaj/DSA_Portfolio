@@ -1,42 +1,42 @@
 {
     "id": 5,
-    "leetcode_number": null,
+    "leetcode_number": 253,
     "title": "Meeting Rooms II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/meeting-rooms-ii/",
-    "problem_statement": "Find the minimum number of conference rooms required to host all meetings.",
+    "problem_statement": "Given meeting time intervals, find the minimum number of conference rooms required.",
     "examples": [
         {
             "input": "intervals = [[0,30],[5,10],[15,20]]",
             "output": "2",
-            "explanation": "Need two rooms for overlapping intervals."
+            "explanation": "Two rooms are needed because meetings [0,30] and [5,10] overlap."
         }
     ],
     "constraints": [
-        "1 ≤ intervals.length ≤ 10⁵",
-        "intervals[i].length == 2"
+        "1 <= intervals.length <= 10^4",
+        "0 <= start < end <= 10^6"
     ],
-    "intuition": "Sort intervals and process sequentially.",
+    "intuition": "Track ongoing meetings with a min-heap of end times and reuse rooms when a meeting finishes.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Min-heap of end times",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Sort meetings by start time, then use a min-heap to store end times and free rooms as meetings end.",
+            "time": "O(n log n)",
+            "space": "O(n)",
+            "why_not": "Counting overlaps without a heap is error-prone and can miss room reuse opportunities.",
+            "code": "class Solution {\n    public int minMeetingRooms(int[][] intervals) {\n        if (intervals.length == 0) return 0;\n        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));\n        PriorityQueue<Integer> heap = new PriorityQueue<>();\n        heap.offer(intervals[0][1]);\n        for (int i = 1; i < intervals.length; i++) {\n            if (intervals[i][0] >= heap.peek()) {\n                heap.poll();\n            }\n            heap.offer(intervals[i][1]);\n        }\n        return heap.size();\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What does the heap store?",
+            "a": "The heap stores end times for meetings currently using rooms."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "When can a room be reused?",
+            "a": "When the next meeting starts at or after the earliest end time in the heap."
         }
     ]
 }

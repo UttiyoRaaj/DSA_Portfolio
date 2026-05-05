@@ -1,42 +1,41 @@
 {
-    "id": 3,
-    "leetcode_number": null,
+    "id": 5,
+    "leetcode_number": 543,
     "title": "Diameter of Binary Tree",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
-    "problem_statement": "Return the length of the diameter of the binary tree.",
+    "problem_statement": "Return the length of the longest path between any two nodes in a binary tree.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "root = [1,2,3,4,5]",
+            "output": "3",
+            "explanation": "The diameter path goes through nodes [4,2,1,3] or [5,2,1,3]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁴",
-        "Tree nodes contain integers"
+        "The number of nodes is in the range [1, 10^4]"
     ],
-    "intuition": "Traverse recursively or iteratively, combining subtree results.",
+    "intuition": "Use recursion to compute height and update diameter as the sum of left and right heights.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Post-order height computation",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute subtree heights and update the max diameter at each node as left height plus right height.",
+            "time": "O(n)",
+            "space": "O(h)",
+            "why_not": "Computing all pairwise node distances is O(n^2) and unnecessary.",
+            "code": "class Solution {\n    private int diameter = 0;\n\n    public int diameterOfBinaryTree(TreeNode root) {\n        height(root);\n        return diameter;\n    }\n\n    private int height(TreeNode node) {\n        if (node == null) return 0;\n        int left = height(node.left);\n        int right = height(node.right);\n        diameter = Math.max(diameter, left + right);\n        return Math.max(left, right) + 1;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "What is the diameter definition here?",
+            "a": "The number of edges on the longest path between two nodes."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "Why use height recursion?",
+            "a": "It computes subtree depths while also capturing the longest path through each node."
         }
     ]
 }

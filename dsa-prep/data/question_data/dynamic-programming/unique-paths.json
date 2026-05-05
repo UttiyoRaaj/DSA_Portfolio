@@ -1,42 +1,41 @@
 {
-    "id": 11,
-    "leetcode_number": null,
+    "id": 21,
+    "leetcode_number": 62,
     "title": "Unique Paths",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/unique-paths/",
-    "problem_statement": "Count the number of unique paths from the top-left corner to the bottom-right corner in an m x n grid moving only down or right.",
+    "problem_statement": "Count the number of unique paths from the top-left to the bottom-right corner of an m x n grid, moving only down or right.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "m = 3, n = 7",
+            "output": "28",
+            "explanation": "There are 28 unique paths."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= m, n <= 100"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Every cell can be reached from above or from the left, so add the path counts from those cells.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Grid DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Compute dp[i][j] as the sum of dp[i-1][j] and dp[i][j-1], with boundaries initialized to 1.",
+            "time": "O(m * n)",
+            "space": "O(n)",
+            "why_not": "Computing all paths recursively is exponential without reuse.",
+            "code": "class Solution {\n    public int uniquePaths(int m, int n) {\n        int[] dp = new int[n];\n        Arrays.fill(dp, 1);\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                dp[j] += dp[j - 1];\n            }\n        }\n        return dp[n - 1];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "How are boundary cells initialized?",
+            "a": "The first row and first column have exactly one path each."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "Why can space be reduced to one row?",
+            "a": "Current row values only depend on the current row left cell and the previous row same column."
         }
     ]
 }

@@ -1,42 +1,42 @@
 {
     "id": 14,
-    "leetcode_number": null,
+    "leetcode_number": 416,
     "title": "Partition Equal Subset Sum",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/partition-equal-subset-sum/",
     "problem_statement": "Determine whether the array can be partitioned into two subsets with equal sum.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "nums = [1,5,11,5]",
+            "output": "true",
+            "explanation": "The array can be partitioned into [1,5,5] and [11]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "1 <= nums.length <= 200",
+        "1 <= nums[i] <= 100"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "Reduce to subset sum for target = total/2 and use DP to track reachable sums.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Subset sum DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use a boolean DP array to mark achievable sums and check if half the total is reachable.",
+            "time": "O(n * sum)",
+            "space": "O(sum)",
+            "why_not": "Brute force subset enumeration is exponential in n.",
+            "code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum & 1) != 0) return false;\n        int target = sum / 2;\n        boolean[] dp = new boolean[target + 1];\n        dp[0] = true;\n        for (int num : nums) {\n            for (int j = target; j >= num; j--) {\n                dp[j] = dp[j] || dp[j - num];\n            }\n        }\n        return dp[target];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "Why check total sum parity first?",
+            "a": "An odd total cannot be split into two equal integer subsets."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "What does dp[j] mean here?",
+            "a": "It means a subset sum of j is achievable with the processed numbers."
         }
     ]
 }

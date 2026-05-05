@@ -1,42 +1,43 @@
 {
     "id": 3,
-    "leetcode_number": null,
+    "leetcode_number": 1899,
     "title": "Merge Triplets to Form Target Triplet",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/merge-triplets-to-form-target-triplet/",
-    "problem_statement": "Check whether you can form a target triplet by merging selected triplets component-wise.",
+    "problem_statement": "Determine whether a target triplet can be formed by merging selected triplets component-wise, where merging takes the maximum value for each index.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "triplets = [[2,5,3],[1,8,4],[1,7,5]], target = [2,7,5]",
+            "output": "true",
+            "explanation": "Combine [2,5,3] and [1,7,5] to obtain [2,7,5]."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= triplets.length <= 10^5",
+        "triplets[i].length == 3",
+        "0 <= triplets[i][j], target[j] <= 1000"
     ],
-    "intuition": "Make locally optimal choices that lead to global optimum.",
+    "intuition": "Collect triplets that do not exceed target values and ensure each target component can be achieved by taking maximums.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Component-wise greedy check",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Track the best candidate for each of the three indices using valid triplets, and verify whether all target components can be matched.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "why_not": "Brute forcing all combinations is exponential; the problem reduces to whether each target coordinate can be reached by some triplet without exceeding other target values.",
+            "code": "class Solution {\n    public boolean mergeTriplets(int[][] triplets, int[] target) {\n        int a = 0, b = 0, c = 0;\n        for (int[] triplet : triplets) {\n            if (triplet[0] <= target[0] && triplet[1] <= target[1] && triplet[2] <= target[2]) {\n                a = Math.max(a, triplet[0]);\n                b = Math.max(b, triplet[1]);\n                c = Math.max(c, triplet[2]);\n            }\n        }\n        return a == target[0] && b == target[1] && c == target[2];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why ignore triplets with values greater than target?",
+            "a": "Because merging takes maximums, any exceeding value would overshoot the target in that dimension."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "What does each tracked coordinate represent?",
+            "a": "The best achievable value for each component from valid candidate triplets."
         }
     ]
 }

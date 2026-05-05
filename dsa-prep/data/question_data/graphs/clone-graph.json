@@ -1,6 +1,6 @@
 {
-    "id": 2,
-    "leetcode_number": null,
+    "id": 3,
+    "leetcode_number": 133,
     "title": "Clone Graph",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/clone-graph/",
@@ -8,35 +8,36 @@
     "examples": [
         {
             "input": "adjList = [[2,4],[1,3],[2,4],[1,3]]",
-            "output": "A deep copy of the graph.",
-            "explanation": "Clone the undirected graph."
+            "output": "A deep copy of the graph with the same adjacency relationships.",
+            "explanation": "Clone each node and reconstruct neighbor references without reusing original nodes."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "The number of nodes is in the range [1, 100].",
+        "1 <= Node.val <= 100",
+        "No duplicate edges or self-loops exist."
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Use BFS or DFS to traverse and clone nodes, mapping original nodes to copies.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "DFS clone with hashmap",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Recursively clone each neighbor and store the mapping from original to cloned node to avoid duplicates.",
+            "time": "O(N + E)",
+            "space": "O(N)",
+            "why_not": "Iterating without a map can create duplicate clones and invalid references.",
+            "code": "class Solution {\n    public Node cloneGraph(Node node) {\n        if (node == null) return null;\n        Map<Node, Node> map = new HashMap<>();\n        return dfs(node, map);\n    }\n    private Node dfs(Node node, Map<Node, Node> map) {\n        if (map.containsKey(node)) return map.get(node);\n        Node clone = new Node(node.val);\n        map.put(node, clone);\n        for (Node nei : node.neighbors) {\n            clone.neighbors.add(dfs(nei, map));\n        }\n        return clone;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "Why store a map of original to clone?",
+            "a": "To ensure each original node maps to exactly one clone and to avoid infinite recursion on cycles."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "Can BFS be used too?",
+            "a": "Yes, BFS works equally well by cloning nodes level by level and storing mappings."
         }
     ]
 }

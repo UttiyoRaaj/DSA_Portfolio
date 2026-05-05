@@ -1,42 +1,43 @@
 {
-    "id": 16,
-    "leetcode_number": null,
+    "id": 1,
+    "leetcode_number": 721,
     "title": "Accounts Merge (Union-Find)",
     "difficulty": "Medium",
-    "url": "https://leetcode.com/problems/accounts-merge-union-find/",
-    "problem_statement": "Implement the problem \"Accounts Merge (Union-Find)\" using a standard topic-specific approach.",
+    "url": "https://leetcode.com/problems/accounts-merge/",
+    "problem_statement": "Merge accounts with the same email address by connecting account entries that share one or more email addresses.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "accounts = [[\"John\", \"johnsmith@mail.com\", \"john00@mail.com\"], [\"John\", \"johnnybravo@mail.com\"], [\"John\", \"johnsmith@mail.com\", \"john_newyork@mail.com\"], [\"Mary\", \"mary@mail.com\"]]",
+            "output": "[[\"John\", \"john00@mail.com\", \"john_newyork@mail.com\", \"johnsmith@mail.com\"], [\"John\", \"johnnybravo@mail.com\"], [\"Mary\", \"mary@mail.com\"]]",
+            "explanation": "Accounts are merged when they share any email address."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 100",
-        "0 ≤ edges ≤ n*(n-1)/2"
+        "1 <= accounts.length <= 1000",
+        "1 <= accounts[i].length <= 10",
+        "1 <= accounts[i][j].length <= 30"
     ],
-    "intuition": "Use BFS/DFS for traversal, union-find for connectivity.",
+    "intuition": "Treat emails as nodes and connect them by account; use union-find to group connected emails before formatting merged accounts.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Union-Find grouping",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Map each email to a parent in a Union-Find structure and union emails in the same account, then collect groups by root.",
+            "time": "O(A * \u03b1(N)) where A is total emails",
+            "space": "O(A)",
+            "why_not": "DFS alone can work, but union-find simplifies grouping across many overlapping accounts.",
+            "code": "class Solution {\n    public List<List<String>> accountsMerge(List<List<String>> accounts) {\n        Map<String, String> parent = new HashMap<>();\n        Map<String, String> owner = new HashMap<>();\n        for (List<String> account: accounts) {\n            String name = account.get(0);\n            for (int i = 1; i < account.size(); i++) {\n                String email = account.get(i);\n                parent.putIfAbsent(email, email);\n                owner.put(email, name);\n                union(parent, account.get(1), email);\n            }\n        }\n        Map<String, TreeSet<String>> groups = new HashMap<>();\n        for (String email: parent.keySet()) {\n            String root = find(parent, email);\n            groups.computeIfAbsent(root, k -> new TreeSet<>()).add(email);\n        }\n        List<List<String>> result = new ArrayList<>();\n        for (var entry : groups.entrySet()) {\n            List<String> merged = new ArrayList<>();\n            merged.add(owner.get(entry.getKey()));\n            merged.addAll(entry.getValue());\n            result.add(merged);\n        }\n        return result;\n    }\n    private String find(Map<String, String> parent, String x) {\n        if (!parent.get(x).equals(x)) parent.put(x, find(parent, parent.get(x)));\n        return parent.get(x);\n    }\n    private void union(Map<String, String> parent, String a, String b) {\n        parent.put(find(parent, a), find(parent, b));\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "When should you use BFS vs DFS?",
-            "a": "Use BFS for shortest paths and layered traversal, DFS for reachability and backtracking."
+            "q": "What structure helps merge overlapping accounts?",
+            "a": "Union-Find groups emails that share an account by connecting them via a common root."
         },
         {
-            "q": "How do you avoid revisiting nodes?",
-            "a": "Mark visited nodes or use a visited set during traversal."
+            "q": "Why sort emails in each merged account?",
+            "a": "Sorting ensures stable output order and matches expected canonical representation."
         }
     ]
 }

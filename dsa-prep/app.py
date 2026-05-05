@@ -12,6 +12,7 @@ def _topics_with_progress():
     for topic in topics:
         completed_count = 0
         visited_count = 0
+        tricky_count = 0
         for q_index, question in enumerate(topic["questions"]):
             key = question_key(topic["slug"], question, q_index)
             entry = progress.get(key, {})
@@ -19,14 +20,19 @@ def _topics_with_progress():
             question["progress"] = {
                 "visited": bool(entry.get("visited")),
                 "complete": bool(entry.get("complete")),
+                "status": entry.get("status", "Unsolved"),
                 "remarks": entry.get("remarks", ""),
+                "tricky": bool(entry.get("tricky")),
             }
             if question["progress"]["visited"]:
                 visited_count += 1
             if question["progress"]["complete"]:
                 completed_count += 1
+            if question["progress"]["tricky"]:
+                tricky_count += 1
         topic["visited_count"] = visited_count
         topic["completed_count"] = completed_count
+        topic["tricky_count"] = tricky_count
     return topics
 
 
@@ -41,6 +47,7 @@ def inject_site_stats():
             "max_topic_questions": max(question_counts, default=1),
             "visited_questions": sum(topic["visited_count"] for topic in topics),
             "completed_questions": sum(topic["completed_count"] for topic in topics),
+            "tricky_questions": sum(topic["tricky_count"] for topic in topics),
         }
     }
 
@@ -76,12 +83,74 @@ def api_topics():
 @app.route("/api/progress/<path:progress_key>", methods=["POST"])
 def api_progress(progress_key):
     data = request.get_json(silent=True) or {}
+    tricky = data.get("tricky")
+    if isinstance(tricky, str):
+        tricky = tricky.lower() in ("1", "true", "yes", "on")
     entry = update_progress(
         progress_key,
-        complete=bool(data.get("complete")),
+        status=data.get("status", "Unsolved"),
         remarks=data.get("remarks", ""),
+        tricky=bool(tricky),
     )
     return jsonify({"ok": True, "progress": entry})
+
+
+@app.route("/completed")
+def completed():
+    topics = _topics_with_progress()
+    groups = []
+    for topic in topics:
+        questions = [
+            {
+                "topic_slug": topic["slug"],
+                "topic_title": topic["title"],
+                "topic_color": topic["color"],
+                "q_index": idx,
+                "title": q["title"],
+                "difficulty": q["difficulty"],
+                "leetcode_number": q.get("leetcode_number"),
+            }
+            for idx, q in enumerate(topic["questions"])
+            if q["progress"]["complete"]
+        ]
+        if questions:
+            groups.append({"topic": topic, "questions": questions})
+    return render_template(
+        "list_view.html",
+        page="completed",
+        title="Completed Questions",
+        subtitle="Questions you have marked solved",
+        groups=groups,
+    )
+
+
+@app.route("/tricky")
+def tricky():
+    topics = _topics_with_progress()
+    groups = []
+    for topic in topics:
+        questions = [
+            {
+                "topic_slug": topic["slug"],
+                "topic_title": topic["title"],
+                "topic_color": topic["color"],
+                "q_index": idx,
+                "title": q["title"],
+                "difficulty": q["difficulty"],
+                "leetcode_number": q.get("leetcode_number"),
+            }
+            for idx, q in enumerate(topic["questions"])
+            if q["progress"]["tricky"]
+        ]
+        if questions:
+            groups.append({"topic": topic, "questions": questions})
+    return render_template(
+        "list_view.html",
+        page="tricky",
+        title="Tricky Questions",
+        subtitle="Questions you've flagged as tricky",
+        groups=groups,
+    )
 
 
 @app.route("/api/session", methods=["POST"])

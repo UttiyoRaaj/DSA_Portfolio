@@ -1,42 +1,42 @@
 {
     "id": 7,
-    "leetcode_number": null,
+    "leetcode_number": 767,
     "title": "Reorganize String",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/reorganize-string/",
     "problem_statement": "Rearrange a string so that no two adjacent characters are the same, or return an empty string if impossible.",
     "examples": [
         {
-            "input": "Example input",
-            "output": "Example output",
-            "explanation": "Example explanation will be added here."
+            "input": "s = \"aab\"",
+            "output": "\"aba\"",
+            "explanation": "Reorganizing yields a valid string with no equal adjacent letters."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 10⁵",
-        "Values within standard ranges"
+        "1 <= s.length <= 500",
+        "s consists of lowercase English letters."
     ],
-    "intuition": "Use priority queues for efficient min/max operations.",
+    "intuition": "Use a max-heap to always place the most frequent remaining character next, while avoiding immediate repeats.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "Greedy heap reconstruction",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Count characters, then repeatedly append the two most frequent unused chars while storing the previous char for future use.",
+            "time": "O(n log k)",
+            "space": "O(k)",
+            "why_not": "Attempting to place characters without frequency consideration can fail on highly skewed counts.",
+            "code": "class Solution {\n    public String reorganizeString(String s) {\n        int[] freq = new int[26];\n        for (char c : s.toCharArray()) freq[c - 'a']++;\n        PriorityQueue<int[]> heap = new PriorityQueue<>((a, b) -> b[1] - a[1]);\n        for (int i = 0; i < 26; i++) {\n            if (freq[i] > 0) heap.offer(new int[]{i, freq[i]});\n        }\n        StringBuilder sb = new StringBuilder();\n        int[] prev = null;\n        while (!heap.isEmpty()) {\n            int[] curr = heap.poll();\n            sb.append((char) ('a' + curr[0]));\n            curr[1]--;\n            if (prev != null && prev[1] > 0) heap.offer(prev);\n            prev = curr[1] > 0 ? curr : null;\n        }\n        return sb.length() == s.length() ? sb.toString() : \"\";\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the key idea?",
-            "a": "Choose the topic-specific pattern that best fits the problem and avoid naive brute force."
+            "q": "Why store the previous character separately?",
+            "a": "It prevents immediately using the same character twice while still allowing it back when safe."
         },
         {
-            "q": "How do you handle edge cases?",
-            "a": "Check for empty or minimal input before applying the main algorithm."
+            "q": "When is reorganization impossible?",
+            "a": "When any character appears more than half of the string length rounded up."
         }
     ]
 }

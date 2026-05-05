@@ -1,42 +1,42 @@
 {
-    "id": 16,
-    "leetcode_number": null,
+    "id": 18,
+    "leetcode_number": 10,
     "title": "Regular Expression Matching",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/regular-expression-matching/",
-    "problem_statement": "Implement regular expression matching with support for \".\" and \"*\", where \".\" matches any character and \"*\" matches zero or more of the preceding element.",
+    "problem_statement": "Implement regex matching with support for \".\" and \"*\" where \".\" matches any character and \"*\" matches zero or more of the preceding element.",
     "examples": [
         {
-            "input": "s = \"aa\", p = \"a*\"",
+            "input": "s = \"aab\", p = \"c*a*b\"",
             "output": "true",
-            "explanation": "The pattern matches the string."
+            "explanation": "c* can match empty, then a* matches \"aa\" and b matches b."
         }
     ],
     "constraints": [
-        "1 ≤ n ≤ 1000",
-        "Values fit in 32-bit integers"
+        "0 <= s.length <= 20",
+        "0 <= p.length <= 30"
     ],
-    "intuition": "Break down into subproblems and use memoization or tabulation.",
+    "intuition": "DP on positions with states handling * as zero or multiple matches.",
     "approaches": [
         {
-            "name": "Optimal Solution",
+            "name": "DP on string and pattern indices",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "A clean explanation of the optimal approach will be added here.",
-            "time": "",
-            "space": "",
-            "why_not": null,
-            "code": null
+            "description": "Use dp[i][j] to represent whether s[i:] matches p[j:], handling * by skipping or consuming a character.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "Backtracking can be complex and error-prone for overlapping * choices.",
+            "code": "class Solution {\n    public boolean isMatch(String s, String p) {\n        int m = s.length(), n = p.length();\n        boolean[][] dp = new boolean[m + 1][n + 1];\n        dp[m][n] = true;\n        for (int j = n - 2; j >= 0; j -= 2) {\n            if (p.charAt(j + 1) == '*') dp[m][j] = true;\n            else break;\n        }\n        for (int i = m; i >= 0; i--) {\n            for (int j = n - 1; j >= 0; j--) {\n                boolean firstMatch = i < m && (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.');\n                if (j + 1 < n && p.charAt(j + 1) == '*') {\n                    dp[i][j] = dp[i][j + 2] || (firstMatch && dp[i + 1][j]);\n                } else {\n                    dp[i][j] = firstMatch && dp[i + 1][j + 1];\n                }\n            }\n        }\n        return dp[0][0];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you identify the DP state?",
-            "a": "Find overlapping subproblems and express the answer in terms of smaller results."
+            "q": "How do you handle a * in the pattern?",
+            "a": "Either skip the preceding element and * entirely or consume one character if the first character matches."
         },
         {
-            "q": "Why memoize or tabulate?",
-            "a": "To avoid recomputing expensive subproblems and keep time complexity manageable."
+            "q": "Why use bottom-up DP?",
+            "a": "It cleanly handles the multiple matching choices and avoids repeated recursion."
         }
     ]
 }

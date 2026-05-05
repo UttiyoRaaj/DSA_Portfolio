@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ question.title }} — DSA Prep{% endblock %}
+{% block title %}{{ question.title }} — ReetCode{% endblock %}
 
 {% block head %}
 <style>
@@ -472,6 +472,11 @@
                         Mark as tricky
                     </label>
                 </div>
+                {% if not current_user %}
+                <div class="field-label" style="color: var(--text3); font-size:0.94rem; margin-bottom:1rem;">
+                    Sign in to save this question's progress to your account.
+                </div>
+                {% endif %}
                 <div class="field-group">
                     <label class="field-label" for="progress-remarks">Remarks</label>
                     <textarea id="progress-remarks" placeholder="Write notes or observations...">{{ question.progress.remarks }}</textarea>

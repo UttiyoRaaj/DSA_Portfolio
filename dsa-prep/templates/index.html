@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}DSA Interview Prep — Google SWE2/3{% endblock %}
+{% block title %}ReetCode — Master Data Structures & Algorithms{% endblock %}
 
 {% block head %}
 <style>
@@ -82,7 +82,7 @@
     }
 
     .stat-num {
-        font-family: var(--font-heading);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         font-size: 2rem;
         font-weight: 700;
         color: var(--accent);
@@ -121,7 +121,7 @@
     }
 
     .topics-heading {
-        font-family: var(--font-heading);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         font-size: 1.45rem;
         font-weight: 700;
         letter-spacing: 0;
@@ -244,15 +244,84 @@
         .topics-note { text-align: left; }
         .topics-list { grid-template-columns: 1fr; }
     }
+
+    /* TRUSTED COMPANIES SECTION */
+    .trusted-section {
+        padding: 4rem 3rem;
+        max-width: 980px;
+        margin: 0 auto;
+        text-align: center;
+        border-top: 1px solid rgba(92,64,42,0.08);
+    }
+
+    .trusted-title {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 2.5rem;
+        letter-spacing: 0;
+    }
+
+    .companies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 1.5rem;
+        align-items: center;
+    }
+
+    .company-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+    }
+
+    .company-logo:hover {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+
+    .company-logo img {
+        height: 48px;
+        width: 48px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 0 rgba(0,0,0,0.1));
+    }
+
+    .company-name {
+        font-size: 0.7rem;
+        color: var(--text3);
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .trusted-footnote {
+        color: var(--text3);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .trusted-section { padding: 3rem 1.25rem; }
+        .companies-grid { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 1.5rem; }
+        .company-logo { height: 50px; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="hero">
-    <div class="hero-eyebrow">Google SWE Interview Preparation</div>
-    <h1 class="hero-title">Master DSA.<br>Ace the Interview.</h1>
+    <div class="hero-eyebrow">The rhythm of problem-solving</div>
+    <h1 class="hero-title">Master DSA<br>Code your way to success...</h1>
     <p class="hero-sub">
-        Topic-wise solutions with full approach evolution — from brute force to optimal — exactly the way you'd walk through it in a real Google interview.
+        Topic-wise solutions with full approach evolution — from brute force to optimal. Perfect for interviews, coding practice, or skill-building at any level.
     </p>
 
     <div class="hero-stats">
@@ -287,9 +356,9 @@
     <div class="topics-header">
         <div>
             <div class="section-label" style="margin-bottom: 0.45rem;">Topics</div>
-            <h2 class="topics-heading">Choose one pattern to practice</h2>
+            <h3 class="topics-title">Choose to practice</h3>
         </div>
-        <p class="topics-note">A quieter list for scanning quickly. Pick a topic and jump straight into its questions.</p>
+        <p class="topics-note">Here's the inception of zenith. Pick a topic and jump straight into its questions.</p>
     </div>
     <div class="topics-list">
         {% for topic in topics %}
@@ -307,5 +376,61 @@
         </a>
         {% endfor %}
     </div>
+</div>
+
+<!-- Trusted Companies Section -->
+<div class="trusted-section">
+    <h3 class="trusted-title">Trusted by engineers at leading tech companies</h3>
+    <div class="companies-grid">
+        <div class="company-logo">
+            <img src="https://www.google.com/favicon.ico" alt="Google">
+            <span class="company-name">Google</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@latest/icons/meta.svg" alt="Meta">
+            <span class="company-name">Meta</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.amazon.com/favicon.ico" alt="Amazon">
+            <span class="company-name">Amazon</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.apple.com/favicon.ico" alt="Apple">
+            <span class="company-name">Apple</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.microsoft.com/favicon.ico" alt="Microsoft">
+            <span class="company-name">Microsoft</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.netflix.com/favicon.ico" alt="Netflix">
+            <span class="company-name">Netflix</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.linkedin.com/favicon.ico" alt="LinkedIn">
+            <span class="company-name">LinkedIn</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.tesla.com/favicon.ico" alt="Tesla">
+            <span class="company-name">Tesla</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons@latest/icons/oracle.svg" alt="Oracle">
+            <span class="company-name">Oracle</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.intel.com/favicon.ico" alt="Intel">
+            <span class="company-name">Intel</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.adobe.com/favicon.ico" alt="Adobe">
+            <span class="company-name">Adobe</span>
+        </div>
+        <div class="company-logo">
+            <img src="https://www.stripe.com/favicon.ico" alt="Stripe">
+            <span class="company-name">Stripe</span>
+        </div>
+    </div>
+    <p class="trusted-footnote">Join thousands of engineers who mastered DSA and landed interviews at their dream companies.</p>
 </div>
 {% endblock %}

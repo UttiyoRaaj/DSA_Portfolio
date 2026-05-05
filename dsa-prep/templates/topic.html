@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ topic.title }} — DSA Prep{% endblock %}
+{% block title %}{{ topic.title }} — ReetCode{% endblock %}
 
 {% block head %}
 <style>
@@ -101,12 +101,18 @@
         font-size: 0.8rem;
     }
 
-    .q-list-item:hover .q-arrow {
-        transform: translateX(4px);
-        color: var(--accent);
-    }
+        .q-list-item.locked {
+            background: rgba(255, 242, 235, 0.85);
+            border-color: rgba(183,139,37,0.18);
+        }
 
-    @media (max-width: 768px) {
+        .q-list-item.locked .q-title,
+        .q-list-item.locked .q-num,
+        .q-list-item.locked .lc-num,
+        .q-list-item.locked .q-arrow {
+            color: var(--text3);
+        }
+
         .topic-hero, .questions-container { padding-left: 1.25rem; padding-right: 1.25rem; }
     }
 </style>
@@ -133,8 +139,19 @@
 <div class="questions-container">
     <div class="section-label">Questions</div>
 
+    {% if not current_user %}
+    <div class="card" style="margin-bottom:1.5rem; padding:1.25rem; background: #fff8ef; border-color: rgba(183,139,37,0.2);">
+        <strong style="display:block; margin-bottom:0.5rem; color: var(--accent);">Sign in to access the problem statements.</strong>
+        <span style="color: var(--text3);">Questions are visible only after login. Click any item below to continue.</span>
+    </div>
+    {% endif %}
+
     {% for q in topic.questions %}
+    {% if current_user %}
     <a href="/question/{{ topic.slug }}/{{ loop.index0 }}" class="q-list-item">
+    {% else %}
+    <a href="{{ url_for('login', next=url_for('question', topic_slug=topic.slug, q_index=loop.index0)) }}" class="q-list-item locked">
+    {% endif %}
         <span class="q-num">{{ loop.index }}</span>
         {% if q.leetcode_number %}
         <span class="lc-num">LC {{ q.leetcode_number }}</span>

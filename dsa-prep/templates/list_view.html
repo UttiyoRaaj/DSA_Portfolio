@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title }} — DSA Prep{% endblock %}
+{% block title %}{{ title }} — ReetCode{% endblock %}
 
 {% block content %}
-<div class="hero" style="padding-top: 3rem; padding-bottom: 2rem;">
+<div class="hero" style="padding-top: 3rem; padding-bottom: 2rem; padding-left: 2rem; padding-right: 2rem;">
     <div class="hero-eyebrow" style="font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem;">Progress Tracker</div>
     <h1 class="hero-title" style="font-family:var(--font-logo); font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom:1rem;">{{ title }}</h1>
     <p class="hero-sub" style="max-width:720px; color:var(--text2); font-size:1rem; line-height:1.7;">{{ subtitle }}. Click any question to jump back to its solution page.</p>
@@ -17,14 +17,14 @@
                 <div class="topic-row-title" style="font-size: 1rem; margin-bottom: 0.85rem;">{{ group.topic_title }}</div>
                 <div style="display: grid; gap: 0.8rem;">
                     {% for item in group.questions %}
-                    <a href="/question/{{ item.topic_slug }}/{{ item.q_index }}" style="display:flex; align-items:center; gap:0.8rem; padding:0.85rem 1rem; background:var(--surface); border:1px solid rgba(92,64,42,0.12); border-radius:12px; text-decoration:none; color:var(--text); transition:all 0.2s;">
-                        <span style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text3); width:24px; text-align:right;">{{ item.q_index + 1 }}</span>
+                    <a href="/question/{{ item.topic_slug }}/{{ item.q_index }}" style="display:flex; align-items:center; gap:0.6rem; padding:0.85rem 1rem; background:var(--surface); border:1px solid rgba(92,64,42,0.12); border-radius:12px; text-decoration:none; color:var(--text); transition:all 0.2s;">
+                        <span style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text3); min-width:28px; text-align:right; flex-shrink:0;">{{ item.q_index + 1 }}</span>
                         {% if item.leetcode_number %}
-                        <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--yellow); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.2); padding:0.18rem 0.35rem; border-radius:6px; white-space:nowrap;">LC {{ item.leetcode_number }}</span>
+                        <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--yellow); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.2); padding:0.18rem 0.35rem; border-radius:6px; white-space:nowrap; flex-shrink:0;">LC {{ item.leetcode_number }}</span>
                         {% endif %}
-                        <span style="flex:1; font-size:0.95rem; font-weight:600;">{{ item.title }}</span>
-                        <span class="badge badge-{{ item.difficulty | lower }}" style="font-size:0.72rem;">{{ item.difficulty }}</span>
-                        <span style="font-size:1rem; color:var(--text3);">→</span>
+                        <span style="flex:1; font-size:0.95rem; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ item.title }}</span>
+                        <span class="badge badge-{{ item.difficulty | lower }}" style="font-size:0.72rem; flex-shrink:0;">{{ item.difficulty }}</span>
+                        <span style="font-size:1rem; color:var(--text3); flex-shrink:0;">→</span>
                     </a>
                     {% endfor %}
                 </div>

@@ -1,52 +1,52 @@
 {% extends "base.html" %}
 
-{% block title %}Mock Interview Practice — DSA Prep{% endblock %}
+{% block title %}Practice Mode — ReetCode{% endblock %}
 
 {% block head %}
 <style>
     .practice-hero {
-        padding: 3.5rem 3rem;
-        max-width: 840px;
+        max-width: 980px;
         margin: 0 auto 2rem;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 22px;
+        padding: 3rem 2rem;
+        text-align: center;
     }
 
     .practice-hero h1 {
-        font-family: 'Syne', sans-serif;
+        font-family: var(--font-logo);
         font-size: clamp(2.5rem, 4vw, 3.5rem);
         margin-bottom: 1rem;
+        color: var(--accent);
     }
 
     .practice-hero p {
-        font-size: 1rem;
-        color: var(--text2);
-        line-height: 1.8;
         max-width: 720px;
+        margin: 0 auto;
+        color: var(--text2);
+        font-size: 1.05rem;
+        line-height: 1.7;
     }
 
     .practice-panel {
-        max-width: 1080px;
-        margin: 0 auto 4rem;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem;
         display: grid;
-        gap: 1.5rem;
+        gap: 1.25rem;
     }
 
     .practice-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 1.75rem;
-        box-shadow: 0 18px 40px rgba(92,64,42,0.08);
+        border-radius: 8px;
+        padding: 1.5rem;
     }
 
     .section-title {
-        font-family: 'Syne', sans-serif;
-        font-size: 1rem;
+        font-family: var(--font-heading);
+        font-size: 1.15rem;
         font-weight: 700;
-        margin-bottom: 1rem;
         color: var(--text);
+        margin-bottom: 1rem;
     }
 
     .field-row {
@@ -68,7 +68,7 @@
     select, input[type="text"], textarea {
         width: 100%;
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: 8px;
         padding: 0.95rem 1rem;
         background: #fff;
         color: var(--text);
@@ -78,7 +78,7 @@
 
     button {
         border: none;
-        border-radius: 12px;
+        border-radius: 8px;
         padding: 0.95rem 1.25rem;
         font-weight: 700;
         cursor: pointer;
@@ -87,12 +87,9 @@
         transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    button:hover { transform: translateY(-1px); background: var(--accent2); }
-
-    .chat-panel {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    button:hover {
+        transform: translateY(-1px);
+        background: var(--accent2);
     }
 
     .chat-window {
@@ -100,7 +97,7 @@
         max-height: 640px;
         overflow-y: auto;
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: 8px;
         background: #fff;
         padding: 1.25rem;
     }
@@ -112,8 +109,10 @@
         align-items: flex-start;
     }
 
-    .message.interviewer { justify-content: flex-start; }
-    .message.candidate { justify-content: flex-end; }
+    .message.interviewer,
+    .message.teacher { justify-content: flex-start; }
+    .message.candidate,
+    .message.student { justify-content: flex-end; }
 
     .message-avatar {
         width: 36px;
@@ -131,26 +130,27 @@
         max-width: 72%;
         background: var(--bg);
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: 8px;
         padding: 1rem 1.1rem;
         line-height: 1.7;
         white-space: pre-wrap;
         color: var(--text2);
     }
 
-    .message.interviewer .message-bubble { background: #fff8ef; }
-    .message.candidate .message-bubble { background: #362f2b; color: #f9f4ef; }
+    .message.interviewer .message-bubble,
+    .message.teacher .message-bubble { background: #fff8ef; }
+    .message.candidate .message-bubble,
+    .message.student .message-bubble { background: #362f2b; color: #f9f4ef; }
 
     .chat-controls {
         display: grid;
         grid-template-columns: 1fr auto auto;
         gap: 1rem;
         align-items: flex-end;
+        margin-top: 1rem;
     }
 
-    .chat-controls input {
-        min-height: 46px;
-    }
+    .chat-controls input { min-height: 46px; }
 
     .voice-mode-row {
         display: flex;
@@ -209,7 +209,7 @@
     .report-card {
         background: #fff;
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: 8px;
         padding: 1.25rem;
     }
 
@@ -230,7 +230,7 @@
 
     .report-score {
         width: fit-content;
-        border-radius: 14px;
+        border-radius: 8px;
         padding: 0.4rem 0.8rem;
         background: rgba(167,111,42,0.12);
         color: var(--accent);
@@ -238,6 +238,7 @@
     }
 
     @media (max-width: 900px) {
+        .practice-panel { padding: 0 1rem 3rem; }
         .field-row { grid-template-columns: 1fr; }
         .chat-controls { grid-template-columns: 1fr; }
         .message-bubble { max-width: 100%; }
@@ -247,8 +248,8 @@
 
 {% block content %}
 <div class="practice-hero">
-    <h1>Mock Interview Practice</h1>
-    <p>Practice questions with a one-to-one interviewer flow, a live coding workspace, follow-up questions, and a final review report.</p>
+    <h1>Practice Mode</h1>
+    <p>Learn DSA topics through a one-to-one teacher and student conversation.</p>
 </div>
 
 <div class="practice-panel">
@@ -256,21 +257,21 @@
         <div class="section-title">Pick a topic</div>
         <div class="field-row">
             <div>
-                <label for="practice-topic">Interview topic</label>
+                <label for="practice-topic">Practice topic</label>
                 <select id="practice-topic"></select>
             </div>
-            <button id="start-practice">Start interview</button>
+            <button id="start-practice">Start practice</button>
         </div>
         <div class="voice-mode-row">
             <span class="voice-mode-label">Mode</span>
             <label><input type="radio" name="voice-mode" value="text-only" checked> Text only</label>
             <label><input type="radio" name="voice-mode" value="voice"> Text + voice</label>
         </div>
-        <p style="color: var(--text3); font-size: 0.95rem; line-height: 1.7;">Choose a topic or practice across all topics. Your interviewer will present one question, guide you through approach and coding, then review your performance. Voice mode synchronizes speech with captions and supports spoken responses.</p>
+        <p style="color: var(--text3); font-size: 0.95rem; line-height: 1.7;">Choose a topic or practice across all topics. Voice mode synchronizes speech with captions and supports spoken responses.</p>
     </div>
 
     <div class="practice-card hidden" id="chat-panel">
-        <div class="section-title">Interview conversation</div>
+        <div class="section-title">Teacher conversation</div>
         <div class="chat-window" id="chat-messages"></div>
         <div class="voice-caption" id="voice-caption">Caption will appear here during voice playback.</div>
         <div class="chat-controls" id="chat-controls">
@@ -322,6 +323,7 @@ const supportsRecognition = 'SpeechRecognition' in window || 'webkitSpeechRecogn
 
 let practiceState = {
     stage: 'setup',
+    sessionId: null,
     selectedTopic: null,
     selectedQuestion: null,
     score: 0,
@@ -339,11 +341,12 @@ function renderText(text) {
 }
 
 function appendMessage(role, text) {
+    const isTeacher = role === 'interviewer' || role === 'teacher';
     const wrapper = document.createElement('div');
     wrapper.className = 'message ' + role;
     const avatar = document.createElement('div');
     avatar.className = 'message-avatar';
-    avatar.textContent = role === 'interviewer' ? 'I' : 'You';
+    avatar.textContent = isTeacher ? 'T' : 'You';
     const bubble = document.createElement('div');
     bubble.className = 'message-bubble';
     bubble.innerHTML = renderText(text);
@@ -446,7 +449,6 @@ function initSpeechRecognition() {
         userInput.value = transcript;
         recordBtn.classList.remove('recording');
         recordBtn.textContent = '🎙️ Record';
-        appendMessage('candidate', transcript);
         handleUserSubmission();
     };
     recog.onstart = () => {
@@ -492,16 +494,43 @@ function pickQuestion(slug) {
     return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
-function startInterview() {
+function getSelectedTopicSlugs(slug) {
+    if (slug === 'all') {
+        return topicsData.map(topic => topic.slug);
+    }
+    return [slug];
+}
+
+function setChatBusy(isBusy) {
+    sendBtn.disabled = isBusy;
+    userInput.disabled = isBusy;
+    startPractice.disabled = isBusy;
+    userInput.placeholder = isBusy ? 'Waiting for teacher...' : 'Type your response...';
+}
+
+async function fetchJson(url, options) {
+    const response = await fetch(url, options);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data.error) {
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+    }
+    return data;
+}
+
+async function startInterview() {
     const slug = topicSelect.value;
-    const selection = pickQuestion(slug);
-    if (!selection) {
-        alert('No questions available for this topic yet.');
+    const selectedTopics = getSelectedTopicSlugs(slug);
+    if (!selectedTopics.length) {
+        alert('No topics available yet.');
         return;
     }
-    practiceState.selectedTopic = selection.topic;
-    practiceState.selectedQuestion = selection.question;
-    practiceState.stage = 'intro';
+    const selectedTopic = slug === 'all'
+        ? { title: 'All topics', slug: 'all' }
+        : topicsData.find(topic => topic.slug === slug) || { title: slug, slug };
+    practiceState.selectedTopic = selectedTopic;
+    practiceState.selectedQuestion = null;
+    practiceState.sessionId = null;
+    practiceState.stage = 'conversation';
     practiceState.endedEarly = false;
     setupPanel.classList.add('hidden');
     chatPanel.classList.remove('hidden');
@@ -509,7 +538,8 @@ function startInterview() {
     codingPanel.classList.add('hidden');
     chatMessages.innerHTML = '';
     codeEditor.value = '';
-    userInput.disabled = false;
+    chatControls.classList.remove('hidden');
+    setChatBusy(true);
     userInput.placeholder = 'Type your response...';
     voiceEnabled = practiceState.voiceMode === 'voice';
     if (voiceEnabled && !recognition) {
@@ -519,11 +549,30 @@ function startInterview() {
         voiceCaption.textContent = 'Voice playback is not supported in this browser.';
     }
     recordBtn.classList.toggle('hidden', !voiceEnabled || !recognition);
-    appendMessage('interviewer', 'Hi! I am your interviewer today. We will practice a ' + selection.topic.title + ' question. When you are ready, tell me you are ready or say “let’s start”.');
-    if (voiceEnabled) {
-        speakText('Hi! I am your interviewer today. We will practice a ' + selection.topic.title + ' question. When you are ready, tell me you are ready or say let’s start.');
+    appendMessage('teacher', 'Starting your teacher session...');
+    try {
+        const data = await fetchJson('/api/chat/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                topics: selectedTopics,
+                session_name: 'Practice - ' + selectedTopic.title
+            })
+        });
+        practiceState.sessionId = data.session_id;
+        chatMessages.innerHTML = '';
+        appendMessage('teacher', data.initial_message);
+        if (voiceEnabled) {
+            speakText(data.initial_message);
+        }
+        setChatBusy(false);
+        userInput.focus();
+    } catch (error) {
+        chatMessages.innerHTML = '';
+        appendMessage('teacher', error.message);
+        setChatBusy(false);
+        setupPanel.classList.remove('hidden');
     }
-    userInput.focus();
 }
 
 function showProblemStatement() {
@@ -544,45 +593,28 @@ function showProblemStatement() {
     }
 }
 
-function handleUserSubmission() {
+async function handleUserSubmission() {
     const text = userInput.value.trim();
-    if (!text) return;
-    appendMessage('candidate', text);
+    if (!text || !practiceState.sessionId) return;
+    appendMessage('student', text);
     userInput.value = '';
+    setChatBusy(true);
 
-    if (practiceState.stage === 'intro') {
-        showProblemStatement();
-        setTimeout(() => {
-            const followup = 'Please explain your approach and the main complexity tradeoffs you are thinking about.';
-            appendMessage('interviewer', followup);
-            if (voiceEnabled) speakText(followup);
-        }, 600);
-        practiceState.stage = 'problem';
-        return;
-    }
-
-    if (practiceState.stage === 'problem') {
-        const followup = 'That sounds reasonable. Now describe how you would implement this, including any edge cases and complexity expectations.';
-        appendMessage('interviewer', followup);
-        if (voiceEnabled) speakText(followup);
-        practiceState.stage = 'approach';
-        return;
-    }
-
-    if (practiceState.stage === 'approach') {
-        const followup = 'Good. Let’s move to the coding phase. Use the editor below and submit the code when ready.';
-        appendMessage('interviewer', followup);
-        if (voiceEnabled) speakText(followup);
-        showCodingStage();
-        practiceState.stage = 'coding';
-        return;
-    }
-
-    if (practiceState.stage === 'followup') {
-        appendMessage('interviewer', 'Thank you for your answer. I will now summarize your performance and give you a final report.');
-        showReport();
-        practiceState.stage = 'report';
-        return;
+    try {
+        const data = await fetchJson('/api/chat/' + practiceState.sessionId + '/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+        });
+        appendMessage('teacher', data.response);
+        if (voiceEnabled) {
+            speakText(data.response);
+        }
+    } catch (error) {
+        appendMessage('teacher', error.message);
+    } finally {
+        setChatBusy(false);
+        userInput.focus();
     }
 }
 
@@ -662,7 +694,7 @@ function submitCode() {
     const code = codeEditor.value;
     const reviewText = generateReview(code);
     const followup = selectFollowupQuestion();
-    appendMessage('interviewer', reviewText + '\n\n' + followup);
+    appendMessage('teacher', reviewText + '\n\n' + followup);
     if (voiceEnabled) speakText(reviewText + ' ' + followup);
     practiceState.stage = 'followup';
     chatControls.classList.remove('hidden');
@@ -673,12 +705,14 @@ function submitCode() {
 
 function endSession() {
     if (practiceState.stage === 'setup' || practiceState.stage === 'report') return;
-    const code = codeEditor.value || '';
-    generateReview(code);
-    appendMessage('interviewer', 'This session is ending now. I will summarize your performance and show the final report.');
-    if (voiceEnabled) speakText('This session is ending now. I will summarize your performance and show the final report.');
-    practiceState.stage = 'report';
-    showReport();
+    appendMessage('teacher', 'This practice session is ending now. You can start another session whenever you are ready.');
+    if (voiceEnabled) speakText('This practice session is ending now. You can start another session whenever you are ready.');
+    practiceState.stage = 'setup';
+    practiceState.sessionId = null;
+    userInput.value = '';
+    chatControls.classList.add('hidden');
+    setupPanel.classList.remove('hidden');
+    startPractice.textContent = 'Start practice';
 }
 
 function showReport() {

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Login — ReetCode{% endblock %}
+
+{% block head %}
+<style>
+    .auth-shell {
+        display: flex;
+        justify-content: center;
+        padding: 4rem 1.5rem 3rem;
+    }
+    .auth-card {
+        width: min(100%, 520px);
+        border-radius: 24px;
+        border: 1px solid rgba(92,64,42,0.12);
+        background: rgba(255,255,255,0.94);
+        box-shadow: 0 24px 60px rgba(92,64,42,0.12);
+        overflow: hidden;
+    }
+    .auth-header {
+        background: linear-gradient(135deg, rgba(144,95,48,0.14), rgba(255,255,255,0.9));
+        padding: 2.5rem 2rem 1.5rem;
+        text-align: center;
+    }
+    .auth-title {
+        font-family: var(--font-heading);
+        font-size: clamp(2rem, 4vw, 2.6rem);
+        margin-bottom: 0.8rem;
+    }
+    .auth-subtitle {
+        color: var(--text2);
+        font-size: 0.98rem;
+        line-height: 1.7;
+    }
+    .auth-body {
+        padding: 2rem;
+        display: grid;
+        gap: 1rem;
+    }
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: var(--text3);
+        font-size: 0.88rem;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+    .auth-button.google {
+        background: #4285F4;
+        color: #fff;
+    }
+    .auth-button.google:hover {
+        background: #3367d6;
+    }
+    .auth-footer {
+        text-align: center;
+        color: var(--text3);
+        font-size: 0.95rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-title">Welcome back</div>
+            <div class="auth-subtitle">Sign in to track your progress and unlock all problems.</div>
+        </div>
+        <div class="auth-body">
+            <form method="post">
+                {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+                {% endif %}
+                <div class="field-group">
+                    <label class="field-label" for="email">Email address</label>
+                    <input id="email" name="email" type="email" placeholder="you@example.com" required style="width:100%; padding:0.95rem 1rem; border-radius:14px; border:1px solid rgba(92,64,42,0.16); font-size:0.95rem;" />
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="password">Password</label>
+                    <input id="password" name="password" type="password" placeholder="Enter your password" required style="width:100%; padding:0.95rem 1rem; border-radius:14px; border:1px solid rgba(92,64,42,0.16); font-size:0.95rem;" />
+                </div>
+                <button type="submit" class="button" style="width:100%;">Login</button>
+            </form>
+            <div class="auth-divider">or continue with</div>
+            <a href="/login/google{% if next %}?next={{ next | urlencode }}{% endif %}" class="button auth-button google" style="width:100%;">Google</a>
+            <div class="auth-footer">
+                New here? <a href="/signup{% if next %}?next={{ next | urlencode }}{% endif %}" style="color:var(--accent);">Create an account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,9 @@ import uuid
 from datetime import datetime
 import os
 
-DB_PATH = "data/conversations.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "conversations.db")
+
 
 def _get_db():
     return sqlite3.connect(DB_PATH)

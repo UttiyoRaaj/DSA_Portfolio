@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}DSA Interview Prep{% endblock %}</title>
+    <title>{% block title %}ReetCode — Master Problem-Solving{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Dancing+Script:wght@500;600;700&family=Lora:wght@400;500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -109,6 +109,29 @@
             align-items: center;
         }
 
+        .nav-user {
+            font-size: 0.78rem;
+            color: var(--text3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(92,64,42,0.08);
+        }
+
+        .flash-message {
+            max-width: 980px;
+            margin: 1rem auto;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            border: 1px solid rgba(92,64,42,0.12);
+            background: rgba(255,255,255,0.96);
+            box-shadow: 0 10px 30px rgba(92,64,42,0.05);
+            color: var(--text2);
+        }
+
+        .flash-message.success { border-color: rgba(47,111,65,0.2); background: rgba(47,111,65,0.08); }
+        .flash-message.error { border-color: rgba(165,73,57,0.2); background: rgba(165,73,57,0.08); }
+
         .nav-topic-link {
             font-size: 0.78rem;
             font-weight: 500;
@@ -125,6 +148,27 @@
             color: var(--text);
             background: var(--surface);
             border-color: var(--border2);
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(144,95,48,0.95), rgba(167,111,42,0.95));
+            border: none;
+            color: #fff;
+            padding: 0.95rem 1.25rem;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(144,95,48,0.18);
         }
 
         /* LAYOUT */
@@ -659,15 +703,30 @@
 <nav>
     <a href="/" class="nav-logo">
         <div class="dot"></div>
-        Master DSA
+        ReetCode
     </a>
     <div class="nav-actions">
         <a href="/practice" class="nav-topic-link {% if page is defined and page == 'practice' %}active{% endif %}">Practice</a>
         <a href="/live-interview" class="nav-topic-link {% if page is defined and page == 'live-interview' %}active{% endif %}">Live Interview</a>
+        {% if current_user %}
+            <span class="nav-user">{{ current_user.email | email_preview }}</span>
+            <a href="/reset-progress" onclick="return confirm('Reset all saved progress? This cannot be undone.');" class="nav-topic-link">Reset progress</a>
+            <a href="/logout" class="nav-topic-link">Logout</a>
+        {% else %}
+            <a href="/login" class="nav-topic-link">Login</a>
+            <a href="/signup" class="nav-topic-link">Sign Up</a>
+        {% endif %}
     </div>
 </nav>
 
 <div class="page-wrapper">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
 </div>
 

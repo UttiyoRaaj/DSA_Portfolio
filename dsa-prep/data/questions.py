@@ -135,4 +135,13 @@ def get_topics() -> list[dict]:
     return _load_topics()
 
 
+def get_topic_data(topic_slug: str) -> dict | None:
+    """Get data for a specific topic by slug"""
+    topics = get_topics()
+    for topic in topics:
+        if topic["slug"] == topic_slug:
+            return topic
+    return None
+
+
 TOPICS = get_topics()

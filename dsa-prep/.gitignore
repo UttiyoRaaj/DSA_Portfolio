@@ -33,3 +33,4 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+client_secret_*.json

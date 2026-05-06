@@ -4,40 +4,64 @@
     "title": "Rotting Oranges",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/rotting-oranges/",
-    "problem_statement": "Return the minimum minutes until no fresh oranges remain, or -1 if some cannot rot.",
+    "problem_statement": "You are given an m x n grid where each cell can have one of three values: 0 representing an empty cell, 1 representing a fresh orange, or 2 representing a rotten orange. Every minute, any fresh orange that is 4-directionally adjacent to a rotten orange becomes rotten. Return the minimum number of minutes that must elapse until no cell has a fresh orange. If this is impossible, return -1.",
     "examples": [
         {
             "input": "grid = [[2,1,1],[1,1,0],[0,1,1]]",
             "output": "4",
-            "explanation": "The rot spreads in waves from initially rotten oranges."
+            "explanation": "At 0 mins: [[2,1,1],[1,1,0],[0,1,1]]\nAt 1 min: [[2,2,1],[2,1,0],[0,1,1]]\nAt 2 mins: [[2,2,2],[2,2,0],[0,1,1]]\nAt 3 mins: [[2,2,2],[2,2,0],[0,2,1]]\nAt 4 mins: [[2,2,2],[2,2,0],[0,2,2]]"
+        },
+        {
+            "input": "grid = [[2,1,1],[0,1,1],[1,0,1]]",
+            "output": "-1",
+            "explanation": "The orange in the bottom left corner (row 2, column 0) is never rotten, because rotting only happens 4-directionally."
+        },
+        {
+            "input": "grid = [[0,2]]",
+            "output": "0",
+            "explanation": "Since there are already no fresh oranges at minute 0, the answer is just 0."
         }
     ],
     "constraints": [
         "m == grid.length",
         "n == grid[i].length",
-        "1 <= m, n <= 10"
+        "1 <= m, n <= 10",
+        "grid[i][j] is 0, 1, or 2."
     ],
-    "intuition": "Use multi-source BFS from all rotten oranges simultaneously to simulate minute-by-minute spread.",
+    "intuition": "Use BFS starting from all rotten oranges simultaneously. Each level represents one minute. Count fresh oranges and ensure all become rotten.",
     "approaches": [
         {
-            "name": "Multi-source BFS",
+            "name": "Multi-Source BFS",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Enqueue all rotten oranges first, then spread rot to adjacent fresh oranges in rounds until no fresh oranges remain.",
+            "description": "Enqueue all initial rotten oranges. BFS level by level, each level is one minute. Rot adjacent fresh oranges.",
             "time": "O(m * n)",
             "space": "O(m * n)",
-            "why_not": "DFS is not ideal because it does not naturally model equal-time propagation from multiple sources.",
-            "code": "class Solution {\n    public int orangesRotting(int[][] grid) {\n        int fresh = 0, minutes = 0;\n        Queue<int[]> queue = new ArrayDeque<>();\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == 2) queue.offer(new int[]{i, j});\n                if (grid[i][j] == 1) fresh++;\n            }\n        }\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        while (!queue.isEmpty() && fresh > 0) {\n            int size = queue.size();\n            minutes++;\n            for (int i = 0; i < size; i++) {\n                int[] cell = queue.poll();\n                for (int[] d : dirs) {\n                    int ni = cell[0] + d[0], nj = cell[1] + d[1];\n                    if (ni >= 0 && ni < grid.length && nj >= 0 && nj < grid[0].length && grid[ni][nj] == 1) {\n                        grid[ni][nj] = 2;\n                        fresh--;\n                        queue.offer(new int[]{ni, nj});\n                    }\n                }\n            }\n        }\n        return fresh == 0 ? minutes : -1;\n    }\n}"
+            "why_not": "DFS doesn't model time well; BFS does level-order.",
+            "code": "class Solution {\n    public int orangesRotting(int[][] grid) {\n        int fresh = 0, minutes = 0;\n        Queue<int[]> queue = new ArrayDeque<>();\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == 2) queue.offer(new int[]{i, j});\n                if (grid[i][j] == 1) fresh++;\n            }\n        }\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        while (!queue.isEmpty() && fresh > 0) {\n            int size = queue.size();\n            minutes++;\n            for (int i = 0; i < size; i++) {\n                int[] cell = queue.poll();\n                for (int[] d : dirs) {\n                    int ni = cell[0] + d[0], nj = cell[1] + d[1];\n                    if (ni >= 0 && ni < grid.length && nj >= 0 && nj < grid[0].length && grid[ni][nj] == 1) {\n                        grid[ni][nj] = 2;\n                        fresh--;\n                        queue.offer(new int[]{ni, nj});\n                    }\n                }\n            }\n        }\n        return fresh == 0 ? minutes : -1;\n    }\n}",
+            "interview_commentary": [
+                "Multi-source BFS: start with all 2s in queue.",
+                "Process by levels: each level increments minutes.",
+                "If fresh > 0 at end, impossible."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why process all rotten oranges per minute?",
-            "a": "To simulate simultaneous spread of rot from all current sources."
+            "q": "Why BFS over DFS?",
+            "a": "BFS models time correctly; DFS would need extra tracking."
         },
         {
-            "q": "What if fresh oranges remain after BFS ends?",
-            "a": "Then they are unreachable and the answer is -1."
+            "q": "What if no fresh oranges?",
+            "a": "Return 0."
+        },
+        {
+            "q": "How to handle unreachable fresh?",
+            "a": "If fresh remains, return -1."
+        },
+        {
+            "q": "Can use DFS?",
+            "a": "Yes, but more complex to track time."
         }
     ]
 }

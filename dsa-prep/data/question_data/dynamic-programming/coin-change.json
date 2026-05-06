@@ -4,39 +4,88 @@
     "title": "Coin Change",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/coin-change/",
-    "problem_statement": "Given coins of different values and a total amount, compute the fewest number of coins needed to make that amount or return -1 if impossible.",
+    "problem_statement": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money. Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1. You may assume that you have an infinite number of each kind of coin.",
     "examples": [
         {
             "input": "coins = [1,2,5], amount = 11",
             "output": "3",
-            "explanation": "11 = 5 + 5 + 1."
+            "explanation": "11 = 5 + 5 + 1"
+        },
+        {
+            "input": "coins = [2], amount = 3",
+            "output": "-1",
+            "explanation": "You cannot make 3 with coins of 2."
         }
     ],
     "constraints": [
         "1 <= coins.length <= 12",
-        "1 <= amount <= 10^4"
+        "1 <= coins[i] <= 2^31 - 1",
+        "0 <= amount <= 10^4"
     ],
-    "intuition": "Use DP to build the minimum coins for each amount from 0 to target.",
+    "intuition": "This is an unbounded knapsack problem where we need to find the minimum number of items (coins) to reach a target sum, with unlimited supply of each item.",
     "approaches": [
         {
-            "name": "Unbounded Knapsack DP",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "For each coin, decide to use it or not, recursing on the remaining amount. Base: if amount == 0, return 0; if amount < 0 or no coins left, return infinity.",
+            "time": "O(2^amount) in worst case",
+            "space": "O(amount) recursion stack",
+            "why_not": "Exponential time due to exploring all combinations. Fails for amount > 20 or so.",
+            "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        return dp(coins, amount, 0);\n    }\n\n    private int dp(int[] coins, int amount, int index) {\n        if (amount == 0) return 0;\n        if (amount < 0 || index == coins.length) return Integer.MAX_VALUE;\n        // Use current coin\n        int use = dp(coins, amount - coins[index], index);\n        if (use != Integer.MAX_VALUE) use += 1;\n        // Skip current coin\n        int skip = dp(coins, amount, index + 1);\n        return Math.min(use, skip);\n    }\n}",
+            "interview_commentary": [
+                "This approach tries every possible combination of coins. For each coin, I can choose to include it (subtract from amount) or skip it.",
+                "The recursion depth is up to amount, and at each level, I branch into two choices, leading to exponential time.",
+                "This will work for small amounts but TLE for larger ones due to overlapping subproblems."
+            ]
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Same recursion, but memoize on (amount, index) to avoid recomputing subproblems.",
+            "time": "O(amount * coins.length)",
+            "space": "O(amount * coins.length) for memo",
+            "why_not": "Still recursive, but bottom-up is iterative and can be more space-efficient.",
+            "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        int[][] memo = new int[amount + 1][coins.length];\n        for (int[] row : memo) Arrays.fill(row, -1);\n        int res = dp(coins, amount, 0, memo);\n        return res == Integer.MAX_VALUE ? -1 : res;\n    }\n\n    private int dp(int[] coins, int amount, int index, int[][] memo) {\n        if (amount == 0) return 0;\n        if (amount < 0 || index == coins.length) return Integer.MAX_VALUE;\n        if (memo[amount][index] != -1) return memo[amount][index];\n        int use = dp(coins, amount - coins[index], index, memo);\n        if (use != Integer.MAX_VALUE) use += 1;\n        int skip = dp(coins, amount, index + 1, memo);\n        return memo[amount][index] = Math.min(use, skip);\n    }\n}",
+            "interview_commentary": [
+                "To optimize, I'll memoize on the state (remaining amount, current coin index).",
+                "This reduces time to O(amount * n) where n is number of coins, since each state is computed once.",
+                "Space is O(amount * n) for the memo table."
+            ]
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Iterate through coins and amounts to compute the minimum coin count for every intermediate sum.",
-            "time": "O(n * amount)",
+            "description": "Use a dp array where dp[i] is the minimum coins for amount i. Initialize dp[0]=0, others to infinity. For each coin, update dp[i] = min(dp[i], dp[i-coin] + 1).",
+            "time": "O(coins.length * amount)",
             "space": "O(amount)",
-            "why_not": "Greedy is not always correct for arbitrary coin sets.",
-            "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        int[] dp = new int[amount + 1];\n        Arrays.fill(dp, amount + 1);\n        dp[0] = 0;\n        for (int coin : coins) {\n            for (int i = coin; i <= amount; i++) {\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n            }\n        }\n        return dp[amount] > amount ? -1 : dp[amount];\n    }\n}"
+            "why_not": "This is the standard optimal solution for coin change.",
+            "code": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        int[] dp = new int[amount + 1];\n        Arrays.fill(dp, amount + 1);\n        dp[0] = 0;\n        for (int coin : coins) {\n            for (int i = coin; i <= amount; i++) {\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n            }\n        }\n        return dp[amount] > amount ? -1 : dp[amount];\n    }\n}",
+            "interview_commentary": [
+                "Bottom-up: start from 0 and build up to amount. For each coin, iterate through all amounts >= coin and update the minimum.",
+                "This ensures we consider all coins for each amount, and since coins are unlimited, we can use the same coin multiple times.",
+                "Time is O(n * amount), space O(amount)."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why use amount+1 as initial dp values?",
-            "a": "Because it represents an impossible large count and simplifies the minimum comparison."
+            "q": "Why initialize dp with amount+1?",
+            "a": "Because amount+1 is larger than any possible coin count (since max coins would be amount/1 = amount), so it acts as infinity for min comparisons."
         },
         {
-            "q": "Can greedy work for all coin sets?",
-            "a": "No, greedy only works for canonical currency systems; DP is needed for arbitrary coin values."
+            "q": "What if coins include 0 or negative values?",
+            "a": "The problem assumes positive coins, but if 0, it would cause infinite loop; negative would make it unbounded."
+        },
+        {
+            "q": "How does this differ from coin change II (number of ways)?",
+            "a": "Coin change II counts combinations, this counts minimum coins. DP is similar but tracks count vs min."
+        },
+        {
+            "q": "Can greedy work here?",
+            "a": "Only if coins are canonical (like US currency), otherwise DP is needed for correctness."
         }
     ]
 }

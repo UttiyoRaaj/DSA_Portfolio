@@ -4,8 +4,13 @@
     "title": "Unique Paths",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/unique-paths/",
-    "problem_statement": "Count the number of unique paths from the top-left to the bottom-right corner of an m x n grid, moving only down or right.",
+    "problem_statement": "There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time. Given the two integers m and n, return the number of possible unique paths that the robot can take to reach the bottom-right corner. The test cases are generated so that the answer will be less than or equal to 2 * 10^9.",
     "examples": [
+        {
+            "input": "m = 3, n = 2",
+            "output": "3",
+            "explanation": "From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:\n1. Right -> Down -> Down\n2. Down -> Down -> Right\n3. Down -> Right -> Down"
+        },
         {
             "input": "m = 3, n = 7",
             "output": "28",
@@ -15,27 +20,71 @@
     "constraints": [
         "1 <= m, n <= 100"
     ],
-    "intuition": "Every cell can be reached from above or from the left, so add the path counts from those cells.",
+    "intuition": "This is a combinatorial problem: to go from (0,0) to (m-1,n-1), you need (m-1) down moves and (n-1) right moves, total paths = C((m-1)+(n-1), m-1). But we can solve it with DP.",
     "approaches": [
         {
-            "name": "Grid DP",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Recurse from (i,j). If at bottom-right, return 1. Else, sum paths from down and right. Base: if out of bounds, 0.",
+            "time": "O(2^{m+n})",
+            "space": "O(m + n) stack",
+            "why_not": "Exponential due to recomputing paths to the same cell. Overlapping subproblems.",
+            "code": "class Solution {\n    public int uniquePaths(int m, int n) {\n        return dp(0, 0, m, n);\n    }\n\n    private int dp(int i, int j, int m, int n) {\n        if (i == m - 1 && j == n - 1) return 1;\n        if (i >= m || j >= n) return 0;\n        return dp(i + 1, j, m, n) + dp(i, j + 1, m, n);\n    }\n}",
+            "interview_commentary": [
+                "This is the straightforward recursive approach. From each cell, try moving down or right, and sum the paths from there.",
+                "The problem is that the same cell is reached in many ways, leading to exponential time.",
+                "This works for small m,n but not for 100x100."
+            ]
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Same recursion, but memoize on (i,j) to store number of paths from that cell.",
+            "time": "O(m * n)",
+            "space": "O(m * n) for memo",
+            "why_not": "Bottom-up is iterative and can be done in O(n) space.",
+            "code": "class Solution {\n    public int uniquePaths(int m, int n) {\n        int[][] memo = new int[m][n];\n        for (int[] row : memo) Arrays.fill(row, -1);\n        return dp(0, 0, m, n, memo);\n    }\n\n    private int dp(int i, int j, int m, int n, int[][] memo) {\n        if (i == m - 1 && j == n - 1) return 1;\n        if (i >= m || j >= n) return 0;\n        if (memo[i][j] != -1) return memo[i][j];\n        return memo[i][j] = dp(i + 1, j, m, n, memo) + dp(i, j + 1, m, n, memo);\n    }\n}",
+            "interview_commentary": [
+                "To optimize, I'll memoize on the position (i,j).",
+                "This ensures each cell is computed once, time O(m*n).",
+                "Space O(m*n) for the memo table."
+            ]
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Compute dp[i][j] as the sum of dp[i-1][j] and dp[i][j-1], with boundaries initialized to 1.",
+            "description": "Use a 2D dp table where dp[i][j] is paths to (i,j). First row and column = 1. For others, dp[i][j] = dp[i-1][j] + dp[i][j-1].",
             "time": "O(m * n)",
-            "space": "O(n)",
-            "why_not": "Computing all paths recursively is exponential without reuse.",
-            "code": "class Solution {\n    public int uniquePaths(int m, int n) {\n        int[] dp = new int[n];\n        Arrays.fill(dp, 1);\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                dp[j] += dp[j - 1];\n            }\n        }\n        return dp[n - 1];\n    }\n}"
+            "space": "O(m * n)",
+            "why_not": "Space can be optimized to O(n) with a 1D array.",
+            "code": "class Solution {\n    public int uniquePaths(int m, int n) {\n        int[][] dp = new int[m][n];\n        for (int i = 0; i < m; i++) dp[i][0] = 1;\n        for (int j = 0; j < n; j++) dp[0][j] = 1;\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];\n            }\n        }\n        return dp[m - 1][n - 1];\n    }\n}",
+            "interview_commentary": [
+                "Bottom-up: initialize the first row and column to 1, since there's only one way to reach them (all right or all down).",
+                "For each cell, the number of ways is the sum from above and from left.",
+                "This fills the grid iteratively.",
+                "Time O(m*n), space O(m*n)."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "How are boundary cells initialized?",
-            "a": "The first row and first column have exactly one path each."
+            "q": "Why is the first row and column 1?",
+            "a": "Because to reach any cell in the first row, you can only come from the left (all right moves). Similarly for the first column (all down moves)."
         },
         {
-            "q": "Why can space be reduced to one row?",
-            "a": "Current row values only depend on the current row left cell and the previous row same column."
+            "q": "How to optimize space?",
+            "a": "Use a 1D array of size n, updating it row by row: for each row, for j from 1 to n-1, dp[j] += dp[j-1]."
+        },
+        {
+            "q": "What's the combinatorial formula?",
+            "a": "Total moves: (m-1) down + (n-1) right. Number of paths: C((m-1)+(n-1), m-1)."
+        },
+        {
+            "q": "What if there are obstacles?",
+            "a": "That's Unique Paths II, where you set dp[i][j] = 0 if obstacle, else same."
         }
     ]
 }

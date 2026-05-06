@@ -26,7 +26,12 @@
             "time": "O(1) per operation",
             "space": "O(n)",
             "why_not": "Searching the stack for the minimum each time is O(n) and too slow.",
-            "code": "class MinStack {\n    private Deque<int[]> stack;\n\n    public MinStack() {\n        stack = new ArrayDeque<>();\n    }\n\n    public void push(int val) {\n        if (stack.isEmpty()) {\n            stack.push(new int[]{val, val});\n        } else {\n            stack.push(new int[]{val, Math.min(val, stack.peek()[1])});\n        }\n    }\n\n    public void pop() {\n        stack.pop();\n    }\n\n    public int top() {\n        return stack.peek()[0];\n    }\n\n    public int getMin() {\n        return stack.peek()[1];\n    }\n}"
+            "code": "class MinStack {\n    private Deque<int[]> stack;\n\n    public MinStack() {\n        stack = new ArrayDeque<>();\n    }\n\n    public void push(int val) {\n        if (stack.isEmpty()) {\n            stack.push(new int[]{val, val});\n        } else {\n            stack.push(new int[]{val, Math.min(val, stack.peek()[1])});\n        }\n    }\n\n    public void pop() {\n        stack.pop();\n    }\n\n    public int top() {\n        return stack.peek()[0];\n    }\n\n    public int getMin() {\n        return stack.peek()[1];\n    }\n}",
+            "interview_commentary": [
+                "Store the minimum value alongside each pushed element to make getMin constant-time.",
+                "When popping, the current minimum naturally reverts to the previous stored minimum.",
+                "This avoids scanning the stack for the minimum and keeps all operations O(1)."
+            ]
         }
     ],
     "interview_qa": [

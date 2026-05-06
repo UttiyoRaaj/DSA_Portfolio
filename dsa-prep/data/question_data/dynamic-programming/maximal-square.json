@@ -4,38 +4,72 @@
     "title": "Maximal Square",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/maximal-square/",
-    "problem_statement": "Given a binary matrix, find the largest square containing only 1s and return its area.",
+    "problem_statement": "Given a 2D binary matrix filled with '0's and '1's, find the largest square containing only '1's and return its area.",
     "examples": [
         {
             "input": "matrix = [[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]",
             "output": "4",
-            "explanation": "The largest square has side length 2."
+            "explanation": "The largest square has side length 2, so the area is 4."
+        },
+        {
+            "input": "matrix = [[\"0\",\"1\"],[\"1\",\"0\"]]",
+            "output": "1",
+            "explanation": "The largest square of 1's has side length 1."
         }
     ],
     "constraints": [
-        "1 <= matrix.length, matrix[0].length <= 300"
+        "1 <= matrix.length, matrix[0].length <= 300",
+        "matrix[i][j] is '0' or '1'."
     ],
-    "intuition": "Each cell is the bottom-right corner of a square whose size depends on its top, left, and top-left neighbors.",
+    "intuition": "A square ending at a '1' cell can be one larger than the minimum square size of its top, left, and top-left neighbors.",
     "approaches": [
         {
-            "name": "DP for square sizes",
+            "name": "Brute Force Check",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "For each cell, try all possible square sizes and verify all cells in the square are '1'.",
+            "time": "O(m * n * min(m,n)^2)",
+            "space": "O(1)",
+            "why_not": "Too slow because each possible square is validated character by character."
+            ,"code": "class Solution {\n    public int maximalSquare(char[][] matrix) {\n        int m = matrix.length, n = matrix[0].length;\n        int maxSide = 0;\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (matrix[i][j] == '1') {\n                    int currentMax = Math.min(m - i, n - j);\n                    for (int side = 1; side <= currentMax; side++) {\n                        if (isAllOnes(matrix, i, j, side)) {\n                            maxSide = Math.max(maxSide, side);\n                        } else {\n                            break;\n                        }\n                    }\n                }\n            }\n        }\n        return maxSide * maxSide;\n    }\n\n    private boolean isAllOnes(char[][] matrix, int row, int col, int side) {\n        for (int i = row; i < row + side; i++) {\n            for (int j = col; j < col + side; j++) {\n                if (matrix[i][j] == '0') return false;\n            }\n        }\n        return true;\n    }\n}"
+        },
+        {
+            "name": "2D Dynamic Programming",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Build a 2D dp table where dp[i][j] is the side length of the largest square ending at cell (i,j).",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "Correct and easy to reason about, but can be optimized in space."
+            ,"code": "class Solution {\n    public int maximalSquare(char[][] matrix) {\n        int m = matrix.length, n = matrix[0].length;\n        int[][] dp = new int[m + 1][n + 1];\n        int maxSide = 0;\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                if (matrix[i - 1][j - 1] == '1') {\n                    dp[i][j] = Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;\n                    maxSide = Math.max(maxSide, dp[i][j]);\n                }\n            }\n        }\n        return maxSide * maxSide;\n    }\n}"
+        },
+        {
+            "name": "Space-Optimized DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "dp[i][j] stores the side length of the largest square ending at cell (i,j).",
+            "description": "Use a single row plus a previous-top-left variable to compute dp values in O(n) space.",
             "time": "O(m * n)",
             "space": "O(n)",
-            "why_not": "Searching all squares directly would be too slow.",
-            "code": "class Solution {\n    public int maximalSquare(char[][] matrix) {\n        int m = matrix.length, n = matrix[0].length;\n        int[] dp = new int[n + 1];\n        int maxSide = 0, prev = 0;\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                int temp = dp[j];\n                if (matrix[i - 1][j - 1] == '1') {\n                    dp[j] = Math.min(Math.min(dp[j - 1], dp[j]), prev) + 1;\n                    maxSide = Math.max(maxSide, dp[j]);\n                } else {\n                    dp[j] = 0;\n                }\n                prev = temp;\n            }\n        }\n        return maxSide * maxSide;\n    }\n}"
+            "why_not": "This is the most space-efficient DP solution for this problem."
+            ,"code": "class Solution {\n    public int maximalSquare(char[][] matrix) {\n        int m = matrix.length, n = matrix[0].length;\n        int[] dp = new int[n + 1];\n        int maxSide = 0, prev = 0;\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                int temp = dp[j];\n                if (matrix[i - 1][j - 1] == '1') {\n                    dp[j] = Math.min(Math.min(dp[j - 1], dp[j]), prev) + 1;\n                    maxSide = Math.max(maxSide, dp[j]);\n                } else {\n                    dp[j] = 0;\n                }\n                prev = temp;\n            }\n        }\n        return maxSide * maxSide;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the state transition for maximal square?",
-            "a": "If matrix[i][j] == 1, dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1."
+            "q": "What is the dp transition for maximal square?",
+            "a": "If matrix[i][j] == '1', dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])."
         },
         {
-            "q": "Why does this work?",
-            "a": "A square ending at the current cell can extend only as far as all three neighboring squares allow."
+            "q": "Why does the minimum of three neighbors matter?",
+            "a": "Because all three neighbors must support a square of that size to extend the current square."
+        },
+        {
+            "q": "Why can a space-optimized solution use only one row?",
+            "a": "Each dp[i][j] depends only on the left, top, and top-left cells from the previous row or current row."
+        },
+        {
+            "q": "What value should dp[0][j] and dp[i][0] have?",
+            "a": "Zero, representing an empty boundary outside the matrix."
         }
     ]
 }

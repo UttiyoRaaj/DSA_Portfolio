@@ -26,7 +26,12 @@
             "time": "O(n)",
             "space": "O(1)",
             "why_not": "Brute force checking all pairs is O(n^2) and too slow.",
-            "code": "class Solution {\n    public int maxArea(int[] height) {\n        int left = 0, right = height.length - 1;\n        int max = 0;\n        while (left < right) {\n            int width = right - left;\n            int minHeight = Math.min(height[left], height[right]);\n            max = Math.max(max, width * minHeight);\n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return max;\n    }\n}"
+            "code": "class Solution {\n    public int maxArea(int[] height) {\n        int left = 0, right = height.length - 1;\n        int max = 0;\n        while (left < right) {\n            int width = right - left;\n            int minHeight = Math.min(height[left], height[right]);\n            max = Math.max(max, width * minHeight);\n            if (height[left] < height[right]) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return max;\n    }\n}",
+            "interview_commentary": [
+                "Always move the shorter boundary because the area is limited by the smaller height.",
+                "The widest possible width is considered first, and then the window shrinks to seek taller boundaries.",
+                "This greedy two-pointer strategy guarantees the maximum area in one pass."
+            ]
         }
     ],
     "interview_qa": [

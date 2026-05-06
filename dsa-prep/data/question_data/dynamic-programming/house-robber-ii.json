@@ -4,39 +4,72 @@
     "title": "House Robber II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/house-robber-ii/",
-    "problem_statement": "Extend House Robber to a circular street where the first and last houses are adjacent.",
+    "problem_statement": "A thief is planning to rob houses along a circular street. Each house has a certain amount of money. Adjacent houses are connected, so the first and last houses are also adjacent. Return the maximum amount the thief can rob without alerting the police.",
     "examples": [
         {
             "input": "nums = [2,3,2]",
             "output": "3",
-            "explanation": "Rob house 2 for 3."
+            "explanation": "Rob house 2 for 3 (cannot rob both 2 and 2 because they are adjacent in the circle)."
+        },
+        {
+            "input": "nums = [1,2,3,1]",
+            "output": "4",
+            "explanation": "Rob houses 1 and 3 to get 1 + 3 = 4."
         }
     ],
     "constraints": [
         "1 <= nums.length <= 100",
         "0 <= nums[i] <= 1000"
     ],
-    "intuition": "Solve two linear House Robber variations excluding either the first or last house.",
-    "approaches": [
+    "intuition": "Because the houses are circular, you cannot rob both the first and last house. Solve two linear cases: exclude the first house or exclude the last house."
+    ,"approaches": [
         {
-            "name": "Two-pass DP for circular array",
+            "name": "Brute Force Circular Search",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try both possibilities for whether the first house is robbed, then solve the remaining linear robber problem for each case.",
+            "time": "O(2 * n)",
+            "space": "O(1)",
+            "why_not": "This is still linear time and is the natural reduction rather than an exponential brute force."
+            ,"code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 1) return nums[0];\n        return Math.max(robRange(nums, 0, nums.length - 2), robRange(nums, 1, nums.length - 1));\n    }\n\n    private int robRange(int[] nums, int start, int end) {\n        int prev = 0, curr = 0;\n        for (int i = start; i <= end; i++) {\n            int next = Math.max(curr, prev + nums[i]);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}"
+        },
+        {
+            "name": "Memoized Linear Robber",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Use memoization for the linear robber helper to compute the best robbery for a given range. Then take the maximum of the two valid circular cases.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Linear DP is simpler and uses constant space, but memoization shows the subproblem structure explicitly."
+            ,"code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 1) return nums[0];\n        return Math.max(robMemo(nums, 0, nums.length - 2), robMemo(nums, 1, nums.length - 1));\n    }\n\n    private int robMemo(int[] nums, int start, int end) {\n        int[] memo = new int[nums.length];\n        Arrays.fill(memo, -1);\n        return helper(nums, start, end, memo);\n    }\n\n    private int helper(int[] nums, int i, int end, int[] memo) {\n        if (i > end) return 0;\n        if (memo[i] != -1) return memo[i];\n        int rob = nums[i] + helper(nums, i + 2, end, memo);\n        int skip = helper(nums, i + 1, end, memo);\n        memo[i] = Math.max(rob, skip);\n        return memo[i];\n    }\n}"
+        },
+        {
+            "name": "Bottom-Up Linear DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Compute the best robbery excluding the first house and excluding the last house, then take the maximum.",
+            "description": "Compute the best robbery for two linear ranges and take the maximum. Use constant space for each linear run.",
             "time": "O(n)",
             "space": "O(1)",
-            "why_not": "Trying all circular combinations would be inefficient; reduce to linear cases instead.",
-            "code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 1) return nums[0];\n        return Math.max(robRange(nums, 0, nums.length - 2), robRange(nums, 1, nums.length - 1));\n    }\n\n    private int robRange(int[] nums, int start, int end) {\n        int prev = 0, curr = 0;\n        for (int i = start; i <= end; i++) {\n            int next = Math.max(curr, prev + nums[i]);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}"
+            "why_not": "This is the standard optimal solution for circular house robber."
+            ,"code": "class Solution {\n    public int rob(int[] nums) {\n        if (nums.length == 1) return nums[0];\n        return Math.max(robRange(nums, 0, nums.length - 2), robRange(nums, 1, nums.length - 1));\n    }\n\n    private int robRange(int[] nums, int start, int end) {\n        int prev = 0, curr = 0;\n        for (int i = start; i <= end; i++) {\n            int next = Math.max(curr, prev + nums[i]);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Why split the circular problem into two ranges?",
-            "a": "Because either the first or last house must be excluded to avoid the circular adjacency conflict."
+            "q": "Why do we consider two ranges?",
+            "a": "Because the circle prevents robbing both the first and last house, so one of them must be excluded."
         },
         {
-            "q": "What if nums has only one house?",
-            "a": "Return its value directly because there is no adjacency restriction beyond itself."
+            "q": "What if nums.length == 1?",
+            "a": "Return nums[0], since there are no adjacent conflicts."
+        },
+        {
+            "q": "How is the linear helper function defined?",
+            "a": "It returns the maximum rob amount for a contiguous range of houses using the standard House Robber recurrence."
+        },
+        {
+            "q": "Can this be done in constant space?",
+            "a": "Yes. The linear helper only needs two variables to track the last two best values."
         }
     ]
 }

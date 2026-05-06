@@ -4,40 +4,87 @@
     "title": "Number of Islands",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/number-of-islands/",
-    "problem_statement": "Count islands in a grid where 1s represent land and 0s represent water, with adjacent land connected horizontally or vertically.",
+    "problem_statement": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.",
     "examples": [
         {
-            "input": "grid = [[1,1,0,0],[1,1,0,0],[0,0,1,0],[0,0,0,1]]",
-            "output": "3",
-            "explanation": "There are three separate islands."
+            "input": "grid = [\n  [\"1\",\"1\",\"1\",\"1\",\"0\"],\n  [\"1\",\"1\",\"0\",\"1\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"0\",\"0\"]\n]",
+            "output": "1"
+        },
+        {
+            "input": "grid = [\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"1\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]",
+            "output": "3"
         }
     ],
     "constraints": [
         "m == grid.length",
         "n == grid[i].length",
-        "1 <= m, n <= 300"
+        "1 <= m, n <= 300",
+        "grid[i][j] is '0' or '1'."
     ],
-    "intuition": "Traverse each unvisited land cell with DFS/BFS and mark visited cells as part of the same island.",
+    "intuition": "Each connected component of '1's (land) forms an island. We can count the number of such components using traversal algorithms.",
     "approaches": [
         {
-            "name": "Grid DFS traversal",
+            "name": "DFS Traversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "For each 1 cell, flood-fill the island and increment the island count.",
+            "description": "Iterate through the grid. When finding a '1', increment island count and DFS to mark all connected '1's as visited (change to '0').",
             "time": "O(m * n)",
+            "space": "O(m * n) worst case recursion stack",
+            "why_not": "BFS is iterative and avoids stack overflow; Union-Find is overkill for grids.",
+            "code": "class Solution {\n    public int numIslands(char[][] grid) {\n        int count = 0;\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == '1') {\n                    count++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        return count;\n    }\n    private void dfs(char[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] != '1') return;\n        grid[i][j] = '0';\n        dfs(grid, i + 1, j);\n        dfs(grid, i - 1, j);\n        dfs(grid, i, j + 1);\n        dfs(grid, i, j - 1);\n    }\n}",
+            "interview_commentary": [
+                "This is a graph traversal problem where each cell is a node, connected to up/down/left/right neighbors.",
+                "I'll iterate through each cell. When I find a '1', it's the start of a new island, so increment count and flood-fill to mark all connected land as visited.",
+                "Changing '1' to '0' in-place saves space for a visited array."
+            ]
+        },
+        {
+            "name": "BFS Traversal",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Same as DFS but use a queue for BFS. When finding a '1', enqueue and explore level by level, marking visited.",
+            "time": "O(m * n)",
+            "space": "O(min(m, n)) queue",
+            "why_not": "DFS is recursive; BFS is iterative and better for large grids.",
+            "code": "class Solution {\n    public int numIslands(char[][] grid) {\n        int count = 0;\n        int[][] directions = {{0,1},{1,0},{0,-1},{-1,0}};\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == '1') {\n                    count++;\n                    Queue<int[]> queue = new LinkedList<>();\n                    queue.add(new int[]{i, j});\n                    grid[i][j] = '0';\n                    while (!queue.isEmpty()) {\n                        int[] curr = queue.poll();\n                        for (int[] dir : directions) {\n                            int ni = curr[0] + dir[0], nj = curr[1] + dir[1];\n                            if (ni >= 0 && ni < grid.length && nj >= 0 && nj < grid[0].length && grid[ni][nj] == '1') {\n                                grid[ni][nj] = '0';\n                                queue.add(new int[]{ni, nj});\n                            }\n                        }\n                    }\n                }\n            }\n        }\n        return count;\n    }\n}",
+            "interview_commentary": [
+                "BFS is similar to DFS but uses a queue to explore level by level.",
+                "This avoids recursion stack issues, which is good for large grids (300x300).",
+                "Same time complexity, but space is better as queue size is bounded by grid width."
+            ]
+        },
+        {
+            "name": "Union-Find",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Treat each land cell as a set. Union adjacent lands. Count the number of distinct roots for land cells.",
+            "time": "O(m * n * α(m*n))",
             "space": "O(m * n)",
-            "why_not": "Union-find works too, but DFS is simpler for counting islands in a grid.",
-            "code": "class Solution {\n    public int numIslands(char[][] grid) {\n        int count = 0;\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == '1') {\n                    count++;\n                    dfs(grid, i, j);\n                }\n            }\n        }\n        return count;\n    }\n    private void dfs(char[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] != '1') return;\n        grid[i][j] = '0';\n        dfs(grid, i + 1, j);\n        dfs(grid, i - 1, j);\n        dfs(grid, i, j + 1);\n        dfs(grid, i, j - 1);\n    }\n}"
+            "why_not": "Overkill for this problem; traversal is simpler and more intuitive.",
+            "code": "class Solution {\n    public int numIslands(char[][] grid) {\n        if (grid == null || grid.length == 0) return 0;\n        int m = grid.length, n = grid[0].length;\n        UnionFind uf = new UnionFind(m * n);\n        int[][] directions = {{0,1},{1,0}};\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (grid[i][j] == '1') {\n                    int idx = i * n + j;\n                    for (int[] dir : directions) {\n                        int ni = i + dir[0], nj = j + dir[1];\n                        if (ni < m && nj < n && grid[ni][nj] == '1') {\n                            int nidx = ni * n + nj;\n                            uf.union(idx, nidx);\n                        }\n                    }\n                }\n            }\n        }\n        Set<Integer> roots = new HashSet<>();\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (grid[i][j] == '1') {\n                    roots.add(uf.find(i * n + j));\n                }\n            }\n        }\n        return roots.size();\n    }\n    class UnionFind {\n        int[] parent;\n        UnionFind(int size) {\n            parent = new int[size];\n            for (int i = 0; i < size; i++) parent[i] = i;\n        }\n        int find(int x) {\n            if (parent[x] != x) parent[x] = find(parent[x]);\n            return parent[x];\n        }\n        void union(int x, int y) {\n            int px = find(x), py = find(y);\n            if (px != py) parent[px] = py;\n        }\n    }\n}",
+            "interview_commentary": [
+                "Union-Find can count connected components. Each land cell is a node, union with right and down neighbors if land.",
+                "Then, collect all unique roots for land cells to get the count.",
+                "This is useful if you need to handle dynamic unions, but for static grids, traversal is easier."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why change land cells to water after visiting?",
-            "a": "To prevent revisiting the same island and to mark visited cells."
+            "q": "Why do we modify the grid in-place?",
+            "a": "To mark visited cells without extra space. Since the problem doesn't require the original grid, this is efficient."
         },
         {
-            "q": "What count does the algorithm return?",
-            "a": "The number of connected components of land in the grid."
+            "q": "What if the grid has no land?",
+            "a": "Return 0, as there are no islands."
+        },
+        {
+            "q": "How does this differ from connected components in a graph?",
+            "a": "It's the same: counting connected components where edges are between adjacent lands."
+        },
+        {
+            "q": "Can diagonal connections be considered?",
+            "a": "No, only horizontal and vertical as per the problem."
         }
     ]
 }

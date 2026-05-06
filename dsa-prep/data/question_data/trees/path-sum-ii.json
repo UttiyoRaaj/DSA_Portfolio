@@ -4,7 +4,7 @@
     "title": "Path Sum II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/path-sum-ii/",
-    "problem_statement": "Find all root-to-leaf paths where the sum of node values equals targetSum.",
+    "problem_statement": "Find all root-to-leaf paths in a binary tree where the sum of node values equals targetSum.",
     "examples": [
         {
             "input": "root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22",
@@ -13,29 +13,43 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [0, 5000]"
+        "The number of nodes is in the range [0, 5000]",
+        "-1000 <= Node.val <= 1000"
     ],
-    "intuition": "Use DFS with a path list and backtracking when exploring root-to-leaf paths.",
+    "intuition": "Explore each root-to-leaf path with DFS, tracking the current sum and backtracking when paths no longer match the target.",
     "approaches": [
         {
-            "name": "DFS with path recording",
+            "name": "DFS backtracking",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Traverse the tree recursively and track the current path sum, adding valid paths at leaf nodes.",
+            "description": "Traverse recursively, track the current path and remaining sum, and add valid root-to-leaf paths to the result.",
             "time": "O(n^2) in worst case due to path copies",
             "space": "O(n)",
-            "why_not": "Using BFS is possible but more cumbersome for path tracking.",
-            "code": "class Solution {\n    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(root, targetSum, new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(TreeNode node, int remaining, List<Integer> path, List<List<Integer>> result) {\n        if (node == null) return;\n        path.add(node.val);\n        if (node.left == null && node.right == null && remaining == node.val) {\n            result.add(new ArrayList<>(path));\n        } else {\n            backtrack(node.left, remaining - node.val, path, result);\n            backtrack(node.right, remaining - node.val, path, result);\n        }\n        path.remove(path.size() - 1);\n    }\n}"
+            "why_not": "BFS is harder for root-to-leaf path collection and requires additional tracking for partial paths.",
+            "code": "class Solution {\n    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {\n        List<List<Integer>> result = new ArrayList<>();\n        backtrack(root, targetSum, new ArrayList<>(), result);\n        return result;\n    }\n\n    private void backtrack(TreeNode node, int remaining, List<Integer> path, List<List<Integer>> result) {\n        if (node == null) return;\n        path.add(node.val);\n        if (node.left == null && node.right == null && remaining == node.val) {\n            result.add(new ArrayList<>(path));\n        } else {\n            backtrack(node.left, remaining - node.val, path, result);\n            backtrack(node.right, remaining - node.val, path, result);\n        }\n        path.remove(path.size() - 1);\n    }\n}",
+            "interview_commentary": [
+                "Backtracking adds and removes nodes as the path changes.",
+                "Only add paths at leaf nodes when the remaining sum matches.",
+                "Copy the path before adding to results to preserve state."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "How do you handle path state?",
-            "a": "Use backtracking to add and remove nodes from the current path."
+            "q": "How do you maintain the current path?",
+            "a": "Use a list that adds the current node before recursion and removes it after exploring children."
         },
         {
-            "q": "When do you add a path to results?",
-            "a": "When you reach a leaf and the remaining sum equals the leaf value."
+            "q": "When do you record a valid path?",
+            "a": "When you reach a leaf and the remaining sum equals the leaf’s value."
+        },
+        {
+            "q": "Why copy the path when adding to results?",
+            "a": "Because the path list is modified during backtracking."
+        },
+        {
+            "q": "What is the worst-case complexity?",
+            "a": "O(n^2) when many paths exist and each path is copied into the result."
         }
     ]
 }

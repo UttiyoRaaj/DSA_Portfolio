@@ -25,7 +25,12 @@
             "time": "O(Catalan(n))",
             "space": "O(Catalan(n))",
             "why_not": "Generating all strings and filtering is much less efficient.",
-            "code": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<String> result = new ArrayList<>();\n        backtrack(result, new StringBuilder(), 0, 0, n);\n        return result;\n    }\n\n    private void backtrack(List<String> result, StringBuilder current, int open, int close, int max) {\n        if (current.length() == max * 2) {\n            result.add(current.toString());\n            return;\n        }\n        if (open < max) {\n            current.append('(');\n            backtrack(result, current, open + 1, close, max);\n            current.deleteCharAt(current.length() - 1);\n        }\n        if (close < open) {\n            current.append(')');\n            backtrack(result, current, open, close + 1, max);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n}"
+            "code": "class Solution {\n    public List<String> generateParenthesis(int n) {\n        List<String> result = new ArrayList<>();\n        backtrack(result, new StringBuilder(), 0, 0, n);\n        return result;\n    }\n\n    private void backtrack(List<String> result, StringBuilder current, int open, int close, int max) {\n        if (current.length() == max * 2) {\n            result.add(current.toString());\n            return;\n        }\n        if (open < max) {\n            current.append('(');\n            backtrack(result, current, open + 1, close, max);\n            current.deleteCharAt(current.length() - 1);\n        }\n        if (close < open) {\n            current.append(')');\n            backtrack(result, current, open, close + 1, max);\n            current.deleteCharAt(current.length() - 1);\n        }\n    }\n}",
+            "interview_commentary": [
+                "Backtracking generates valid parentheses by adding open parens when possible and close parens only when valid.",
+                "The number of open parens must never be less than closed parens to keep prefixes valid.",
+                "This prunes invalid sequences early and generates only well-formed combinations."
+            ]
         }
     ],
     "interview_qa": [

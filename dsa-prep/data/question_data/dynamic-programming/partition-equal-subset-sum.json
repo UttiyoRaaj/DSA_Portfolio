@@ -4,39 +4,72 @@
     "title": "Partition Equal Subset Sum",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/partition-equal-subset-sum/",
-    "problem_statement": "Determine whether the array can be partitioned into two subsets with equal sum.",
+    "problem_statement": "Given a non-empty array nums containing only positive integers, determine whether the array can be partitioned into two subsets whose sums are equal.",
     "examples": [
         {
             "input": "nums = [1,5,11,5]",
             "output": "true",
             "explanation": "The array can be partitioned into [1,5,5] and [11]."
+        },
+        {
+            "input": "nums = [1,2,3,5]",
+            "output": "false",
+            "explanation": "No partition produces equal subset sums."
         }
     ],
     "constraints": [
         "1 <= nums.length <= 200",
         "1 <= nums[i] <= 100"
     ],
-    "intuition": "Reduce to subset sum for target = total/2 and use DP to track reachable sums.",
+    "intuition": "If the total sum is even, the problem reduces to checking whether there is a subset that sums to total/2.",
     "approaches": [
         {
-            "name": "Subset sum DP",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try including or excluding each number and check whether a subset sums to half the total.",
+            "time": "O(2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential time due to trying every subset."
+            ,"code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum & 1) != 0) return false;\n        return dfs(nums, nums.length - 1, sum / 2);\n    }\n\n    private boolean dfs(int[] nums, int i, int target) {\n        if (target == 0) return true;\n        if (i < 0 || target < 0) return false;\n        return dfs(nums, i - 1, target - nums[i]) || dfs(nums, i - 1, target);\n    }\n}"
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Cache whether a subset sum is achievable for each index and remaining target.",
+            "time": "O(n * sum)",
+            "space": "O(n * sum)",
+            "why_not": "Bottom-up uses the same idea with less recursion overhead."
+            ,"code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum & 1) != 0) return false;\n        int target = sum / 2;\n        Boolean[][] memo = new Boolean[nums.length][target + 1];\n        return dfs(nums, nums.length - 1, target, memo);\n    }\n\n    private boolean dfs(int[] nums, int i, int target, Boolean[][] memo) {\n        if (target == 0) return true;\n        if (i < 0 || target < 0) return false;\n        if (memo[i][target] != null) return memo[i][target];\n        boolean result = dfs(nums, i - 1, target - nums[i], memo) || dfs(nums, i - 1, target, memo);\n        memo[i][target] = result;\n        return result;\n    }\n}"
+        },
+        {
+            "name": "Bottom-Up Subset Sum DP",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use a boolean DP array to mark achievable sums and check if half the total is reachable.",
+            "description": "Use a boolean DP array to mark reachable sums and determine whether target/2 is achievable.",
             "time": "O(n * sum)",
             "space": "O(sum)",
-            "why_not": "Brute force subset enumeration is exponential in n.",
-            "code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum & 1) != 0) return false;\n        int target = sum / 2;\n        boolean[] dp = new boolean[target + 1];\n        dp[0] = true;\n        for (int num : nums) {\n            for (int j = target; j >= num; j--) {\n                dp[j] = dp[j] || dp[j - num];\n            }\n        }\n        return dp[target];\n    }\n}"
+            "why_not": "This is the standard optimal approach for subset sum problems."
+            ,"code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum & 1) != 0) return false;\n        int target = sum / 2;\n        boolean[] dp = new boolean[target + 1];\n        dp[0] = true;\n        for (int num : nums) {\n            for (int j = target; j >= num; j--) {\n                dp[j] = dp[j] || dp[j - num];\n            }\n        }\n        return dp[target];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Why check total sum parity first?",
-            "a": "An odd total cannot be split into two equal integer subsets."
+            "q": "Why is total parity checked?",
+            "a": "If the total sum is odd, it cannot be split into two equal integer subsets."
         },
         {
-            "q": "What does dp[j] mean here?",
-            "a": "It means a subset sum of j is achievable with the processed numbers."
+            "q": "What does dp[j] represent?",
+            "a": "It indicates whether a subset sum of j is achievable with the numbers processed so far."
+        },
+        {
+            "q": "Why iterate backward through the dp array?",
+            "a": "To avoid reusing the same number more than once in the current iteration."
+        },
+        {
+            "q": "How does this relate to knapsack?",
+            "a": "It is a 0/1 knapsack problem where each number can be chosen at most once to achieve a target capacity."
         }
     ]
 }

@@ -4,39 +4,88 @@
     "title": "House Robber",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/house-robber/",
-    "problem_statement": "Given a list of non-negative integers representing money in houses, maximize robbery amount without robbing adjacent houses.",
+    "problem_statement": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night. Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.",
     "examples": [
         {
             "input": "nums = [1,2,3,1]",
             "output": "4",
-            "explanation": "Rob house 1 and 3 for 1 + 3 = 4."
+            "explanation": "Rob house 1 (money = 1) and then rob house 3 (money = 3). Total amount you can rob = 1 + 3 = 4."
+        },
+        {
+            "input": "nums = [2,7,9,3,1]",
+            "output": "12",
+            "explanation": "Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1). Total amount you can rob = 2 + 9 + 1 = 12."
         }
     ],
     "constraints": [
         "1 <= nums.length <= 100",
         "0 <= nums[i] <= 400"
     ],
-    "intuition": "Decide for each house whether to rob it or skip it based on prior results.",
+    "intuition": "For each house, decide whether to rob it (add its value to the max from two houses ago) or skip it (take the max from the previous house).",
     "approaches": [
         {
-            "name": "Linear DP with constant space",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "At each house, choose to rob it (add value, skip next) or skip it. Recurse on the rest.",
+            "time": "O(2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential due to exploring all robbery choices. Overlapping subproblems make it inefficient.",
+            "code": "class Solution {\n    public int rob(int[] nums) {\n        return dp(nums, 0);\n    }\n\n    private int dp(int[] nums, int index) {\n        if (index >= nums.length) return 0;\n        // Rob this house, skip next\n        int rob = nums[index] + dp(nums, index + 2);\n        // Skip this house\n        int skip = dp(nums, index + 1);\n        return Math.max(rob, skip);\n    }\n}",
+            "interview_commentary": [
+                "This is like a decision tree: for each house, I can rob it or not. If I rob it, I can't rob the next one.",
+                "The recursion will explore all paths, but many subproblems overlap — for example, the max from index 2 is computed multiple times.",
+                "This works for small n but will be slow for n=100."
+            ]
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Same recursion, but memoize the result for each index to avoid recomputation.",
+            "time": "O(n)",
+            "space": "O(n) for memo",
+            "why_not": "Bottom-up is iterative and can be done in constant space.",
+            "code": "class Solution {\n    public int rob(int[] nums) {\n        int[] memo = new int[nums.length];\n        Arrays.fill(memo, -1);\n        return dp(nums, 0, memo);\n    }\n\n    private int dp(int[] nums, int index, int[] memo) {\n        if (index >= nums.length) return 0;\n        if (memo[index] != -1) return memo[index];\n        int rob = nums[index] + dp(nums, index + 2, memo);\n        int skip = dp(nums, index + 1, memo);\n        return memo[index] = Math.max(rob, skip);\n    }\n}",
+            "interview_commentary": [
+                "To optimize, I'll use memoization. memo[i] will store the max robbery starting from house i.",
+                "This brings time to O(n) since each index is computed once.",
+                "Space is O(n) for the memo array."
+            ]
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Track the best amount when robbing or skipping each house and update iteratively.",
+            "description": "Use two variables to track the max robbery if we rob the previous house or not. Iterate through the array updating these values.",
             "time": "O(n)",
             "space": "O(1)",
-            "why_not": "Brute forcing all subsets is exponential and unnecessary.",
-            "code": "class Solution {\n    public int rob(int[] nums) {\n        int prev = 0, curr = 0;\n        for (int num : nums) {\n            int next = Math.max(curr, prev + num);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}"
+            "why_not": "This is optimal for space and time.",
+            "code": "class Solution {\n    public int rob(int[] nums) {\n        int prev = 0, curr = 0;\n        for (int num : nums) {\n            int next = Math.max(curr, prev + num);\n            prev = curr;\n            curr = next;\n        }\n        return curr;\n    }\n}",
+            "interview_commentary": [
+                "Bottom-up: prev is the max without robbing current, curr is the max up to previous.",
+                "For each house, next = max(curr, prev + num) — curr is skip, prev + num is rob.",
+                "Then shift prev = curr, curr = next.",
+                "This uses O(1) space by only keeping the last two states."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What recurrence does House Robber use?",
-            "a": "rob[i] = max(rob[i-1], rob[i-2] + nums[i]) because we cannot rob adjacent houses."
+            "q": "What is the recurrence relation?",
+            "a": "rob(i) = max(rob(i-1), rob(i-2) + nums[i]). rob(i-1) means skipping house i, rob(i-2) + nums[i] means robbing house i."
         },
         {
-            "q": "How is space optimized?",
-            "a": "Only keep the last two best values instead of the full dp array."
+            "q": "Why can't we rob adjacent houses?",
+            "a": "Because they have connected security systems that would alert the police."
+        },
+        {
+            "q": "How does this relate to maximum sum with no two adjacent elements?",
+            "a": "Exactly — it's the same problem. The DP captures that constraint."
+        },
+        {
+            "q": "What if the array is empty?",
+            "a": "Return 0, as there are no houses to rob."
         }
     ]
 }

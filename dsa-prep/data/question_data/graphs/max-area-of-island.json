@@ -4,40 +4,74 @@
     "title": "Max Area of Island",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/max-area-of-island/",
-    "problem_statement": "Return the size of the largest island in a binary grid, where islands are connected horizontally or vertically.",
+    "problem_statement": "You are given an m x n binary matrix grid. An island is a group of 1's (representing land) connected 4-directionally (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water. The area of an island is the number of cells with a value 1 in the island. Return the maximum area of an island in grid. If there is no island, return 0.",
     "examples": [
         {
-            "input": "grid = [[0,0,1,0],[1,1,1,0],[0,0,1,0],[1,0,0,0]]",
-            "output": "5",
-            "explanation": "The largest connected island includes five 1s."
+            "input": "grid = [[0,0,1,0,0,0,0,1,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,1,1,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,1,1,0,0,1,0,1,0,0],[0,1,0,0,1,1,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,0,1,1,0,0,0,0]]",
+            "output": "6",
+            "explanation": "The answer is not 11, because the island must be connected 4-directionally."
+        },
+        {
+            "input": "grid = [[0,0,0,0,0,0,0,0]]",
+            "output": "0",
+            "explanation": "No islands, return 0."
         }
     ],
     "constraints": [
         "m == grid.length",
         "n == grid[i].length",
-        "1 <= m, n <= 50"
+        "1 <= m, n <= 50",
+        "grid[i][j] is 0 or 1."
     ],
-    "intuition": "Use DFS/BFS to traverse each island and count contiguous land cells.",
+    "intuition": "Traverse the grid, for each land cell, explore the connected component using DFS or BFS, count the area, and track the max.",
     "approaches": [
         {
-            "name": "DFS flood-fill",
+            "name": "DFS Flood Fill",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Explore each unvisited land cell recursively, mark visited cells, and compute area size.",
+            "description": "Iterate through grid, when find 1, DFS to mark all connected 1s as visited (set to 0), count area.",
+            "time": "O(m * n)",
+            "space": "O(m * n) worst case recursion",
+            "why_not": "BFS uses queue, DFS uses stack; both fine, DFS is recursive.",
+            "code": "class Solution {\n    public int maxAreaOfIsland(int[][] grid) {\n        int maxArea = 0;\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == 1) {\n                    maxArea = Math.max(maxArea, dfs(grid, i, j));\n                }\n            }\n        }\n        return maxArea;\n    }\n    private int dfs(int[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == 0) return 0;\n        grid[i][j] = 0;\n        int area = 1;\n        area += dfs(grid, i+1, j);\n        area += dfs(grid, i-1, j);\n        area += dfs(grid, i, j+1);\n        area += dfs(grid, i, j-1);\n        return area;\n    }\n}",
+            "interview_commentary": [
+                "DFS explores 4 directions, marks visited by setting to 0.",
+                "Returns the area of the island.",
+                "Handles boundaries and water cells."
+            ]
+        },
+        {
+            "name": "BFS Flood Fill",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use queue for BFS, start from each 1, explore neighbors, count area.",
             "time": "O(m * n)",
             "space": "O(m * n)",
-            "why_not": "Recursive DFS is straightforward; BFS is also valid but does not change complexity.",
-            "code": "class Solution {\n    public int maxAreaOfIsland(int[][] grid) {\n        int maxArea = 0;\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                maxArea = Math.max(maxArea, dfs(grid, i, j));\n            }\n        }\n        return maxArea;\n    }\n    private int dfs(int[][] grid, int i, int j) {\n        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == 0) return 0;\n        grid[i][j] = 0;\n        return 1 + dfs(grid, i+1, j) + dfs(grid, i-1, j) + dfs(grid, i, j+1) + dfs(grid, i, j-1);\n    }\n}"
+            "why_not": "DFS is recursive, BFS iterative; both equivalent.",
+            "code": "class Solution {\n    public int maxAreaOfIsland(int[][] grid) {\n        int maxArea = 0;\n        int[][] dirs = {{0,1},{1,0},{0,-1},{-1,0}};\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                if (grid[i][j] == 1) {\n                    int area = 0;\n                    Queue<int[]> queue = new LinkedList<>();\n                    queue.add(new int[]{i, j});\n                    grid[i][j] = 0;\n                    while (!queue.isEmpty()) {\n                        int[] curr = queue.poll();\n                        area++;\n                        for (int[] d : dirs) {\n                            int ni = curr[0] + d[0], nj = curr[1] + d[1];\n                            if (ni >= 0 && ni < grid.length && nj >= 0 && nj < grid[0].length && grid[ni][nj] == 1) {\n                                grid[ni][nj] = 0;\n                                queue.add(new int[]{ni, nj});\n                            }\n                        }\n                    }\n                    maxArea = Math.max(maxArea, area);\n                }\n            }\n        }\n        return maxArea;\n    }\n}",
+            "interview_commentary": [
+                "BFS uses queue, processes level by level.",
+                "Marks visited in place.",
+                "Counts area during traversal."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why mark visited cells?",
-            "a": "To avoid counting the same land cell multiple times and to prevent infinite recursion."
+            "q": "Why modify grid in place?",
+            "a": "To mark visited without extra space."
         },
         {
-            "q": "Can BFS work here?",
-            "a": "Yes, BFS also traverses connected components level by level and computes area size."
+            "q": "What if grid is large?",
+            "a": "Recursion depth for DFS could be issue, use BFS."
+        },
+        {
+            "q": "How to count islands instead of max area?",
+            "a": "Increment counter each time start DFS/BFS."
+        },
+        {
+            "q": "Diagonal connections?",
+            "a": "No, only 4-directional."
         }
     ]
 }

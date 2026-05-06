@@ -26,7 +26,12 @@
             "time": "O(n)",
             "space": "O(n)",
             "why_not": "Counting brackets without order fails to detect nesting errors.",
-            "code": "class Solution {\n    public boolean isValid(String s) {\n        Deque<Character> stack = new ArrayDeque<>();\n        for (char c : s.toCharArray()) {\n            if (c == '(') stack.push(')');\n            else if (c == '[') stack.push(']');\n            else if (c == '{') stack.push('}');\n            else if (stack.isEmpty() || stack.pop() != c) return false;\n        }\n        return stack.isEmpty();\n    }\n}"
+            "code": "class Solution {\n    public boolean isValid(String s) {\n        Deque<Character> stack = new ArrayDeque<>();\n        for (char c : s.toCharArray()) {\n            if (c == '(') stack.push(')');\n            else if (c == '[') stack.push(']');\n            else if (c == '{') stack.push('}');\n            else if (stack.isEmpty() || stack.pop() != c) return false;\n        }\n        return stack.isEmpty();\n    }\n}",
+            "interview_commentary": [
+                "Push expected closing brackets onto the stack instead of opening brackets for simpler matching.",
+                "A mismatch or leftover opening bracket indicates an invalid string.",
+                "This handles nested brackets and different bracket types in one linear pass."
+            ]
         }
     ],
     "interview_qa": [

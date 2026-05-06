@@ -4,39 +4,72 @@
     "title": "Target Sum",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/target-sum/",
-    "problem_statement": "Given numbers and a target, count ways to assign + or - signs to each number to reach the target sum.",
+    "problem_statement": "Given an integer array nums and an integer target, return the number of ways to assign a '+' or '-' sign to each element such that the resulting sum equals target.",
     "examples": [
         {
             "input": "nums = [1,1,1,1,1], target = 3",
             "output": "5",
-            "explanation": "Five ways to reach 3 with signs."
+            "explanation": "There are five ways to assign signs to get sum 3."
+        },
+        {
+            "input": "nums = [1,2,3,4,5], target = 3",
+            "output": "3",
+            "explanation": "Three sign assignments yield the sum 3."
         }
     ],
     "constraints": [
         "1 <= nums.length <= 20",
         "0 <= nums[i] <= 1000"
     ],
-    "intuition": "Transform to a subset sum problem by solving for the sum of positive-assigned numbers.",
+    "intuition": "Convert the problem to selecting a subset of numbers as positive so that the difference between selected and unselected sums equals the target.",
     "approaches": [
         {
-            "name": "Subset sum with offset",
+            "name": "Brute Force Sign Assignment",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try every sign combination using recursion, summing values with + or - and counting matches to target.",
+            "time": "O(2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential in n; acceptable only for very small arrays."
+            ,"code": "class Solution {\n    public int findTargetSumWays(int[] nums, int target) {\n        return dfs(nums, 0, 0, target);\n    }\n\n    private int dfs(int[] nums, int index, int sum, int target) {\n        if (index == nums.length) return sum == target ? 1 : 0;\n        return dfs(nums, index + 1, sum + nums[index], target) + dfs(nums, index + 1, sum - nums[index], target);\n    }\n}"
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Memoize the number of ways to reach each sum at each index to avoid recomputing overlapping states.",
+            "time": "O(n * sum)",
+            "space": "O(n * sum)",
+            "why_not": "Still recursive, but avoids the exponential blow-up."
+            ,"code": "class Solution {\n    private Map<String, Integer> memo = new HashMap<>();\n\n    public int findTargetSumWays(int[] nums, int target) {\n        return dfs(nums, 0, 0, target);\n    }\n\n    private int dfs(int[] nums, int index, int sum, int target) {\n        if (index == nums.length) return sum == target ? 1 : 0;\n        String key = index + \",\" + sum;\n        if (memo.containsKey(key)) return memo.get(key);\n        int ways = dfs(nums, index + 1, sum + nums[index], target) + dfs(nums, index + 1, sum - nums[index], target);\n        memo.put(key, ways);\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Subset Sum Transformation",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use DP to count subsets whose sum equals (target + total)/2 when this value is an integer.",
+            "description": "Reformulate as counting subsets whose sum equals (total + target) / 2, then use 1D DP to count subset sums.",
             "time": "O(n * sum)",
             "space": "O(sum)",
-            "why_not": "Brute force sign assignments is O(2^n) and too slow for n=20.",
-            "code": "class Solution {\n    public int findTargetSumWays(int[] nums, int target) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum + target) % 2 != 0 || sum < Math.abs(target)) return 0;\n        int T = (sum + target) / 2;\n        int[] dp = new int[T + 1];\n        dp[0] = 1;\n        for (int num : nums) {\n            for (int j = T; j >= num; j--) {\n                dp[j] += dp[j - num];\n            }\n        }\n        return dp[T];\n    }\n}"
+            "why_not": "This is the standard optimal solution for the transformed problem."
+            ,"code": "class Solution {\n    public int findTargetSumWays(int[] nums, int target) {\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if ((sum + target) % 2 != 0 || sum < Math.abs(target)) return 0;\n        int T = (sum + target) / 2;\n        int[] dp = new int[T + 1];\n        dp[0] = 1;\n        for (int num : nums) {\n            for (int j = T; j >= num; j--) {\n                dp[j] += dp[j - num];\n            }\n        }\n        return dp[T];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How is Target Sum reduced to subset sum?",
-            "a": "Positive numbers minus negative numbers equals target, so the sum of positives becomes (total + target)/2."
+            "q": "How is Target Sum transformed to subset sum?",
+            "a": "Let P be the sum of numbers assigned '+', and N be the sum assigned '-'. Then P - N = target and P + N = total, so P = (total + target)/2."
         },
         {
-            "q": "What invalidates a solution immediately?",
-            "a": "If total + target is odd or |target| > total, there is no valid assignment."
+            "q": "When is there no solution?",
+            "a": "If total + target is odd or |target| > total, no sign assignment can satisfy the equation."
+        },
+        {
+            "q": "Why iterate the dp array backward?",
+            "a": "To ensure each number is only counted once per subset."
+        },
+        {
+            "q": "What if nums contains zeros?",
+            "a": "Zeros double the number of ways for each valid subset sum because +0 and -0 are equivalent but counted separately in the original problem."
         }
     ]
 }

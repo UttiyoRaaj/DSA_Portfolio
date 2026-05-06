@@ -4,7 +4,7 @@
     "title": "Same Tree",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/same-tree/",
-    "problem_statement": "Determine if two binary trees are structurally identical and have the same node values.",
+    "problem_statement": "Determine if two binary trees are structurally identical and contain the same values in corresponding nodes.",
     "examples": [
         {
             "input": "p = [1,2,3], q = [1,2,3]",
@@ -13,29 +13,43 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [0, 100]"
+        "The number of nodes is in the range [0, 100]",
+        "-100 <= Node.val <= 100"
     ],
-    "intuition": "Recursively compare corresponding nodes and subtrees for equality.",
+    "intuition": "Traverse both trees in sync and verify that every corresponding pair of nodes matches in value and structure.",
     "approaches": [
         {
-            "name": "Recursive tree comparison",
+            "name": "Recursive subtree comparison",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Check if both nodes are null, then compare values and recurse on both left and right children.",
+            "description": "Check both nodes for nullity, compare values, and recurse on left and right pairs.",
             "time": "O(min(n,m))",
             "space": "O(h)",
-            "why_not": "Converting trees to strings is unnecessary and more error-prone.",
-            "code": "class Solution {\n    public boolean isSameTree(TreeNode p, TreeNode q) {\n        if (p == null && q == null) return true;\n        if (p == null || q == null || p.val != q.val) return false;\n        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n    }\n}"
+            "why_not": "Serializing trees to strings can be done, but recursion is clearer and avoids string edge cases.",
+            "code": "class Solution {\n    public boolean isSameTree(TreeNode p, TreeNode q) {\n        if (p == null && q == null) return true;\n        if (p == null || q == null || p.val != q.val) return false;\n        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);\n    }\n}",
+            "interview_commentary": [
+                "Compare both trees in parallel by visiting corresponding nodes.",
+                "Return false as soon as any mismatch in structure or value appears.",
+                "Both null nodes indicate identical empty subtrees."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What are the base cases?",
-            "a": "Both nodes null is true; one null or mismatched values is false."
+            "q": "What is the first comparison at each node?",
+            "a": "Check whether both nodes are null, or one is null, or their values differ."
         },
         {
-            "q": "How are subtrees compared?",
-            "a": "Recursively compare left with left and right with right."
+            "q": "How do you compare child subtrees?",
+            "a": "Recursively compare left children together and right children together."
+        },
+        {
+            "q": "What happens if one tree is larger?",
+            "a": "The comparison returns false when a subtree exists in one tree but not the other."
+        },
+        {
+            "q": "Can this be done iteratively?",
+            "a": "Yes, with two stacks or queues to traverse both trees in parallel."
         }
     ]
 }

@@ -27,7 +27,12 @@
             "time": "O(n)",
             "space": "O(1)",
             "why_not": "Using a hash map is unnecessary given the sorted property.",
-            "code": "class Solution {\n    public int[] twoSum(int[] numbers, int target) {\n        int left = 0, right = numbers.length - 1;\n        while (left < right) {\n            int sum = numbers[left] + numbers[right];\n            if (sum == target) {\n                return new int[]{left + 1, right + 1};\n            }\n            if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return new int[]{-1, -1};\n    }\n}"
+            "code": "class Solution {\n    public int[] twoSum(int[] numbers, int target) {\n        int left = 0, right = numbers.length - 1;\n        while (left < right) {\n            int sum = numbers[left] + numbers[right];\n            if (sum == target) {\n                return new int[]{left + 1, right + 1};\n            }\n            if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return new int[]{-1, -1};\n    }\n}",
+            "interview_commentary": [
+                "The sorted order means increasing the left pointer increases the sum and decreasing the right pointer decreases it.",
+                "Two pointers avoid extra storage and find the pair in a single linear pass.",
+                "If the sum matches the target, both indices are returned with 1-based adjustment."
+            ]
         }
     ],
     "interview_qa": [

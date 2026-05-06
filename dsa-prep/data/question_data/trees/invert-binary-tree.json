@@ -4,7 +4,7 @@
     "title": "Invert Binary Tree",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/invert-binary-tree/",
-    "problem_statement": "Invert a binary tree by swapping left and right children recursively.",
+    "problem_statement": "Invert a binary tree by swapping each node’s left and right children, producing the mirror image of the original tree.",
     "examples": [
         {
             "input": "root = [4,2,7,1,3,6,9]",
@@ -13,29 +13,58 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [0, 100]"
+        "The number of nodes is in the range [0, 100]",
+        "-100 <= Node.val <= 100"
     ],
-    "intuition": "Recursively swap children for every node in the tree.",
+    "intuition": "Invert the tree by swapping child pointers at each node, either recursively or iteratively with a queue.",
     "approaches": [
         {
-            "name": "Recursive subtree swap",
+            "name": "Recursive inversion",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Swap left and right pointers and recurse on both children.",
+            "description": "Recursively invert left and right subtrees, then swap them at the current node.",
             "time": "O(n)",
             "space": "O(h)",
-            "why_not": "Iterative BFS also works but recursion is simpler here.",
-            "code": "class Solution {\n    public TreeNode invertTree(TreeNode root) {\n        if (root == null) return null;\n        TreeNode left = invertTree(root.left);\n        TreeNode right = invertTree(root.right);\n        root.left = right;\n        root.right = left;\n        return root;\n    }\n}"
+            "why_not": "An iterative approach can avoid recursion depth but has similar complexity.",
+            "code": "class Solution {\n    public TreeNode invertTree(TreeNode root) {\n        if (root == null) return null;\n        TreeNode left = invertTree(root.left);\n        TreeNode right = invertTree(root.right);\n        root.left = right;\n        root.right = left;\n        return root;\n    }\n}",
+            "interview_commentary": [
+                "Invert subtrees recursively and then swap them at the current node.",
+                "Recursive inversion is simple and mirrors the tree structure naturally.",
+                "Null nodes are base cases and stop recursion."
+            ]
+        },
+        {
+            "name": "Iterative BFS inversion",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use a queue to traverse the tree and swap children at each visited node iteratively.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Recursion is usually simpler and uses less explicit auxiliary data.",
+            "code": "class Solution {\n    public TreeNode invertTree(TreeNode root) {\n        if (root == null) return null;\n        Queue<TreeNode> queue = new ArrayDeque<>();\n        queue.offer(root);\n        while (!queue.isEmpty()) {\n            TreeNode node = queue.poll();\n            TreeNode temp = node.left;\n            node.left = node.right;\n            node.right = temp;\n            if (node.left != null) queue.offer(node.left);\n            if (node.right != null) queue.offer(node.right);\n        }\n        return root;\n    }\n}",
+            "interview_commentary": [
+                "Use BFS to invert nodes level by level if recursion is undesirable.",
+                "Swapping children at each node mirrors the tree iteratively.",
+                "The queue holds nodes still to process."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What must be swapped at each node?",
-            "a": "The left and right child pointers."
+            "q": "What operation is performed at each node?",
+            "a": "Swap the left and right children."
         },
         {
-            "q": "Does order matter for recursion?",
-            "a": "No, you can swap before or after recursing as long as both children are processed."
+            "q": "Why does recursive inversion work?",
+            "a": "It inverts subtrees first, then swaps them to mirror the current node."
+        },
+        {
+            "q": "How can you do this iteratively?",
+            "a": "Use BFS or DFS with a stack/queue and swap children for each visited node."
+        },
+        {
+            "q": "What does the tree become after inversion?",
+            "a": "A mirror image of the original tree."
         }
     ]
 }

@@ -4,40 +4,62 @@
     "title": "Word Ladder II",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/word-ladder-ii/",
-    "problem_statement": "Return all shortest transformation sequences from beginWord to endWord using a dictionary of words.",
+    "problem_statement": "A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that: Every adjacent pair of words differs by a single letter. Every si for 1 <= i <= k is in wordList. All words in the sequence are of the same length. Note that beginWord does not need to be in wordList. sk == endWord. Given two words, beginWord and endWord, and a dictionary wordList, return all the shortest transformation sequences from beginWord to endWord, or an empty list if there is no such sequence. The sequences should be returned in any order.",
     "examples": [
         {
             "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
             "output": "[[\"hit\",\"hot\",\"dot\",\"dog\",\"cog\"],[\"hit\",\"hot\",\"lot\",\"log\",\"cog\"]]",
-            "explanation": "There are two shortest transformation sequences."
+            "explanation": "There are 2 shortest transformation sequences, each of length 5."
+        },
+        {
+            "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]",
+            "output": "[]",
+            "explanation": "The endWord \"cog\" is not in wordList, therefore there is no valid transformation sequence."
         }
     ],
     "constraints": [
-        "1 <= wordList.length <= 5000",
         "1 <= beginWord.length <= 10",
-        "All words are the same length and lowercase."
+        "endWord.length == beginWord.length",
+        "1 <= wordList.length <= 5000",
+        "wordList[i].length == beginWord.length",
+        "beginWord, endWord, and wordList[i] consist of lowercase English letters.",
+        "beginWord != endWord",
+        "All the words in wordList are unique."
     ],
-    "intuition": "Find shortest path length with BFS, then backtrack through a parent graph to build all minimum sequences.",
+    "intuition": "Use BFS to find shortest distance and build parent map, then DFS to generate all paths.",
     "approaches": [
         {
-            "name": "BFS + backtracking",
+            "name": "BFS + DFS Backtracking",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Build neighbor relationships at shortest distances with BFS, then DFS from endWord to beginWord through valid predecessors.",
+            "description": "BFS to build adjacency for shortest paths, then DFS from end to start to collect all paths.",
             "time": "O(N * L^2 + output)",
             "space": "O(N * L)",
-            "why_not": "A naive DFS can generate non-shortest sequences and is too slow for all shortest paths.",
-            "code": "class Solution {\n    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        List<List<String>> results = new ArrayList<>();\n        if (!dict.contains(endWord)) return results;\n        Map<String, List<String>> children = new HashMap<>();\n        Set<String> start = new HashSet<>();\n        start.add(beginWord);\n        bfs(dict, start, endWord, children, false);\n        LinkedList<String> path = new LinkedList<>();\n        path.add(beginWord);\n        dfs(beginWord, endWord, children, path, results);\n        return results;\n    }\n    private boolean bfs(Set<String> dict, Set<String> start, String end, Map<String, List<String>> children, boolean reverse) {\n        if (start.isEmpty()) return false;\n        if (start.contains(end)) return true;\n        if (start.size() > dict.size()) return bfs(dict, dict, end, children, !reverse);\n        dict.removeAll(start);\n        Set<String> nextLevel = new HashSet<>();\n        boolean found = false;\n        for (String word : start) {\n            char[] arr = word.toCharArray();\n            for (int i = 0; i < arr.length; i++) {\n                char old = arr[i];\n                for (char c = 'a'; c <= 'z'; c++) {\n                    if (c == old) continue;\n                    arr[i] = c;\n                    String target = new String(arr);\n                    if (!dict.contains(target)) continue;\n                    nextLevel.add(target);\n                    String key = reverse ? target : word;\n                    String val = reverse ? word : target;\n                    children.computeIfAbsent(key, k -> new ArrayList<>()).add(val);\n                    if (target.equals(end)) found = true;\n                }\n                arr[i] = old;\n            }\n        }\n        return found || bfs(dict, nextLevel, end, children, reverse);\n    }\n    private void dfs(String word, String end, Map<String, List<String>> children, LinkedList<String> path, List<List<String>> results) {\n        if (word.equals(end)) {\n            results.add(new ArrayList<>(path));\n            return;\n        }\n        if (!children.containsKey(word)) return;\n        for (String nxt : children.get(word)) {\n            path.add(nxt);\n            dfs(nxt, end, children, path, results);\n            path.removeLast();\n        }\n    }\n}"
+            "why_not": "BFS alone gives distance, DFS builds paths.",
+            "code": "class Solution {\n    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        List<List<String>> results = new ArrayList<>();\n        if (!dict.contains(endWord)) return results;\n        Map<String, List<String>> children = new HashMap<>();\n        Set<String> start = new HashSet<>();\n        start.add(beginWord);\n        bfs(dict, start, endWord, children, false);\n        LinkedList<String> path = new LinkedList<>();\n        path.add(beginWord);\n        dfs(beginWord, endWord, children, path, results);\n        return results;\n    }\n    private boolean bfs(Set<String> dict, Set<String> start, String end, Map<String, List<String>> children, boolean reverse) {\n        if (start.isEmpty()) return false;\n        if (start.contains(end)) return true;\n        if (start.size() > dict.size()) return bfs(dict, dict, end, children, !reverse);\n        dict.removeAll(start);\n        Set<String> nextLevel = new HashSet<>();\n        boolean found = false;\n        for (String word : start) {\n            char[] arr = word.toCharArray();\n            for (int i = 0; i < arr.length; i++) {\n                char old = arr[i];\n                for (char c = 'a'; c <= 'z'; c++) {\n                    if (c == old) continue;\n                    arr[i] = c;\n                    String target = new String(arr);\n                    if (!dict.contains(target)) continue;\n                    nextLevel.add(target);\n                    String key = reverse ? target : word;\n                    String val = reverse ? word : target;\n                    children.computeIfAbsent(key, k -> new ArrayList<>()).add(val);\n                    if (target.equals(end)) found = true;\n                }\n                arr[i] = old;\n            }\n        }\n        return found || bfs(dict, nextLevel, end, children, reverse);\n    }\n    private void dfs(String word, String end, Map<String, List<String>> children, LinkedList<String> path, List<List<String>> results) {\n        if (word.equals(end)) {\n            results.add(new ArrayList<>(path));\n            return;\n        }\n        if (!children.containsKey(word)) return;\n        for (String nxt : children.get(word)) {\n            path.add(nxt);\n            dfs(nxt, end, children, path, results);\n            path.removeLast();\n        }\n    }\n}",
+            "interview_commentary": [
+                "BFS builds children map for shortest paths.",
+                "DFS backtracks from begin to end using children.",
+                "Handles multiple paths."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the two-phase strategy?",
-            "a": "Use BFS to determine shortest distances, then backtrack to build all paths constrained to those distances."
+            "q": "Why BFS first?",
+            "a": "Ensures only shortest paths are considered."
         },
         {
-            "q": "Why not use BFS alone?",
-            "a": "BFS finds distance but does not enumerate all shortest sequences without parent tracking."
+            "q": "Why DFS for paths?",
+            "a": "Backtracks to build all combinations."
+        },
+        {
+            "q": "Time complexity?",
+            "a": "BFS O(N*L^2), DFS O(paths)."
+        },
+        {
+            "q": "If no path?",
+            "a": "Return empty list."
         }
     ]
 }

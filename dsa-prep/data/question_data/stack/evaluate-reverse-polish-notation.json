@@ -26,7 +26,12 @@
             "time": "O(n)",
             "space": "O(n)",
             "why_not": "Converting to infix requires additional parsing and is unnecessary for RPN.",
-            "code": "class Solution {\n    public int evalRPN(String[] tokens) {\n        Deque<Integer> stack = new ArrayDeque<>();\n        for (String token : tokens) {\n            if (\"+-*/\".contains(token)) {\n                int b = stack.pop();\n                int a = stack.pop();\n                switch (token) {\n                    case \"+\": stack.push(a + b); break;\n                    case \"-\": stack.push(a - b); break;\n                    case \"*\": stack.push(a * b); break;\n                    default: stack.push(a / b); break;\n                }\n            } else {\n                stack.push(Integer.parseInt(token));\n            }\n        }\n        return stack.pop();\n    }\n}"
+            "code": "class Solution {\n    public int evalRPN(String[] tokens) {\n        Deque<Integer> stack = new ArrayDeque<>();\n        for (String token : tokens) {\n            if (\"+-*/\".contains(token)) {\n                int b = stack.pop();\n                int a = stack.pop();\n                switch (token) {\n                    case \"+\": stack.push(a + b); break;\n                    case \"-\": stack.push(a - b); break;\n                    case \"*\": stack.push(a * b); break;\n                    default: stack.push(a / b); break;\n                }\n            } else {\n                stack.push(Integer.parseInt(token));\n            }\n        }\n        return stack.pop();\n    }\n}",
+            "interview_commentary": [
+                "Use a stack to store operands and apply each operator to the two most recent values.",
+                "RPN evaluation is straightforward because the notation already encodes operator precedence.",
+                "Convert numeric tokens before pushing and apply integer division rules consistently."
+            ]
         }
     ],
     "interview_qa": [

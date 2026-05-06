@@ -4,38 +4,86 @@
     "title": "Climbing Stairs",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/climbing-stairs/",
-    "problem_statement": "Count the distinct ways to climb n stairs if you can take 1 or 2 steps each time.",
+    "problem_statement": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
     "examples": [
+        {
+            "input": "n = 2",
+            "output": "2",
+            "explanation": "1. 1 step + 1 step\n2. 2 steps"
+        },
         {
             "input": "n = 3",
             "output": "3",
-            "explanation": "Three ways: 1+1+1, 1+2, 2+1."
+            "explanation": "1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step"
         }
     ],
     "constraints": [
         "1 <= n <= 45"
     ],
-    "intuition": "This is Fibonacci-style DP: ways(n)=ways(n-1)+ways(n-2).",
+    "intuition": "This is a classic Fibonacci sequence problem where the number of ways to reach step n is the sum of ways to reach n-1 and n-2.",
     "approaches": [
         {
-            "name": "Bottom-up DP",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Direct recursion: for each step, choose to take 1 or 2 steps. Base cases: 0 steps = 1 way (do nothing), negative = 0.",
+            "time": "O(2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential time due to redundant calculations of overlapping subproblems. Fails for n > 20.",
+            "code": "class Solution {\n    public int climbStairs(int n) {\n        if (n < 0) return 0;\n        if (n == 0) return 1;\n        return climbStairs(n - 1) + climbStairs(n - 2);\n    }\n}",
+            "interview_commentary": [
+                "This is the most straightforward way to think about it — at each step, you have two choices: take 1 or take 2.",
+                "The recursion tree will have a lot of overlap — for example, climbStairs(3) calls climbStairs(2) and climbStairs(1), and climbStairs(2) calls the same climbStairs(1) again.",
+                "This is a signal to memoize or use DP to avoid recomputing the same subproblems."
+            ]
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Same recursion as brute force, but cache results in an array. Use memo[n] to store ways for n.",
+            "time": "O(n)",
+            "space": "O(n) for memo array",
+            "why_not": "Still uses recursion stack, though shallower. Bottom-up is iterative and avoids stack altogether.",
+            "code": "class Solution {\n    public int climbStairs(int n) {\n        int[] memo = new int[n + 1];\n        return dp(n, memo);\n    }\n\n    private int dp(int n, int[] memo) {\n        if (n < 0) return 0;\n        if (n == 0) return 1;\n        if (memo[n] != 0) return memo[n];\n        return memo[n] = dp(n - 1, memo) + dp(n - 2, memo);\n    }\n}",
+            "interview_commentary": [
+                "To fix the exponential time, I'll add memoization. I'll use an array memo where memo[i] stores the number of ways to reach i.",
+                "Before recursing, check if we've already computed it. This brings time down to O(n) since each n is computed once.",
+                "Space is O(n) for the memo array, plus O(n) for the recursion stack in the worst case."
+            ]
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use an array or two variables to build the count of ways iteratively.",
+            "description": "Iteratively build the solution from base cases. Use two variables to track the last two values, updating them in a loop.",
             "time": "O(n)",
             "space": "O(1)",
-            "why_not": "Recursive solutions without memoization are exponential.",
-            "code": "class Solution {\n    public int climbStairs(int n) {\n        if (n <= 1) return 1;\n        int a = 1, b = 1;\n        for (int i = 2; i <= n; i++) {\n            int c = a + b;\n            a = b;\n            b = c;\n        }\n        return b;\n    }\n}"
+            "why_not": "This is optimal. No further optimizations needed for this problem.",
+            "code": "class Solution {\n    public int climbStairs(int n) {\n        if (n <= 1) return 1;\n        int a = 1, b = 1;\n        for (int i = 2; i <= n; i++) {\n            int c = a + b;\n            a = b;\n            b = c;\n        }\n        return b;\n    }\n}",
+            "interview_commentary": [
+                "Bottom-up DP starts from the base cases and builds up. Here, a and b represent ways for n-2 and n-1.",
+                "Each iteration computes ways for the current n by summing the previous two.",
+                "This uses constant space since we only need the last two values, and it's iterative so no recursion stack."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What recurrence defines climbStairs?",
-            "a": "ways(n) = ways(n-1) + ways(n-2), because the last step can be 1 or 2."
+            "q": "Why is this a Fibonacci problem?",
+            "a": "Because ways(n) = ways(n-1) + ways(n-2), matching the Fibonacci recurrence where each number is the sum of the two preceding ones."
         },
         {
-            "q": "How can space be optimized?",
-            "a": "Only the previous two values are needed, so constant space suffices."
+            "q": "What are the base cases?",
+            "a": "ways(0) = 1 (one way to be at the bottom), ways(1) = 1 (one step)."
+        },
+        {
+            "q": "Can you generalize this to k steps instead of 1 or 2?",
+            "a": "Yes, if you can take 1 to k steps, ways(n) = sum of ways(n-1) + ways(n-2) + ... + ways(n-k). The recurrence becomes ways(n) = sum_{i=1 to k} ways(n-i) for n >= 0."
+        },
+        {
+            "q": "How does memoization help?",
+            "a": "It stores results of subproblems so we don't recompute them. For example, ways(3) computes ways(2) and ways(1), and ways(2) computes ways(1) and ways(0), but ways(1) is only computed once."
         }
     ]
 }

@@ -26,7 +26,12 @@
             "time": "O(n log n) for sorting",
             "space": "O(n)",
             "why_not": "Simulating all cars individually can be slow and unnecessary.",
-            "code": "class Solution {\n    public int carFleet(int target, int[] position, int[] speed) {\n        int n = position.length;\n        int[][] cars = new int[n][2];\n        for (int i = 0; i < n; i++) {\n            cars[i] = new int[]{position[i], speed[i]};\n        }\n        Arrays.sort(cars, (a, b) -> b[0] - a[0]);\n        int fleets = 0;\n        double slowestTime = 0;\n        for (int[] car : cars) {\n            double time = (double)(target - car[0]) / car[1];\n            if (time > slowestTime) {\n                fleets++;\n                slowestTime = time;\n            }\n        }\n        return fleets;\n    }\n}"
+            "code": "class Solution {\n    public int carFleet(int target, int[] position, int[] speed) {\n        int n = position.length;\n        int[][] cars = new int[n][2];\n        for (int i = 0; i < n; i++) {\n            cars[i] = new int[]{position[i], speed[i]};\n        }\n        Arrays.sort(cars, (a, b) -> b[0] - a[0]);\n        int fleets = 0;\n        double slowestTime = 0;\n        for (int[] car : cars) {\n            double time = (double)(target - car[0]) / car[1];\n            if (time > slowestTime) {\n                fleets++;\n                slowestTime = time;\n            }\n        }\n        return fleets;\n    }\n}",
+            "interview_commentary": [
+                "Process cars from the one closest to the target backward to correctly group fleets.",
+                "A new fleet is counted only when a car cannot catch up to the slower fleet ahead.",
+                "Use arrival times and a monotonic comparison rather than simulating positions over time."
+            ]
         }
     ],
     "interview_qa": [

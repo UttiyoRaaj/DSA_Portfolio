@@ -4,7 +4,7 @@
     "title": "Construct Binary Tree from Preorder and Inorder Traversal",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/",
-    "problem_statement": "Build a binary tree from its preorder and inorder traversal arrays.",
+    "problem_statement": "Given preorder and inorder traversal arrays of a binary tree, reconstruct the original tree.",
     "examples": [
         {
             "input": "preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]",
@@ -13,29 +13,44 @@
         }
     ],
     "constraints": [
-        "1 <= preorder.length == inorder.length <= 3000"
+        "1 <= preorder.length == inorder.length <= 3000",
+        "-3000 <= preorder[i], inorder[i] <= 3000",
+        "All values are unique."
     ],
-    "intuition": "The first preorder element is the root; use inorder to split left and right subtrees recursively.",
+    "intuition": "The preorder list gives roots in sequence, and the inorder list partitions left and right subtrees around each root.",
     "approaches": [
         {
-            "name": "Recursive reconstruction with index map",
+            "name": "Recursive reconstruction with inorder index map",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use a hashmap for inorder indices and recursively build subtrees from preorder values.",
+            "description": "Use a hashmap to map inorder values to indices, then recursively build left and right subtrees from preorder values.",
             "time": "O(n)",
             "space": "O(n)",
-            "why_not": "Searching inorder for each root is O(n^2) and too slow.",
-            "code": "class Solution {\n    private Map<Integer, Integer> indexMap;\n    private int preorderIndex;\n\n    public TreeNode buildTree(int[] preorder, int[] inorder) {\n        preorderIndex = 0;\n        indexMap = new HashMap<>();\n        for (int i = 0; i < inorder.length; i++) {\n            indexMap.put(inorder[i], i);\n        }\n        return helper(preorder, 0, inorder.length - 1);\n    }\n\n    private TreeNode helper(int[] preorder, int left, int right) {\n        if (left > right) return null;\n        int rootVal = preorder[preorderIndex++];\n        TreeNode root = new TreeNode(rootVal);\n        int inorderIndex = indexMap.get(rootVal);\n        root.left = helper(preorder, left, inorderIndex - 1);\n        root.right = helper(preorder, inorderIndex + 1, right);\n        return root;\n    }\n}"
+            "why_not": "Searching for each root position in inorder would degrade to O(n^2).",
+            "code": "class Solution {\n    private Map<Integer, Integer> indexMap;\n    private int preorderIndex;\n\n    public TreeNode buildTree(int[] preorder, int[] inorder) {\n        preorderIndex = 0;\n        indexMap = new HashMap<>();\n        for (int i = 0; i < inorder.length; i++) {\n            indexMap.put(inorder[i], i);\n        }\n        return helper(preorder, 0, inorder.length - 1);\n    }\n\n    private TreeNode helper(int[] preorder, int left, int right) {\n        if (left > right) return null;\n        int rootVal = preorder[preorderIndex++];\n        TreeNode root = new TreeNode(rootVal);\n        int inorderIndex = indexMap.get(rootVal);\n        root.left = helper(preorder, left, inorderIndex - 1);\n        root.right = helper(preorder, inorderIndex + 1, right);\n        return root;\n    }\n}",
+            "interview_commentary": [
+                "Preorder gives the root value for each recursive subtree build.",
+                "Inorder is used to partition left and right subtrees around the root.",
+                "A hashmap avoids repeated linear search for root positions in inorder."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What does preorder tell you?",
-            "a": "The root node value at each recursive step."
+            "q": "Why is preorder useful for reconstruction?",
+            "a": "The first value in preorder is the root of the whole tree or subtree."
         },
         {
-            "q": "How does inorder help?",
-            "a": "It defines the boundary between left and right subtrees."
+            "q": "How does inorder determine subtree size?",
+            "a": "Elements left of the root in inorder belong to the left subtree; elements right belong to the right subtree."
+        },
+        {
+            "q": "Why use a hashmap for inorder indices?",
+            "a": "It avoids repeated linear scans and keeps the algorithm linear."
+        },
+        {
+            "q": "What is the recursion base case?",
+            "a": "When the left bound is greater than the right bound, there is no subtree to build."
         }
     ]
 }

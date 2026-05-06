@@ -4,7 +4,7 @@
     "title": "Validate Binary Search Tree",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/validate-binary-search-tree/",
-    "problem_statement": "Determine whether a binary tree is a valid binary search tree.",
+    "problem_statement": "Determine whether a binary tree is a valid binary search tree, where left subtree values are less and right subtree values are greater for every node.",
     "examples": [
         {
             "input": "root = [2,1,3]",
@@ -13,29 +13,58 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [1, 10^4]"
+        "The number of nodes is in the range [1, 10^4]",
+        "-10^5 <= Node.val <= 10^5"
     ],
-    "intuition": "Use recursion with value bounds to ensure every node is within the allowed range.",
+    "intuition": "Validate the BST property by carrying allowable lower and upper bounds down the tree; each node must fit within its ancestor-derived interval.",
     "approaches": [
         {
             "name": "Bounded recursion",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Pass minimum and maximum allowed values during recursion and validate each node against them.",
+            "description": "Use recursion with lower and upper bounds for each node and verify that all descendants satisfy the ancestor constraints.",
             "time": "O(n)",
             "space": "O(h)",
-            "why_not": "Inorder traversal comparison also works but needs extra tracking of previous value.",
-            "code": "class Solution {\n    public boolean isValidBST(TreeNode root) {\n        return helper(root, null, null);\n    }\n\n    private boolean helper(TreeNode node, Integer lower, Integer upper) {\n        if (node == null) return true;\n        if (lower != null && node.val <= lower) return false;\n        if (upper != null && node.val >= upper) return false;\n        return helper(node.left, lower, node.val) && helper(node.right, node.val, upper);\n    }\n}"
+            "why_not": "Inorder traversal is another valid solution, but explicit bounds directly encode the BST invariant.",
+            "code": "class Solution {\n    public boolean isValidBST(TreeNode root) {\n        return helper(root, null, null);\n    }\n\n    private boolean helper(TreeNode node, Integer lower, Integer upper) {\n        if (node == null) return true;\n        if (lower != null && node.val <= lower) return false;\n        if (upper != null && node.val >= upper) return false;\n        return helper(node.left, lower, node.val) && helper(node.right, node.val, upper);\n    }\n}",
+            "interview_commentary": [
+                "Bounds ensure every node respects ancestor constraints.",
+                "The current node’s value restricts its left and right subtrees differently.",
+                "Null nodes are always valid BSTs."
+            ]
+        },
+        {
+            "name": "Inorder traversal validation",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Traverse the tree inorder and confirm the visited values are strictly increasing.",
+            "time": "O(n)",
+            "space": "O(h)",
+            "why_not": "This relies on the BST property of inorder order and requires tracking the previous visited value.",
+            "code": "class Solution {\n    private Integer prev = null;\n\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) return true;\n        if (!isValidBST(root.left)) return false;\n        if (prev != null && root.val <= prev) return false;\n        prev = root.val;\n        return isValidBST(root.right);\n    }\n}",
+            "interview_commentary": [
+                "Inorder traversal of a BST should yield increasing values.",
+                "Track the last visited value to ensure strict ordering.",
+                "If any value is not greater than the previous, the tree is invalid."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What bounds are passed to children?",
-            "a": "The left child gets the current node\u2019s value as an upper bound, the right child gets it as a lower bound."
+            "q": "What bounds are passed to the left subtree?",
+            "a": "The current node's value becomes the upper bound for the left subtree."
         },
         {
-            "q": "Why is this better than simple subtree checks?",
-            "a": "It ensures all descendants respect all ancestor constraints."
+            "q": "What bounds are passed to the right subtree?",
+            "a": "The current node's value becomes the lower bound for the right subtree."
+        },
+        {
+            "q": "Why is a simple parent check insufficient?",
+            "a": "Because descendants must also satisfy all ancestor constraints, not just the immediate parent."
+        },
+        {
+            "q": "How does inorder traversal validate a BST?",
+            "a": "It ensures node values are visited in strictly increasing order."
         }
     ]
 }

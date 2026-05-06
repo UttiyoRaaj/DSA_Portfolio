@@ -4,39 +4,74 @@
     "title": "Combination Sum IV",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/combination-sum-iv/",
-    "problem_statement": "Given an array of distinct integers and a target, return the number of possible combinations that add up to the target. Order matters.",
+    "problem_statement": "Given an array of distinct integers nums and a target integer target, return the number of possible combinations that add up to target. The order of the numbers in the combination matters. You may use the same number from nums as many times as needed.",
     "examples": [
         {
             "input": "nums = [1, 2, 3], target = 4",
             "output": "7",
-            "explanation": "Combinations: 1+1+1+1,1+1+2,1+2+1,2+1+1,2+2,1+3,3+1."
+            "explanation": "Combinations: 1+1+1+1, 1+1+2, 1+2+1, 2+1+1, 2+2, 1+3, 3+1."
+        },
+        {
+            "input": "nums = [9], target = 3",
+            "output": "0",
+            "explanation": "No combination of 9 can sum to 3."
         }
     ],
     "constraints": [
         "1 <= nums.length <= 200",
-        "1 <= target <= 1000"
+        "1 <= target <= 1000",
+        "1 <= nums[i] <= 1000",
+        "All values in nums are distinct."
     ],
-    "intuition": "Define dp[t] as the number of combinations to reach t and build from smaller targets.",
+    "intuition": "Think of the target as a position on a number line. For each sum, count how many ordered sequences of nums reach that sum from smaller sums.",
     "approaches": [
         {
-            "name": "1D DP over target",
-            "badge": "Optimal",
-            "badge_color": "green",
-            "description": "Use a one-dimensional DP array where each target adds combinations from previous reachable targets.",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try every number at each step and subtract it from the remaining target until the target reaches zero or negative.",
+            "time": "O(n^target) worst case",
+            "space": "O(target) recursion stack",
+            "why_not": "Exponential time due to exploring all ordered combinations. It will TLE for larger target values.",
+            "code": "class Solution {\n    public int combinationSum4(int[] nums, int target) {\n        return dfs(nums, target);\n    }\n\n    private int dfs(int[] nums, int remaining) {\n        if (remaining == 0) return 1;\n        if (remaining < 0) return 0;\n        int ways = 0;\n        for (int num : nums) {\n            ways += dfs(nums, remaining - num);\n        }\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Cache the number of combinations for each remaining target to avoid recomputing duplicate subproblems.",
             "time": "O(n * target)",
             "space": "O(target)",
-            "why_not": "Backtracking without memoization duplicates many equivalent partial combinations.",
+            "why_not": "Still recursive, but avoids repeated work. Bottom-up is simpler and avoids recursion overhead.",
+            "code": "class Solution {\n    public int combinationSum4(int[] nums, int target) {\n        int[] memo = new int[target + 1];\n        Arrays.fill(memo, -1);\n        memo[0] = 1;\n        return dfs(nums, target, memo);\n    }\n\n    private int dfs(int[] nums, int remaining, int[] memo) {\n        if (remaining < 0) return 0;\n        if (memo[remaining] != -1) return memo[remaining];\n        int ways = 0;\n        for (int num : nums) {\n            ways += dfs(nums, remaining - num, memo);\n        }\n        memo[remaining] = ways;\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Iteratively build dp[sum] for all sums from 0 to target using previously computed values.",
+            "time": "O(n * target)",
+            "space": "O(target)",
+            "why_not": "This is the standard optimal solution for ordered combination counting.",
             "code": "class Solution {\n    public int combinationSum4(int[] nums, int target) {\n        int[] dp = new int[target + 1];\n        dp[0] = 1;\n        for (int sum = 1; sum <= target; sum++) {\n            for (int num : nums) {\n                if (sum >= num) {\n                    dp[sum] += dp[sum - num];\n                }\n            }\n        }\n        return dp[target];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "Why does order matter here?",
-            "a": "Different orders of the same numbers are counted as distinct combinations for this problem."
+            "q": "Why does order matter in this problem?",
+            "a": "Because sequences like [1,2,1] and [1,1,2] are counted as different combinations, even though they use the same numbers."
         },
         {
             "q": "What does dp[t] represent?",
-            "a": "The number of ordered combinations that sum to t."
+            "a": "It represents the number of ordered combinations that sum exactly to t."
+        },
+        {
+            "q": "Why is bottom-up dp preferable?",
+            "a": "It avoids recursion and efficiently reuses previously computed counts for smaller targets."
+        },
+        {
+            "q": "What is the main recurrence?",
+            "a": "dp[sum] = sum(dp[sum - num]) for each num in nums where sum >= num."
         }
     ]
 }

@@ -4,40 +4,74 @@
     "title": "Pacific Atlantic Water Flow",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
-    "problem_statement": "Find all coordinates where water can flow to both the Pacific and Atlantic oceans in a height grid.",
+    "problem_statement": "There is an m x n rectangular island that borders both the Pacific Ocean and Atlantic Ocean. The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges. The island is partitioned into a grid of square cells. You are given an m x n integer matrix heights where heights[i][j] represents the height above sea level of the cell at coordinate (i, j). The island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell's height is less than or equal to the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean. Return a 2D list of grid coordinates result where result[i] = [ri, ci] denotes that rain water can flow from cell (ri, ci) to both the Pacific and Atlantic oceans.",
     "examples": [
         {
             "input": "heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]",
             "output": "[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]",
-            "explanation": "These cells can reach both oceans via non-increasing height paths."
+            "explanation": "The following cells can flow to the Pacific and Atlantic: [0,4]: [0,4] -> Pacific, [0,4] -> Atlantic, [1,3]: [1,3] -> [0,3] -> Pacific, [1,3] -> [1,4] -> Atlantic, [1,4]: [1,4] -> [1,3] -> [0,3] -> Pacific, [1,4] -> Atlantic, [2,2]: [2,2] -> [1,2] -> [0,2] -> Pacific, [2,2] -> [2,3] -> [2,4] -> Atlantic, [3,0]: [3,0] -> Pacific, [3,0] -> [4,0] -> Atlantic, [3,1]: [3,1] -> [3,0] -> Pacific, [3,1] -> [4,1] -> [4,2] -> [4,3] -> [4,4] -> Atlantic, [4,0]: [4,0] -> Pacific, [4,0] -> Atlantic."
+        },
+        {
+            "input": "heights = [[2,1],[1,2]]",
+            "output": "[[0,0],[0,1],[1,0],[1,1]]",
+            "explanation": "The entire island can flow to both oceans."
         }
     ],
     "constraints": [
         "m == heights.length",
         "n == heights[i].length",
-        "1 <= m, n <= 150"
+        "1 <= m, n <= 200",
+        "0 <= heights[i][j] <= 10^5"
     ],
-    "intuition": "Run two BFS/DFS passes from the ocean borders and intersect reachable cells from both origins.",
+    "intuition": "Start DFS/BFS from ocean borders, marking cells that can reach each ocean. Intersect the two sets.",
     "approaches": [
         {
-            "name": "Bidirectional ocean BFS",
+            "name": "DFS from Both Oceans",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Start from Pacific-border cells and Atlantic-border cells separately, then collect cells reachable in both searches.",
+            "description": "DFS from Pacific borders (top, left) and Atlantic (bottom, right), marking reachable cells. Find intersection.",
             "time": "O(m * n)",
             "space": "O(m * n)",
-            "why_not": "A naive check from each cell would be too slow; reverse reachability is much faster.",
-            "code": "class Solution {\n    public List<List<Integer>> pacificAtlantic(int[][] heights) {\n        int m = heights.length, n = heights[0].length;\n        boolean[][] pac = new boolean[m][n];\n        boolean[][] atl = new boolean[m][n];\n        for (int i = 0; i < m; i++) {\n            dfs(heights, pac, i, 0);\n            dfs(heights, atl, i, n - 1);\n        }\n        for (int j = 0; j < n; j++) {\n            dfs(heights, pac, 0, j);\n            dfs(heights, atl, m - 1, j);\n        }\n        List<List<Integer>> ans = new ArrayList<>();\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (pac[i][j] && atl[i][j]) ans.add(Arrays.asList(i, j));\n            }\n        }\n        return ans;\n    }\n    private void dfs(int[][] heights, boolean[][] visited, int i, int j) {\n        if (visited[i][j]) return;\n        visited[i][j] = true;\n        int m = heights.length, n = heights[0].length;\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        for (int[] d : dirs) {\n            int ni = i + d[0], nj = j + d[1];\n            if (ni >= 0 && ni < m && nj >= 0 && nj < n && !visited[ni][nj] && heights[ni][nj] >= heights[i][j]) {\n                dfs(heights, visited, ni, nj);\n            }\n        }\n    }\n}"
+            "why_not": "BFS also works; DFS is recursive.",
+            "code": "class Solution {\n    public List<List<Integer>> pacificAtlantic(int[][] heights) {\n        int m = heights.length, n = heights[0].length;\n        boolean[][] pac = new boolean[m][n];\n        boolean[][] atl = new boolean[m][n];\n        for (int i = 0; i < m; i++) {\n            dfs(heights, pac, i, 0);\n            dfs(heights, atl, i, n - 1);\n        }\n        for (int j = 0; j < n; j++) {\n            dfs(heights, pac, 0, j);\n            dfs(heights, atl, m - 1, j);\n        }\n        List<List<Integer>> ans = new ArrayList<>();\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (pac[i][j] && atl[i][j]) ans.add(Arrays.asList(i, j));\n            }\n        }\n        return ans;\n    }\n    private void dfs(int[][] heights, boolean[][] visited, int i, int j) {\n        if (visited[i][j]) return;\n        visited[i][j] = true;\n        int m = heights.length, n = heights[0].length;\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        for (int[] d : dirs) {\n            int ni = i + d[0], nj = j + d[1];\n            if (ni >= 0 && ni < m && nj >= 0 && nj < n && !visited[ni][nj] && heights[ni][nj] >= heights[i][j]) {\n                dfs(heights, visited, ni, nj);\n            }\n        }\n    }\n}",
+            "interview_commentary": [
+                "Reverse flow: from ocean to cells, allowing >= height.",
+                "Two DFS passes: one for each ocean.",
+                "Intersect visited arrays."
+            ]
+        },
+        {
+            "name": "BFS from Both Oceans",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use BFS instead of DFS for the same logic.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "DFS may have stack issues; BFS uses queue.",
+            "code": "class Solution {\n    public List<List<Integer>> pacificAtlantic(int[][] heights) {\n        int m = heights.length, n = heights[0].length;\n        boolean[][] pac = new boolean[m][n];\n        boolean[][] atl = new boolean[m][n];\n        Queue<int[]> qp = new LinkedList<>(), qa = new LinkedList<>();\n        for (int i = 0; i < m; i++) {\n            qp.add(new int[]{i, 0});\n            qa.add(new int[]{i, n-1});\n            pac[i][0] = true;\n            atl[i][n-1] = true;\n        }\n        for (int j = 0; j < n; j++) {\n            qp.add(new int[]{0, j});\n            qa.add(new int[]{m-1, j});\n            pac[0][j] = true;\n            atl[m-1][j] = true;\n        }\n        bfs(heights, pac, qp);\n        bfs(heights, atl, qa);\n        List<List<Integer>> ans = new ArrayList<>();\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (pac[i][j] && atl[i][j]) ans.add(Arrays.asList(i, j));\n            }\n        }\n        return ans;\n    }\n    private void bfs(int[][] heights, boolean[][] visited, Queue<int[]> q) {\n        int m = heights.length, n = heights[0].length;\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        while (!q.isEmpty()) {\n            int[] curr = q.poll();\n            for (int[] d : dirs) {\n                int ni = curr[0] + d[0], nj = curr[1] + d[1];\n                if (ni >= 0 && ni < m && nj >= 0 && nj < n && !visited[ni][nj] && heights[ni][nj] >= heights[curr[0]][curr[1]]) {\n                    visited[ni][nj] = true;\n                    q.add(new int[]{ni, nj});\n                }\n            }\n        }\n    }\n}",
+            "interview_commentary": [
+                "BFS from borders, enqueue neighbors if >= height.",
+                "Mark visited to avoid reprocessing.",
+                "Same intersection logic."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why traverse from oceans instead of from each cell?",
-            "a": "Reverse traversal avoids repeated expensive path searches and naturally enforces non-decreasing height."
+            "q": "Why reverse flow?",
+            "a": "Easier to check from ocean to cells than from cells to ocean."
         },
         {
-            "q": "What condition allows water to flow to a neighbor?",
-            "a": "Neighbor height must be >= current height when searching backward from the ocean."
+            "q": "What if cell on border?",
+            "a": "Automatically reachable by its ocean."
+        },
+        {
+            "q": "Height condition?",
+            "a": "Water flows to lower or equal height."
+        },
+        {
+            "q": "Time complexity?",
+            "a": "O(m*n) since each cell visited at most twice."
         }
     ]
 }

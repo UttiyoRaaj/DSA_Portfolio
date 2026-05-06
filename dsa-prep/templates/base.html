@@ -714,7 +714,9 @@
             <a href="/logout" class="nav-topic-link">Logout</a>
         {% else %}
             <a href="/login" class="nav-topic-link">Login</a>
-            <a href="/signup" class="nav-topic-link">Sign Up</a>
+            {% if page is not defined or page != 'login' %}
+                <a href="/signup" class="nav-topic-link">Sign Up</a>
+            {% endif %}
         {% endif %}
     </div>
 </nav>

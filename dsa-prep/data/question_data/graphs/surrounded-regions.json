@@ -4,40 +4,74 @@
     "title": "Surrounded Regions",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/surrounded-regions/",
-    "problem_statement": "Capture all O regions completely surrounded by X, leaving border-connected O regions unchanged.",
+    "problem_statement": "Given an m x n matrix board containing 'X' and 'O', capture all regions that are 4-directionally surrounded by 'X'. A region is captured by flipping all 'O's into 'X's in that surrounded region.",
     "examples": [
         {
             "input": "board = [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]",
             "output": "[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]",
-            "explanation": "Only the O on the border remains because it reaches the edge."
+            "explanation": "Surrounded regions should not be on the border, which means that any 'O' on the border of the board are not flipped to 'X'. Any 'O' that is not on the border and it is not connected to an 'O' on the border will be flipped to 'X'. Two cells are connected if they are adjacent cells connected horizontally or vertically."
+        },
+        {
+            "input": "board = [[\"X\"]]",
+            "output": "[[\"X\"]]",
+            "explanation": "There are no 'O's, so the board remains the same."
         }
     ],
     "constraints": [
         "m == board.length",
         "n == board[i].length",
-        "1 <= m, n <= 200"
+        "1 <= m, n <= 200",
+        "board[i][j] is 'X' or 'O'."
     ],
-    "intuition": "Avoid capturing O regions connected to the border by marking them first, then flip remaining O cells.",
+    "intuition": "Mark 'O's connected to border as safe, then flip remaining 'O's to 'X's.",
     "approaches": [
         {
-            "name": "Border DFS marking",
+            "name": "DFS from Borders",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "DFS from border O cells to mark safe regions, then convert unmarked O to X while restoring safe cells.",
+            "description": "DFS from border 'O's, mark them as temporary. Then flip unmarked 'O's to 'X', restore marked to 'O'.",
             "time": "O(m * n)",
             "space": "O(m * n)",
-            "why_not": "Scanning each region individually can mistake border-connected areas; reverse marking is more reliable.",
-            "code": "class Solution {\n    public void solve(char[][] board) {\n        int m = board.length, n = board[0].length;\n        for (int i = 0; i < m; i++) {\n            dfs(board, i, 0);\n            dfs(board, i, n - 1);\n        }\n        for (int j = 0; j < n; j++) {\n            dfs(board, 0, j);\n            dfs(board, m - 1, j);\n        }\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == 'O') board[i][j] = 'X';\n                if (board[i][j] == 'T') board[i][j] = 'O';\n            }\n        }\n    }\n    private void dfs(char[][] board, int i, int j) {\n        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != 'O') return;\n        board[i][j] = 'T';\n        dfs(board, i + 1, j);\n        dfs(board, i - 1, j);\n        dfs(board, i, j + 1);\n        dfs(board, i, j - 1);\n    }\n}"
+            "why_not": "BFS also works; DFS is recursive.",
+            "code": "class Solution {\n    public void solve(char[][] board) {\n        int m = board.length, n = board[0].length;\n        for (int i = 0; i < m; i++) {\n            dfs(board, i, 0);\n            dfs(board, i, n - 1);\n        }\n        for (int j = 0; j < n; j++) {\n            dfs(board, 0, j);\n            dfs(board, m - 1, j);\n        }\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == 'O') board[i][j] = 'X';\n                if (board[i][j] == 'T') board[i][j] = 'O';\n            }\n        }\n    }\n    private void dfs(char[][] board, int i, int j) {\n        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || board[i][j] != 'O') return;\n        board[i][j] = 'T';\n        dfs(board, i + 1, j);\n        dfs(board, i - 1, j);\n        dfs(board, i, j + 1);\n        dfs(board, i, j - 1);\n    }\n}",
+            "interview_commentary": [
+                "Mark border-connected 'O's with 'T'.",
+                "Flip remaining 'O's to 'X', 'T' back to 'O'.",
+                "Handles all connected components from border."
+            ]
+        },
+        {
+            "name": "BFS from Borders",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use BFS instead of DFS for marking.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "DFS may stack overflow; BFS uses queue.",
+            "code": "class Solution {\n    public void solve(char[][] board) {\n        int m = board.length, n = board[0].length;\n        Queue<int[]> queue = new LinkedList<>();\n        for (int i = 0; i < m; i++) {\n            if (board[i][0] == 'O') {\n                queue.add(new int[]{i, 0});\n                board[i][0] = 'T';\n            }\n            if (board[i][n-1] == 'O') {\n                queue.add(new int[]{i, n-1});\n                board[i][n-1] = 'T';\n            }\n        }\n        for (int j = 0; j < n; j++) {\n            if (board[0][j] == 'O') {\n                queue.add(new int[]{0, j});\n                board[0][j] = 'T';\n            }\n            if (board[m-1][j] == 'O') {\n                queue.add(new int[]{m-1, j});\n                board[m-1][j] = 'T';\n            }\n        }\n        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};\n        while (!queue.isEmpty()) {\n            int[] curr = queue.poll();\n            for (int[] d : dirs) {\n                int ni = curr[0] + d[0], nj = curr[1] + d[1];\n                if (ni >= 0 && ni < m && nj >= 0 && nj < n && board[ni][nj] == 'O') {\n                    board[ni][nj] = 'T';\n                    queue.add(new int[]{ni, nj});\n                }\n            }\n        }\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == 'O') board[i][j] = 'X';\n                if (board[i][j] == 'T') board[i][j] = 'O';\n            }\n        }\n    }\n}",
+            "interview_commentary": [
+                "Enqueue border 'O's, mark as 'T'.",
+                "BFS to mark connected 'O's.",
+                "Same flip logic."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why mark border-connected Os?",
-            "a": "Because only O regions not connected to the border should be flipped."
+            "q": "Why not flip all 'O's?",
+            "a": "Border 'O's are not surrounded."
         },
         {
-            "q": "What placeholder character is used?",
-            "a": "A temporary marker like T distinguishes safe O cells during restoration."
+            "q": "What is surrounded?",
+            "a": "'O's not connected to border."
+        },
+        {
+            "q": "Why temporary marker?",
+            "a": "To distinguish safe 'O's."
+        },
+        {
+            "q": "Time complexity?",
+            "a": "O(m*n) visits each cell."
         }
     ]
 }

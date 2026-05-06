@@ -15,27 +15,55 @@
     "constraints": [
         "The number of nodes is in the range [0, 2000]"
     ],
-    "intuition": "Use a queue to traverse the tree breadth-first and collect nodes layer by layer.",
+    "intuition": "Use BFS to visit nodes level by level and collect values in nested lists. DFS can also work if you track depth explicitly.",
     "approaches": [
         {
             "name": "Breadth-first search",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use a queue and process one level at a time, collecting values for each level before moving on.",
+            "description": "Use a queue to process each level and collect values from all nodes currently in the queue before moving to the next level.",
             "time": "O(n)",
             "space": "O(n)",
-            "why_not": "Recursive DFS does not naturally group nodes by level without extra bookkeeping.",
-            "code": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        Queue<TreeNode> queue = new ArrayDeque<>();\n        queue.offer(root);\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            List<Integer> level = new ArrayList<>();\n            for (int i = 0; i < size; i++) {\n                TreeNode node = queue.poll();\n                level.add(node.val);\n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            result.add(level);\n        }\n        return result;\n    }\n}"
+            "why_not": "Recursive DFS can also produce level order, but it requires extra depth tracking and list management.",
+            "code": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        if (root == null) return result;\n        Queue<TreeNode> queue = new ArrayDeque<>();\n        queue.offer(root);\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            List<Integer> level = new ArrayList<>();\n            for (int i = 0; i < size; i++) {\n                TreeNode node = queue.poll();\n                level.add(node.val);\n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            result.add(level);\n        }\n        return result;\n    }\n}",
+            "interview_commentary": [
+                "Queue-based BFS naturally groups nodes by depth.",
+                "Use the current queue size to separate levels.",
+                "Each layer represents one additional distance from the root."
+            ]
+        },
+        {
+            "name": "Depth-first search with depth tracking",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use recursion and the current depth to append node values into the correct nested list for each level.",
+            "time": "O(n)",
+            "space": "O(h)",
+            "why_not": "DFS is less intuitive for level grouping and can use more call stack space in deep trees.",
+            "code": "class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> result = new ArrayList<>();\n        dfs(root, 0, result);\n        return result;\n    }\n\n    private void dfs(TreeNode node, int depth, List<List<Integer>> result) {\n        if (node == null) return;\n        if (depth == result.size()) result.add(new ArrayList<>());\n        result.get(depth).add(node.val);\n        dfs(node.left, depth + 1, result);\n        dfs(node.right, depth + 1, result);\n    }\n}",
+            "interview_commentary": [
+                "Use depth to index into the result list for each level.",
+                "DFS can produce level order output with additional state.",
+                "Add a new inner list when you first reach a deeper level."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What data structure supports level order traversal?",
-            "a": "A queue supports breadth-first traversal across tree levels."
+            "q": "What data structure is ideal for level order traversal?",
+            "a": "A queue, because it naturally processes nodes in first-in first-out order by depth."
         },
         {
-            "q": "How do you know when a level ends?",
-            "a": "By processing a fixed number of nodes equal to the current queue size."
+            "q": "How do you decide when to finish one level?",
+            "a": "By using the queue size at the start of the level as the number of nodes to process."
+        },
+        {
+            "q": "Why is BFS optimal here?",
+            "a": "It visits nodes in increasing depth order, which directly matches the required grouping."
+        },
+        {
+            "q": "When would DFS be useful instead?",
+            "a": "DFS is useful when you need to build the list recursively and can carry the depth as extra state."
         }
     ]
 }

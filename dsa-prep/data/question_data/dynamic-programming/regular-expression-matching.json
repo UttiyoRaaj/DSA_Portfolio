@@ -1,42 +1,96 @@
 {
-    "id": 18,
-    "leetcode_number": 10,
-    "title": "Regular Expression Matching",
-    "difficulty": "Hard",
-    "url": "https://leetcode.com/problems/regular-expression-matching/",
-    "problem_statement": "Implement regex matching with support for \".\" and \"*\" where \".\" matches any character and \"*\" matches zero or more of the preceding element.",
-    "examples": [
-        {
-            "input": "s = \"aab\", p = \"c*a*b\"",
-            "output": "true",
-            "explanation": "c* can match empty, then a* matches \"aa\" and b matches b."
-        }
-    ],
-    "constraints": [
-        "0 <= s.length <= 20",
-        "0 <= p.length <= 30"
-    ],
-    "intuition": "DP on positions with states handling * as zero or multiple matches.",
-    "approaches": [
-        {
-            "name": "DP on string and pattern indices",
-            "badge": "Optimal",
-            "badge_color": "green",
-            "description": "Use dp[i][j] to represent whether s[i:] matches p[j:], handling * by skipping or consuming a character.",
-            "time": "O(m * n)",
-            "space": "O(m * n)",
-            "why_not": "Backtracking can be complex and error-prone for overlapping * choices.",
-            "code": "class Solution {\n    public boolean isMatch(String s, String p) {\n        int m = s.length(), n = p.length();\n        boolean[][] dp = new boolean[m + 1][n + 1];\n        dp[m][n] = true;\n        for (int j = n - 2; j >= 0; j -= 2) {\n            if (p.charAt(j + 1) == '*') dp[m][j] = true;\n            else break;\n        }\n        for (int i = m; i >= 0; i--) {\n            for (int j = n - 1; j >= 0; j--) {\n                boolean firstMatch = i < m && (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.');\n                if (j + 1 < n && p.charAt(j + 1) == '*') {\n                    dp[i][j] = dp[i][j + 2] || (firstMatch && dp[i + 1][j]);\n                } else {\n                    dp[i][j] = firstMatch && dp[i + 1][j + 1];\n                }\n            }\n        }\n        return dp[0][0];\n    }\n}"
-        }
-    ],
-    "interview_qa": [
-        {
-            "q": "How do you handle a * in the pattern?",
-            "a": "Either skip the preceding element and * entirely or consume one character if the first character matches."
-        },
-        {
-            "q": "Why use bottom-up DP?",
-            "a": "It cleanly handles the multiple matching choices and avoids repeated recursion."
-        }
-    ]
+  "id": 18,
+  "leetcode_number": 10,
+  "title": "Regular Expression Matching",
+  "difficulty": "Hard",
+  "url": "https://leetcode.com/problems/regular-expression-matching/",
+  "problem_statement": "Implement regex matching with support for \".\" and \"*\" where \".\" matches any character and \"*\" matches zero or more of the preceding element.",
+  "examples": [
+    {
+      "input": "s = \"aab\", p = \"c*a*b\"",
+      "output": "true",
+      "explanation": "c* can match empty, then a* matches \"aa\" and b matches b."
+    }
+  ],
+  "constraints": [
+    "0 <= s.length <= 20",
+    "0 <= p.length <= 30"
+  ],
+  "intuition": "DP on positions with states handling * as zero or multiple matches.",
+  "approaches": [
+    {
+      "name": "Recursive Brute Force",
+      "badge": "Brute Force",
+      "badge_color": "red",
+      "description": "Directly recurse on the string and pattern. At each step, check if the first characters match. If the next pattern character is '*', branch into two choices: skip the '*' pair entirely, or consume one character from s if it matches and stay at the same pattern position.",
+      "time": "O(2^(m+n))",
+      "space": "O(m + n) recursion stack",
+      "why_not": "Exponential time due to overlapping subproblems being recomputed. Will TLE on inputs near the upper constraint bounds.",
+      "code": "class Solution {\n    public boolean isMatch(String s, String p) {\n        // Base case: if pattern is exhausted, string must also be exhausted\n        if (p.isEmpty()) return s.isEmpty();\n\n        // Check if the very first character matches\n        boolean firstMatch = (!s.isEmpty() &&\n                             (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.'));\n\n        // If next char in pattern is '*', we have two choices:\n        if (p.length() >= 2 && p.charAt(1) == '*') {\n            // Choice 1: treat x* as empty (zero occurrences), skip x*\n            // Choice 2: if first char matches, consume one from s, stay at same p\n            return isMatch(s, p.substring(2)) ||\n                   (firstMatch && isMatch(s.substring(1), p));\n        } else {\n            // No '*' ahead, must match first character and recurse on rest\n            return firstMatch && isMatch(s.substring(1), p.substring(1));\n        }\n    }\n}",
+      "interview_commentary": [
+        "Before coding, I just want to make sure I understand the problem fully.",
+        "When we see 'x*' in the pattern, x* can match zero or more x's — so 'c*' can match empty string, 'c', 'cc', etc.",
+        "'.' can match any single character.",
+        "The recursion mirrors exactly how we'd reason through it by hand — at each step ask: does this position match, and move forward.",
+        "The problem is that we'll hit the same (i, j) pair many times — that's the classic signal to memoize or use DP."
+      ]
+    },
+    {
+      "name": "Memoized Recursion (Top-Down DP)",
+      "badge": "Better",
+      "badge_color": "yellow",
+      "description": "Same recursion as brute force, but cache results in a HashMap keyed by (i, j) — the current indices into s and p. This eliminates repeated computation of identical subproblems.",
+      "time": "O(m * n)",
+      "space": "O(m * n) for the memo table",
+      "why_not": "Still has recursion overhead and the key construction cost per call. Bottom-up DP is cleaner and avoids stack depth concerns for large inputs.",
+      "code": "class Solution {\n    private Map<String, Boolean> memo = new HashMap<>();\n\n    public boolean isMatch(String s, String p) {\n        return dp(s, 0, p, 0);\n    }\n\n    private boolean dp(String s, int i, String p, int j) {\n        // Build a cache key from current positions\n        String key = i + \",\" + j;\n        if (memo.containsKey(key)) return memo.get(key);\n\n        boolean result;\n\n        // Base case: pattern exhausted\n        if (j == p.length()) {\n            result = (i == s.length());\n        } else {\n            // First character match check\n            boolean firstMatch = (i < s.length() &&\n                                 (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.'));\n\n            if (j + 1 < p.length() && p.charAt(j + 1) == '*') {\n                // Two branches: skip x* entirely, or consume one char if first matches\n                result = dp(s, i, p, j + 2) ||\n                         (firstMatch && dp(s, i + 1, p, j));\n            } else {\n                result = firstMatch && dp(s, i + 1, p, j + 1);\n            }\n        }\n\n        memo.put(key, result);\n        return result;\n    }\n}",
+      "interview_commentary": [
+        "Noticing the overlapping subproblems, let me add memoization. I'll key the cache on the pair (i, j) — current position in s and current position in p.",
+        "This brings us down to O(m*n) time because each unique (i, j) is computed exactly once.",
+        "The logic is identical to brute force — only difference is we check the cache before recursing and store before returning.",
+        "This is good enough to pass, but let me think if we can do better with bottom-up DP to avoid recursion stack and string key overhead."
+      ]
+    },
+    {
+      "name": "Bottom-Up Dynamic Programming",
+      "badge": "Optimal",
+      "badge_color": "green",
+      "description": "Build a 2D dp table where dp[i][j] = true if s[i:] matches p[j:]. Fill the table from the end backwards. The base case dp[m][n] = true (both exhausted). Patterns ending in 'x*' sequences can also match an empty string. For each cell, apply the same two-branch logic as the recursive solution but iteratively.",
+      "time": "O(m * n)",
+      "space": "O(m * n)",
+      "why_not": "This is the optimal solution. Space can theoretically be optimized to O(n) with rolling arrays, but that's rarely asked in interviews.",
+      "code": "import java.util.Scanner;\n\nclass Solution {\n    public boolean isMatch(String s, String p) {\n        int m = s.length();\n        int n = p.length();\n\n        // dp[i][j] = does s[i:] match p[j:]?\n        // Size (m+1) x (n+1) to accommodate the empty-suffix base cases\n        boolean[][] dp = new boolean[m + 1][n + 1];\n\n        // Base case 1: empty string matches empty pattern\n        dp[m][n] = true;\n\n        // Base case 2: empty string s[m:] can match patterns like \"a*\", \"a*b*\", \"a*b*c*\"\n        // Walk backwards in steps of 2; stop as soon as we hit a non-'x*' pair\n        for (int j = n - 2; j >= 0; j -= 2) {\n            if (p.charAt(j + 1) == '*') {\n                dp[m][j] = true;  // x* counts as zero occurrences → matches empty s\n            } else {\n                break;            // no further j can salvage an empty-s match\n            }\n        }\n\n        // Fill remaining cells bottom-up (i from m-1 to 0, j from n-1 to 0)\n        // dp[i][j] depends on dp[i+1][...] and dp[i][j+2], so fill row by row downward\n        for (int i = m - 1; i >= 0; i--) {\n            for (int j = n - 1; j >= 0; j--) {\n\n                // Does the current pattern character match the current string character?\n                // '.' is a wildcard that matches any single character\n                boolean firstMatch = (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.');\n\n                if (j + 1 < n && p.charAt(j + 1) == '*') {\n                    // Pattern has 'x*' starting at j — two choices:\n                    // Option A: use x* as ZERO occurrences → skip both j and j+1 in pattern\n                    // Option B: use x* as ONE occurrence  → consume s[i] (if it matches) and stay at j\n                    //           (staying at j lets x* match more chars in future iterations)\n                    dp[i][j] = dp[i][j + 2]                  // Option A: skip x*\n                             || (firstMatch && dp[i + 1][j]); // Option B: consume one, stay\n                } else {\n                    // No '*' following — straightforward: both chars must match, advance both\n                    dp[i][j] = firstMatch && dp[i + 1][j + 1];\n                }\n            }\n        }\n\n        // dp[0][0]: does the full string s[0:] match the full pattern p[0:]?\n        return dp[0][0];\n    }\n\n    // -----------------------------------------------------------------------\n    // Main — drives a few representative test cases and prints pass/fail\n    // -----------------------------------------------------------------------\n    public static void main(String[] args) {\n        Solution sol = new Solution();\n\n        // Each entry: { s, p, expectedResult }\n        String[][] tests = {\n            // Provided example\n            {\"aab\",   \"c*a*b\",  \"true\"},\n\n            // Classic '.*' wildcard — matches everything\n            {\"mississippi\", \".*\",     \"true\"},\n\n            // '.*' matches empty string too\n            {\"\",      \".*\",     \"true\"},\n\n            // Simple dot — must match exactly one char\n            {\"a\",     \".\",      \"true\"},\n            {\"ab\",    \".\",      \"false\"},\n\n            // '*' used as zero occurrences\n            {\"b\",     \"a*b\",    \"true\"},\n            {\"\",      \"a*\",     \"true\"},\n\n            // No match\n            {\"aa\",    \"a\",      \"false\"},\n            {\"aaa\",   \"ab*a\",   \"false\"},\n\n            // Chained 'x*' patterns against empty string\n            {\"\",      \"a*b*c*\", \"true\"},\n\n            // Dot-star followed by literal\n            {\"abcdef\", \".*f\",   \"true\"},\n            {\"abcdef\", \".*e\",   \"false\"},\n\n            // Pattern longer than string\n            {\"a\",     \"ab*\",    \"true\"},  // b* = zero b's\n            {\"a\",     \"ab*c*\",  \"true\"},  // b*c* = zero of each\n        };\n\n        int passed = 0;\n        System.out.println(\"Running \" + tests.length + \" test cases...\\n\");\n\n        for (String[] test : tests) {\n            String s        = test[0];\n            String p        = test[1];\n            boolean expected = Boolean.parseBoolean(test[2]);\n            boolean actual   = sol.isMatch(s, p);\n            boolean ok       = (actual == expected);\n            if (ok) passed++;\n\n            System.out.printf(\"%s  s=\\\"%-12s\\\"  p=\\\"%-10s\\\"  expected=%-5s  got=%-5s%n\",\n                ok ? \"PASS\" : \"FAIL\",\n                s, p,\n                expected, actual);\n        }\n\n        System.out.println(\"\\n\" + passed + \"/\" + tests.length + \" tests passed.\");\n\n        // Interactive mode: read s and p from stdin if extra args supplied\n        if (args.length == 2) {\n            String s = args[0];\n            String p = args[1];\n            System.out.println(\"\\nCustom input: s=\\\"\" + s + \"\\\"  p=\\\"\" + p + \"\\\"\");\n            System.out.println(\"Result: \" + sol.isMatch(s, p));\n        }\n    }\n}",
+      "interview_commentary": [
+        "Let me define dp[i][j] as: 'does s[i:] match p[j:]?' — suffix-based DP is more natural here because '*' always refers to the preceding pattern character.",
+        "Base cases first: dp[m][n] = true (both exhausted — empty matches empty). Then I walk the last row backwards in steps of 2: any trailing 'x*' sequence can match an empty string by using zero occurrences.",
+        "For the '*' branch I have exactly two choices mirroring the recursive solution: skip the x* pair entirely (Option A: dp[i][j+2]), or consume one char from s and stay at j to allow more matches (Option B: firstMatch && dp[i+1][j]).",
+        "For the plain branch it's a direct one-for-one: current chars must match and both pointers advance to dp[i+1][j+1].",
+        "I loop i from m-1 down to 0 because dp[i][j] depends on dp[i+1][...] — the row below must already be filled before we use it.",
+        "main() runs a suite of 14 hand-crafted tests — including the provided example, chained 'x*' against empty string, dot-star combos, and no-match cases — and prints PASS/FAIL for each. It also accepts two command-line args for quick ad-hoc testing.",
+        "Final answer sits at dp[0][0]: does all of s match all of p? Time O(m*n), Space O(m*n)."
+      ]
+    }
+  ],
+  "interview_qa": [
+    {
+      "q": "Walk me through why you chose to fill the DP table bottom-up instead of top-down.",
+      "a": "Bottom-up avoids recursion stack overhead and function call costs per state. Since every cell dp[i][j] depends only on dp[i][j+2] and dp[i+1][j], filling from bottom-right to top-left gives us a clean, predictable traversal with no stack depth risk. Top-down with memoization is equally correct and O(m*n) — I'd use it in a pinch if I couldn't recall the iteration order — but bottom-up is cleaner to reason about in an interview."
+    },
+    {
+      "q": "Can you reduce the space from O(m*n) to O(n)?",
+      "a": "Yes. Since dp[i][j] only ever looks at the current row (dp[i][j+2]) and the row directly below (dp[i+1][j] and dp[i+1][j+1]), we only need to keep two rows alive at a time — current and next. We can use two 1D arrays of size n+1, swapping them as we go from i=m down to i=0. That brings space to O(n). Here's the modified solution:\n\nimport java.util.Scanner;\n\nclass Solution {\n    public boolean isMatch(String s, String p) {\n        int m = s.length();\n        int n = p.length();\n\n        // 'next' represents dp[i+1][...], i.e. the row below the current one\n        boolean[] next = new boolean[n + 1];\n\n        // Base case: empty s matches empty p\n        next[n] = true;\n\n        // Base case: empty s against trailing 'x*' sequences\n        for (int j = n - 2; j >= 0; j -= 2) {\n            if (p.charAt(j + 1) == '*') next[j] = true;\n            else break;\n        }\n\n        // Fill from i = m-1 up to i = 0\n        for (int i = m - 1; i >= 0; i--) {\n            boolean[] curr = new boolean[n + 1];\n            // curr[n] stays false: s[i:] is non-empty, pattern empty = no match\n            for (int j = n - 1; j >= 0; j--) {\n                boolean firstMatch = (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.');\n                if (j + 1 < n && p.charAt(j + 1) == '*') {\n                    curr[j] = curr[j + 2] || (firstMatch && next[j]);\n                } else {\n                    curr[j] = firstMatch && next[j + 1];\n                }\n            }\n            next = curr;\n        }\n\n        return next[0];\n    }\n\n    public static void main(String[] args) {\n        Solution sol = new Solution();\n        System.out.println(sol.isMatch(\"aab\",   \"c*a*b\"));  // true\n        System.out.println(sol.isMatch(\"aa\",    \"a\"));       // false\n        System.out.println(sol.isMatch(\"\",       \"a*b*\"));   // true\n        System.out.println(sol.isMatch(\"abcdef\", \".*f\"));    // true\n    }\n}"
+    },
+    {
+      "q": "What if '?' was also a wildcard that matches exactly one character — how would your solution change?",
+      "a": "Almost nothing changes. In the firstMatch check, I already handle '.' as 'any single character'. I'd just add '|| p.charAt(j) == '?'' to the same condition:\n\nboolean firstMatch = (p.charAt(j) == s.charAt(i)\n                   || p.charAt(j) == '.'\n                   || p.charAt(j) == '?');\n\nThe rest of the DP logic — including how '*' works — stays identical because '?' doesn't change the two-pointer movement rules, only the single-character matching condition."
+    },
+    {
+      "q": "How does your solution handle the edge case where the pattern is just \".*\"?",
+      "a": "Let's trace s='abc', p='.*'. At i=0, j=0: p[0]='.' and p[1]='*' so we hit the '*' branch. dp[0][0] = dp[0][2] OR (firstMatch && dp[1][0]). dp[0][2] checks if s[0:]='abc' matches p[2:]='' — false. But firstMatch is true ('.' matches 'a'), so we check dp[1][0]: does s[1:]='bc' match p[0:]='.*'? Same logic recurses all the way to dp[3][0]: does s[3:]='' match '.*'? That's the base case row where dp[m][0] was initialized to true (zero occurrences of '.'). So the whole chain resolves to true."
+    },
+    {
+      "q": "Could there be a pattern that causes your loop bounds to go out of range?",
+      "a": "I guard against this in two places. First, I only enter the i loop from m-1 down to 0 (not m), so s.charAt(i) is always a valid access — no out-of-bounds on s. Second, the '*' lookahead checks 'j + 1 < n' before touching p.charAt(j+1). The base-case initialization loop also steps j by 2 and breaks early on a non-'*' pair, so it never reads past the pattern. Together these three guards make every array access provably in-range."
+    }
+  ]
 }

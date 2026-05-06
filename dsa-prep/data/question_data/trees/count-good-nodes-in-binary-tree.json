@@ -4,7 +4,7 @@
     "title": "Count Good Nodes in Binary Tree",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/count-good-nodes-in-binary-tree/",
-    "problem_statement": "Count nodes in a binary tree where the node value is at least the maximum value along the path from the root.",
+    "problem_statement": "Count the number of nodes in a binary tree where each node’s value is at least the maximum value along the path from the root to that node.",
     "examples": [
         {
             "input": "root = [3,1,4,3,null,1,5]",
@@ -13,29 +13,43 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [1, 10^5]"
+        "The number of nodes is in the range [1, 10^5]",
+        "-10^4 <= Node.val <= 10^4"
     ],
-    "intuition": "Traverse the tree while carrying the maximum value seen so far and count when a node is not smaller.",
+    "intuition": "Visit each node while carrying the maximum value seen so far from the root and count nodes that meet or exceed that maximum.",
     "approaches": [
         {
-            "name": "Preorder traversal with max tracking",
+            "name": "Preorder traversal with path maximum",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use recursion to pass the current path maximum and increment count when the current node is good.",
+            "description": "Use recursion to propagate the max value on the path and count the current node when it is good.",
             "time": "O(n)",
             "space": "O(h)",
-            "why_not": "A bottom-up approach is possible but more complex for this condition.",
-            "code": "class Solution {\n    public int goodNodes(TreeNode root) {\n        return dfs(root, Integer.MIN_VALUE);\n    }\n\n    private int dfs(TreeNode node, int maxSoFar) {\n        if (node == null) return 0;\n        int count = 0;\n        if (node.val >= maxSoFar) {\n            count = 1;\n            maxSoFar = node.val;\n        }\n        count += dfs(node.left, maxSoFar);\n        count += dfs(node.right, maxSoFar);\n        return count;\n    }\n}"
+            "why_not": "A bottom-up traversal would require more complicated state merging and is unnecessary here.",
+            "code": "class Solution {\n    public int goodNodes(TreeNode root) {\n        return dfs(root, Integer.MIN_VALUE);\n    }\n\n    private int dfs(TreeNode node, int maxSoFar) {\n        if (node == null) return 0;\n        int count = 0;\n        if (node.val >= maxSoFar) {\n            count = 1;\n            maxSoFar = node.val;\n        }\n        count += dfs(node.left, maxSoFar);\n        count += dfs(node.right, maxSoFar);\n        return count;\n    }\n}",
+            "interview_commentary": [
+                "Track the path maximum from root to each node.",
+                "Count nodes when their value meets or exceeds that maximum.",
+                "Update maxSoFar before exploring children if the current node is good."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What state is passed down during recursion?",
-            "a": "The maximum value from the root to the current node."
+            "q": "What information is carried to child nodes?",
+            "a": "The maximum value seen so far along the path from the root."
         },
         {
-            "q": "When is a node counted?",
-            "a": "When its value is greater than or equal to the path maximum."
+            "q": "How do you decide if a node is good?",
+            "a": "If its value is greater than or equal to the path maximum."
+        },
+        {
+            "q": "Why is this an O(n) solution?",
+            "a": "Each node is visited exactly once."
+        },
+        {
+            "q": "What happens when the current node is good?",
+            "a": "Update the path maximum before processing its children."
         }
     ]
 }

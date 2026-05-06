@@ -4,39 +4,73 @@
     "title": "Word Break",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/word-break/",
-    "problem_statement": "Given a string and a word dictionary, determine if the string can be segmented into a space-separated sequence of dictionary words.",
+    "problem_statement": "Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.",
     "examples": [
         {
-            "input": "s = \"leetcode\", wordDict = [\"leet\",\"code\"]",
+            "input": "s = \"leetcode\", wordDict = [\"leet\", \"code\"]",
             "output": "true",
             "explanation": "The string can be segmented as \"leet code\"."
+        },
+        {
+            "input": "s = \"applepenapple\", wordDict = [\"apple\", \"pen\"]",
+            "output": "true",
+            "explanation": "The string can be segmented as \"apple pen apple\"."
         }
     ],
     "constraints": [
         "1 <= s.length <= 300",
-        "1 <= wordDict.length <= 1000"
+        "1 <= wordDict.length <= 1000",
+        "1 <= wordDict[i].length <= 20"
     ],
-    "intuition": "Use DP to check at each index if a dictionary word ends there and previous prefix is valid.",
+    "intuition": "At each index, determine whether the prefix ending there can be segmented by checking previous valid break points and dictionary words.",
     "approaches": [
         {
-            "name": "DP over string prefixes",
-            "badge": "Optimal",
-            "badge_color": "green",
-            "description": "dp[i] is true if s[0..i-1] can be segmented; extend using words from the dictionary.",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try every dictionary word at the current prefix and recurse on the remaining suffix.",
+            "time": "O(n * 2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential because it recomputes segmentation decisions for the same suffix many times."
+            ,"code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        return dfs(s, new HashSet<>(wordDict), 0);\n    }\n\n    private boolean dfs(String s, Set<String> dict, int start) {\n        if (start == s.length()) return true;\n        for (int end = start + 1; end <= s.length(); end++) {\n            if (dict.contains(s.substring(start, end)) && dfs(s, dict, end)) {\n                return true;\n            }\n        }\n        return false;\n    }\n}"
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Memoize the result for each starting index to avoid repeated work on the same suffix.",
             "time": "O(n^2 * k)",
             "space": "O(n)",
-            "why_not": "Brute force segmentation tries all splits and duplicates prefix checks.",
-            "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        boolean[] dp = new boolean[s.length() + 1];\n        dp[0] = true;\n        for (int i = 1; i <= s.length(); i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j] && dict.contains(s.substring(j, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        return dp[s.length()];\n    }\n}"
+            "why_not": "This is good, but iterative dp is simpler and avoids recursion."
+            ,"code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        Boolean[] memo = new Boolean[s.length()];\n        return dfs(s, dict, 0, memo);\n    }\n\n    private boolean dfs(String s, Set<String> dict, int start, Boolean[] memo) {\n        if (start == s.length()) return true;\n        if (memo[start] != null) return memo[start];\n        for (int end = start + 1; end <= s.length(); end++) {\n            if (dict.contains(s.substring(start, end)) && dfs(s, dict, end, memo)) {\n                return memo[start] = true;\n            }\n        }\n        return memo[start] = false;\n    }\n}"
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use dp[i] to track whether s[0..i-1] can be segmented, and update it using valid dictionary words ending at i.",
+            "time": "O(n^2 * k)",
+            "space": "O(n)",
+            "why_not": "This is the standard DP approach."
+            ,"code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        Set<String> dict = new HashSet<>(wordDict);\n        boolean[] dp = new boolean[s.length() + 1];\n        dp[0] = true;\n        for (int i = 1; i <= s.length(); i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j] && dict.contains(s.substring(j, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        return dp[s.length()];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the meaning of dp[i] in Word Break?",
-            "a": "It means the prefix s[0..i-1] can be segmented into dictionary words."
+            "q": "What does dp[i] mean?",
+            "a": "It means s[0..i-1] can be segmented into words from wordDict."
         },
         {
-            "q": "How can checking dictionary words be optimized?",
-            "a": "Use a hash set for constant-time word lookup and limit substring lengths by the max word length."
+            "q": "How can you optimize substring checks?",
+            "a": "Use a set for O(1) lookup and limit the substring length by the longest dictionary word."
+        },
+        {
+            "q": "What is the base case?",
+            "a": "dp[0] = true, representing the empty string."
+        },
+        {
+            "q": "Why does memoization help?",
+            "a": "It prevents reprocessing the same suffix, turning exponential recursion into polynomial time."
         }
     ]
 }

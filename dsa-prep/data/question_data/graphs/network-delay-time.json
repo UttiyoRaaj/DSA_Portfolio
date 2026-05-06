@@ -4,40 +4,77 @@
     "title": "Network Delay Time",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/network-delay-time/",
-    "problem_statement": "Calculate how long it takes for all nodes to receive a signal sent from a source in a weighted directed graph.",
+    "problem_statement": "You are given a network of n nodes, labeled from 1 to n. You are also given times, a list of travel times as directed edges times[i] = (ui, vi, wi), where ui is the source node, vi is the target node, and wi is the time it takes for a signal to travel from source to target. We will send a signal from a given node k. Return the time it takes for all the n nodes to receive the signal. If it is impossible for all the n nodes to receive the signal, return -1.",
     "examples": [
         {
             "input": "times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2",
             "output": "2",
-            "explanation": "All nodes receive the signal by time 2."
+            "explanation": "At time 0, we send the signal from node 2. At time 1, node 1 and node 3 receive the signal. At time 2, node 4 receives the signal."
+        },
+        {
+            "input": "times = [[1,2,1]], n = 2, k = 1",
+            "output": "-1",
+            "explanation": "Node 2 cannot receive the signal."
         }
     ],
     "constraints": [
-        "1 <= n <= 100",
+        "1 <= k <= n <= 100",
         "1 <= times.length <= 6000",
-        "0 <= travel time <= 100"
+        "times[i].length == 3",
+        "1 <= ui, vi <= n",
+        "ui != vi",
+        "0 <= wi <= 100",
+        "All the pairs (ui, vi) are unique. (i.e., no multiple edges.)"
     ],
-    "intuition": "Find shortest paths from the source to all nodes using Dijkstra, then take the maximum distance.",
+    "intuition": "This is a shortest path problem from node k to all nodes. The answer is the maximum shortest path distance, or -1 if some node is unreachable.",
     "approaches": [
         {
-            "name": "Dijkstra\u2019s shortest path",
+            "name": "Dijkstra's Algorithm",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Use a min-heap to pick the next closest node and update neighbor distances until all reachable nodes are processed.",
-            "time": "O(E log V)",
-            "space": "O(E + V)",
-            "why_not": "Bellman-Ford works but is slower for this dense edge range.",
-            "code": "class Solution {\n    public int networkDelayTime(int[][] times, int n, int k) {\n        Map<Integer, List<int[]>> graph = new HashMap<>();\n        for (int[] t : times) {\n            graph.computeIfAbsent(t[0], x -> new ArrayList<>()).add(new int[]{t[1], t[2]});\n        }\n        int[] dist = new int[n + 1];\n        Arrays.fill(dist, Integer.MAX_VALUE);\n        dist[k] = 0;\n        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));\n        pq.offer(new int[]{k, 0});\n        while (!pq.isEmpty()) {\n            int[] node = pq.poll();\n            int u = node[0], d = node[1];\n            if (d > dist[u]) continue;\n            for (int[] edge : graph.getOrDefault(u, List.of())) {\n                int v = edge[0], w = edge[1];\n                if (dist[v] > dist[u] + w) {\n                    dist[v] = dist[u] + w;\n                    pq.offer(new int[]{v, dist[v]});\n                }\n            }\n        }\n        int max = 0;\n        for (int i = 1; i <= n; i++) {\n            if (dist[i] == Integer.MAX_VALUE) return -1;\n            max = Math.max(max, dist[i]);\n        }\n        return max;\n    }\n}"
+            "description": "Use a priority queue to always process the node with the smallest current distance. Update distances to neighbors and track the max distance.",
+            "time": "O((V + E) log V)",
+            "space": "O(V + E)",
+            "why_not": "Bellman-Ford is O(V*E) and slower; Dijkstra is efficient for non-negative weights.",
+            "code": "class Solution {\n    public int networkDelayTime(int[][] times, int n, int k) {\n        Map<Integer, List<int[]>> graph = new HashMap<>();\n        for (int[] t : times) {\n            graph.computeIfAbsent(t[0], x -> new ArrayList<>()).add(new int[]{t[1], t[2]});\n        }\n        int[] dist = new int[n + 1];\n        Arrays.fill(dist, Integer.MAX_VALUE);\n        dist[k] = 0;\n        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));\n        pq.offer(new int[]{k, 0});\n        while (!pq.isEmpty()) {\n            int[] node = pq.poll();\n            int u = node[0], d = node[1];\n            if (d > dist[u]) continue;\n            for (int[] edge : graph.getOrDefault(u, List.of())) {\n                int v = edge[0], w = edge[1];\n                if (dist[v] > dist[u] + w) {\n                    dist[v] = dist[u] + w;\n                    pq.offer(new int[]{v, dist[v]});\n                }\n            }\n        }\n        int max = 0;\n        for (int i = 1; i <= n; i++) {\n            if (dist[i] == Integer.MAX_VALUE) return -1;\n            max = Math.max(max, dist[i]);\n        }\n        return max;\n    }\n}",
+            "interview_commentary": [
+                "Dijkstra finds shortest paths from k to all nodes. We use a PQ to always expand the closest node.",
+                "After running, check if all nodes have finite distance; if not, return -1. Else, return the max distance.",
+                "This assumes non-negative weights, which is given."
+            ]
+        },
+        {
+            "name": "Bellman-Ford Algorithm",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Relax all edges V-1 times. Since n<=100, it's feasible. Track distances and check for unreachable nodes.",
+            "time": "O(V * E)",
+            "space": "O(V)",
+            "why_not": "Slower than Dijkstra for this case, but handles negative weights if needed.",
+            "code": "class Solution {\n    public int networkDelayTime(int[][] times, int n, int k) {\n        int[] dist = new int[n + 1];\n        Arrays.fill(dist, Integer.MAX_VALUE / 2);\n        dist[k] = 0;\n        for (int i = 1; i < n; i++) {\n            for (int[] t : times) {\n                int u = t[0], v = t[1], w = t[2];\n                if (dist[u] != Integer.MAX_VALUE / 2 && dist[v] > dist[u] + w) {\n                    dist[v] = dist[u] + w;\n                }\n            }\n        }\n        int max = 0;\n        for (int i = 1; i <= n; i++) {\n            if (dist[i] == Integer.MAX_VALUE / 2) return -1;\n            max = Math.max(max, dist[i]);\n        }\n        return max;\n    }\n}",
+            "interview_commentary": [
+                "Bellman-Ford relaxes all edges in each of V-1 iterations. Here, since weights are positive, it's overkill but works.",
+                "We don't need the negative cycle check since the problem guarantees no negatives.",
+                "Same logic: find shortest paths and take max."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What does the final answer represent?",
-            "a": "The time when the farthest reachable node receives the signal."
+            "q": "Why return the max distance?",
+            "a": "Because the signal reaches all nodes at different times; we need the time when the last node receives it."
         },
         {
-            "q": "Why use Dijkstra here?",
-            "a": "Because edge weights are non-negative and we need shortest paths from one source."
+            "q": "What if the graph is disconnected?",
+            "a": "If some node has infinite distance, return -1."
+        },
+        {
+            "q": "Why Dijkstra over Bellman-Ford?",
+            "a": "Dijkstra is faster for non-negative weights; Bellman-Ford is more general."
+        },
+        {
+            "q": "Can we use BFS?",
+            "a": "Only if all weights are 1; here weights vary, so Dijkstra or Bellman-Ford."
         }
     ]
 }

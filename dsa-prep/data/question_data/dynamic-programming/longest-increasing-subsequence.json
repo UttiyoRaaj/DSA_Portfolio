@@ -4,39 +4,72 @@
     "title": "Longest Increasing Subsequence",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
-    "problem_statement": "Find the length of the longest strictly increasing subsequence in an integer array.",
+    "problem_statement": "Given an integer array nums, return the length of the longest strictly increasing subsequence.",
     "examples": [
         {
             "input": "nums = [10,9,2,5,3,7,101,18]",
             "output": "4",
-            "explanation": "One LIS is [2,3,7,101]."
+            "explanation": "One longest increasing subsequence is [2,3,7,101]."
+        },
+        {
+            "input": "nums = [0,1,0,3,2,3]",
+            "output": "4",
+            "explanation": "One LIS is [0,1,2,3]."
         }
     ],
     "constraints": [
         "1 <= nums.length <= 2500",
         "-10^4 <= nums[i] <= 10^4"
     ],
-    "intuition": "Use patience sorting with binary search to maintain smallest endings for increasing subsequences.",
+    "intuition": "Keep track of the smallest possible tail value for increasing subsequences of each length, and extend or replace tails using binary search.",
     "approaches": [
         {
-            "name": "DP with binary search",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try every subsequence by deciding whether to include or skip each number while maintaining the last chosen value.",
+            "time": "O(2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential due to exploring all subsets of indices. Does not scale beyond n~30."
+            ,"code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        return dfs(nums, 0, Integer.MIN_VALUE);\n    }\n\n    private int dfs(int[] nums, int index, int prev) {\n        if (index == nums.length) return 0;\n        int skip = dfs(nums, index + 1, prev);\n        int take = 0;\n        if (nums[index] > prev) {\n            take = 1 + dfs(nums, index + 1, nums[index]);\n        }\n        return Math.max(skip, take);\n    }\n}"
+        },
+        {
+            "name": "DP with O(n^2)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Use dp[i] to store the LIS ending at index i by scanning previous indices for smaller values.",
+            "time": "O(n^2)",
+            "space": "O(n)",
+            "why_not": "Correct for n up to 2500, but O(n log n) is faster for larger arrays."
+            ,"code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        int n = nums.length;\n        int[] dp = new int[n];\n        Arrays.fill(dp, 1);\n        int best = 1;\n        for (int i = 1; i < n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (nums[j] < nums[i]) {\n                    dp[i] = Math.max(dp[i], dp[j] + 1);\n                }\n            }\n            best = Math.max(best, dp[i]);\n        }\n        return best;\n    }\n}"
+        },
+        {
+            "name": "DP with Binary Search (Patience Sorting)",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Maintain a tails array where tails[len] is the smallest ending value of an increasing subsequence of length len+1.",
+            "description": "Maintain a tails array where tails[len] is the smallest ending value of any increasing subsequence of length len+1. Use binary search to place each number.",
             "time": "O(n log n)",
             "space": "O(n)",
-            "why_not": "Simple O(n^2) DP is easier but too slow for large inputs.",
-            "code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        int[] tails = new int[nums.length];\n        int size = 0;\n        for (int num : nums) {\n            int i = Arrays.binarySearch(tails, 0, size, num);\n            if (i < 0) i = -(i + 1);\n            tails[i] = num;\n            if (i == size) size++;\n        }\n        return size;\n    }\n}"
+            "why_not": "This is the best known time complexity for LIS length."
+            ,"code": "class Solution {\n    public int lengthOfLIS(int[] nums) {\n        int[] tails = new int[nums.length];\n        int size = 0;\n        for (int num : nums) {\n            int i = Arrays.binarySearch(tails, 0, size, num);\n            if (i < 0) i = -(i + 1);\n            tails[i] = num;\n            if (i == size) size++;\n        }\n        return size;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the tails array in LIS?",
-            "a": "It stores the smallest possible tail value for increasing subsequences of each length."
+            "q": "What does tails[k] represent?",
+            "a": "The smallest ending value for an increasing subsequence of length k+1."
         },
         {
-            "q": "Why use binary search?",
-            "a": "To find where the current number can extend or replace an existing subsequence in O(log n) time."
+            "q": "Why replace a tail value instead of append?",
+            "a": "Replacing with a smaller value gives more chance to extend the subsequence later."
+        },
+        {
+            "q": "When is O(n^2) DP acceptable?",
+            "a": "For n around 2500, O(n^2) is often acceptable; but O(n log n) is preferred when performance matters."
+        },
+        {
+            "q": "Why is binary search used?",
+            "a": "To find the first tails position that is >= current number, so we can update the smallest valid tail efficiently."
         }
     ]
 }

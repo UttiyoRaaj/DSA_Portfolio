@@ -4,40 +4,80 @@
     "title": "Course Schedule II",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/course-schedule-ii/",
-    "problem_statement": "Return a valid ordering of courses given prerequisites, or an empty array if no order exists.",
+    "problem_statement": "There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai. For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1. Return the ordering of courses you should take to finish all courses. If there are many valid answers, return any of them. If it is impossible to finish all courses, return an empty array.",
     "examples": [
         {
             "input": "numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]",
-            "output": "[0,1,2,3] or [0,2,1,3]",
-            "explanation": "Courses 0 must be taken first, then 1 and 2 before 3."
+            "output": "[0,2,1,3]",
+            "explanation": "There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0. So one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3]."
+        },
+        {
+            "input": "numCourses = 2, prerequisites = [[1,0]]",
+            "output": "[0,1]",
+            "explanation": "There are a total of 2 courses to take. To take course 1 you should have finished course 0. So the correct course order is [0,1]."
+        },
+        {
+            "input": "numCourses = 2, prerequisites = [[1,0],[0,1]]",
+            "output": "[]",
+            "explanation": "There are a total of 2 courses to take. To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible."
         }
     ],
     "constraints": [
         "1 <= numCourses <= 2000",
         "0 <= prerequisites.length <= numCourses * (numCourses - 1)",
-        "prerequisites[i].length == 2"
+        "prerequisites[i].length == 2",
+        "0 <= ai, bi < numCourses",
+        "All the pairs [ai, bi] are unique."
     ],
-    "intuition": "Perform topological sort on the directed graph of prerequisites to detect cycles and determine order.",
+    "intuition": "This is a topological sort problem. We need to order courses such that all prerequisites come before the course. If there's a cycle, it's impossible.",
     "approaches": [
         {
-            "name": "Kahn\u2019s algorithm for topological sort",
+            "name": "Kahn's Algorithm (BFS)",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Compute in-degrees, enqueue zero in-degree nodes, and build the order while checking for cycles.",
+            "description": "Use indegree array and queue. Start with courses having 0 indegree, process them, reduce indegrees of neighbors. If all courses are processed, return order.",
             "time": "O(V + E)",
             "space": "O(V + E)",
-            "why_not": "DFS works too, but Kahn\u2019s algorithm directly detects invalid course graphs by leftover nodes.",
-            "code": "class Solution {\n    public int[] findOrder(int numCourses, int[][] prerequisites) {\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>());\n        int[] indegree = new int[numCourses];\n        for (int[] pre : prerequisites) {\n            graph.get(pre[1]).add(pre[0]);\n            indegree[pre[0]]++;\n        }\n        Queue<Integer> queue = new ArrayDeque<>();\n        for (int i = 0; i < numCourses; i++) if (indegree[i] == 0) queue.offer(i);\n        int[] order = new int[numCourses];\n        int idx = 0;\n        while (!queue.isEmpty()) {\n            int course = queue.poll();\n            order[idx++] = course;\n            for (int next : graph.get(course)) {\n                if (--indegree[next] == 0) queue.offer(next);\n            }\n        }\n        return idx == numCourses ? order : new int[0];\n    }\n}"
+            "why_not": "DFS also works, but BFS detects cycles by checking if all nodes are visited.",
+            "code": "class Solution {\n    public int[] findOrder(int numCourses, int[][] prerequisites) {\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>());\n        int[] indegree = new int[numCourses];\n        for (int[] pre : prerequisites) {\n            graph.get(pre[1]).add(pre[0]);\n            indegree[pre[0]]++;\n        }\n        Queue<Integer> queue = new ArrayDeque<>();\n        for (int i = 0; i < numCourses; i++) if (indegree[i] == 0) queue.offer(i);\n        int[] order = new int[numCourses];\n        int idx = 0;\n        while (!queue.isEmpty()) {\n            int course = queue.poll();\n            order[idx++] = course;\n            for (int next : graph.get(course)) {\n                if (--indegree[next] == 0) queue.offer(next);\n            }\n        }\n        return idx == numCourses ? order : new int[0];\n    }\n}",
+            "interview_commentary": [
+                "Kahn's algorithm is BFS-based topological sort. We use a queue for nodes with indegree 0.",
+                "Each time we process a node, we decrease indegrees of its neighbors.",
+                "If we can't process all nodes, there's a cycle."
+            ]
+        },
+        {
+            "name": "DFS Topological Sort",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use DFS to traverse the graph, keeping track of visiting states. Build the order by adding nodes after visiting all dependencies.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "why_not": "BFS is often preferred for this problem, but DFS works and can detect cycles.",
+            "code": "class Solution {\n    public int[] findOrder(int numCourses, int[][] prerequisites) {\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>());\n        for (int[] pre : prerequisites) graph.get(pre[1]).add(pre[0]);\n        int[] visited = new int[numCourses]; // 0 not, 1 visiting, 2 done\n        List<Integer> order = new ArrayList<>();\n        for (int i = 0; i < numCourses; i++) {\n            if (dfs(graph, i, visited, order)) return new int[0];\n        }\n        Collections.reverse(order);\n        return order.stream().mapToInt(i -> i).toArray();\n    }\n    private boolean dfs(List<List<Integer>> graph, int course, int[] visited, List<Integer> order) {\n        if (visited[course] == 1) return true; // cycle\n        if (visited[course] == 2) return false;\n        visited[course] = 1;\n        for (int next : graph.get(course)) {\n            if (dfs(graph, next, visited, order)) return true;\n        }\n        visited[course] = 2;\n        order.add(course);\n        return false;\n    }\n}",
+            "interview_commentary": [
+                "DFS uses three states: not visited, visiting, done. If we revisit a visiting node, cycle.",
+                "We add nodes to order after processing all dependencies, then reverse the list.",
+                "This builds the topological order in reverse."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "How can you detect a cycle in prerequisites?",
-            "a": "If topological sort finishes with fewer than numCourses nodes, a cycle exists."
+            "q": "Why return empty array if cycle?",
+            "a": "If there's a cycle, no valid order exists."
         },
         {
-            "q": "What is the role of indegree?",
-            "a": "Indegree counts prerequisites remaining before a course can be taken."
+            "q": "Difference between Kahn's and DFS?",
+            "a": "Kahn's uses BFS and indegrees; DFS uses recursion and visiting states."
+        },
+        {
+            "q": "What if multiple valid orders?",
+            "a": "Return any one."
+        },
+        {
+            "q": "How to handle disconnected graph?",
+            "a": "Both algorithms handle it; process all components."
         }
     ]
 }

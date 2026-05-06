@@ -333,7 +333,7 @@ def login():
             flash("Logged in successfully.", "success")
             return redirect(url_for("index"))
         flash("Invalid email or password.", "error")
-    return render_template("login.html", next=next_page)
+    return render_template("login.html", next=next_page, page='login')
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -360,7 +360,7 @@ def signup():
                     return redirect(next_page)
                 flash("Account created successfully. A confirmation email has been sent.", "success")
                 return redirect(url_for("index"))
-    return render_template("signup.html", next=next_page)
+    return render_template("signup.html", next=next_page, page='signup')
 
 
 @app.route("/logout")

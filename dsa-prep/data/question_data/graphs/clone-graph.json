@@ -4,40 +4,70 @@
     "title": "Clone Graph",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/clone-graph/",
-    "problem_statement": "Return a deep copy of an undirected graph given a reference node.",
+    "problem_statement": "Given a reference of a node in a connected undirected graph. Return a deep copy (clone) of the graph. Each node in the graph contains a value (int) and a list (List[Node]) of its neighbors.",
     "examples": [
         {
             "input": "adjList = [[2,4],[1,3],[2,4],[1,3]]",
-            "output": "A deep copy of the graph with the same adjacency relationships.",
-            "explanation": "Clone each node and reconstruct neighbor references without reusing original nodes."
+            "output": "[[2,4],[1,3],[2,4],[1,3]]",
+            "explanation": "There are 4 nodes with values 1, 2, 3, 4. Node 1 is connected to nodes 2 and 4, node 2 is connected to nodes 1 and 3, etc."
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [1, 100].",
+        "The number of nodes in the graph is in the range [0, 100].",
         "1 <= Node.val <= 100",
-        "No duplicate edges or self-loops exist."
+        "Node.val is unique for each node.",
+        "There are no repeated edges and no self-loops in the graph.",
+        "The Graph is connected and all nodes can be visited starting from the given node."
     ],
-    "intuition": "Use BFS or DFS to traverse and clone nodes, mapping original nodes to copies.",
+    "intuition": "We need to create a new graph with the same structure. Use a map to track cloned nodes and traverse the graph to copy neighbors.",
     "approaches": [
         {
-            "name": "DFS clone with hashmap",
+            "name": "DFS with HashMap",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Recursively clone each neighbor and store the mapping from original to cloned node to avoid duplicates.",
+            "description": "Use DFS to traverse the graph. For each node, create a clone if not already, and recursively clone neighbors, adding to the clone's neighbors list.",
             "time": "O(N + E)",
             "space": "O(N)",
-            "why_not": "Iterating without a map can create duplicate clones and invalid references.",
-            "code": "class Solution {\n    public Node cloneGraph(Node node) {\n        if (node == null) return null;\n        Map<Node, Node> map = new HashMap<>();\n        return dfs(node, map);\n    }\n    private Node dfs(Node node, Map<Node, Node> map) {\n        if (map.containsKey(node)) return map.get(node);\n        Node clone = new Node(node.val);\n        map.put(node, clone);\n        for (Node nei : node.neighbors) {\n            clone.neighbors.add(dfs(nei, map));\n        }\n        return clone;\n    }\n}"
+            "why_not": "BFS is iterative; DFS is recursive but fine for small graphs.",
+            "code": "class Solution {\n    public Node cloneGraph(Node node) {\n        if (node == null) return null;\n        Map<Node, Node> map = new HashMap<>();\n        return dfs(node, map);\n    }\n    private Node dfs(Node node, Map<Node, Node> map) {\n        if (map.containsKey(node)) return map.get(node);\n        Node clone = new Node(node.val);\n        map.put(node, clone);\n        for (Node nei : node.neighbors) {\n            clone.neighbors.add(dfs(nei, map));\n        }\n        return clone;\n    }\n}",
+            "interview_commentary": [
+                "This is a graph cloning problem. I need to create new nodes with the same values and connect them the same way.",
+                "The key is to use a map from original node to cloned node to avoid creating duplicates and to handle cycles.",
+                "DFS traverses the graph, cloning as it goes, and adds neighbors recursively."
+            ]
+        },
+        {
+            "name": "BFS with HashMap",
+            "badge": "Optimal",
+            "badge_color": "green",
+            "description": "Use BFS with a queue. Clone nodes level by level, using a map to store clones. For each neighbor, if not cloned, clone and enqueue.",
+            "time": "O(N + E)",
+            "space": "O(N)",
+            "why_not": "Same as DFS; BFS is iterative and avoids recursion.",
+            "code": "class Solution {\n    public Node cloneGraph(Node node) {\n        if (node == null) return null;\n        Map<Node, Node> map = new HashMap<>();\n        Queue<Node> queue = new LinkedList<>();\n        queue.add(node);\n        map.put(node, new Node(node.val));\n        while (!queue.isEmpty()) {\n            Node curr = queue.poll();\n            Node clone = map.get(curr);\n            for (Node nei : curr.neighbors) {\n                if (!map.containsKey(nei)) {\n                    map.put(nei, new Node(nei.val));\n                    queue.add(nei);\n                }\n                clone.neighbors.add(map.get(nei));\n            }\n        }\n        return map.get(node);\n    }\n}",
+            "interview_commentary": [
+                "BFS is similar: start with the given node, clone it, and enqueue.",
+                "For each node, iterate its neighbors: if not cloned, clone and enqueue; then add the cloned neighbor to the current clone's list.",
+                "This processes level by level, ensuring all nodes are cloned before connecting."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why store a map of original to clone?",
-            "a": "To ensure each original node maps to exactly one clone and to avoid infinite recursion on cycles."
+            "q": "Why do we need a map?",
+            "a": "To map original nodes to their clones, preventing multiple clones of the same node and ensuring correct neighbor references."
         },
         {
-            "q": "Can BFS be used too?",
-            "a": "Yes, BFS works equally well by cloning nodes level by level and storing mappings."
+            "q": "What if the graph has cycles?",
+            "a": "The map handles cycles by checking if a node is already cloned before recursing or enqueuing."
+        },
+        {
+            "q": "Can we clone without extra space?",
+            "a": "No, because we need to store the mapping. O(N) is necessary."
+        },
+        {
+            "q": "What's the difference between shallow and deep copy?",
+            "a": "Shallow copy shares references; deep copy creates new objects. Here, we need deep copy with new nodes and new neighbor lists."
         }
     ]
 }

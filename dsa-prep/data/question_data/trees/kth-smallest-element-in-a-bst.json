@@ -4,7 +4,7 @@
     "title": "Kth Smallest Element in a BST",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
-    "problem_statement": "Return the kth smallest value in a binary search tree.",
+    "problem_statement": "Return the kth smallest value in a binary search tree, where k is 1-indexed.",
     "examples": [
         {
             "input": "root = [3,1,4,null,2], k = 1",
@@ -13,29 +13,58 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [1, 10^4]"
+        "The number of nodes is in the range [1, 10^4]",
+        "-10^5 <= Node.val <= 10^5"
     ],
-    "intuition": "Use inorder traversal to visit BST nodes in sorted order and return the kth visited node.",
+    "intuition": "An inorder traversal of a BST visits nodes in sorted order, so the kth visited node is the answer.",
     "approaches": [
         {
-            "name": "Inorder traversal",
+            "name": "Recursive inorder traversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Traverse the tree in order and stop when the kth smallest node is reached.",
+            "description": "Traverse left subtree, visit current node, and traverse right subtree while counting nodes until k is reached.",
             "time": "O(h + k)",
             "space": "O(h)",
-            "why_not": "Collecting all values uses extra space and is not necessary if k is small.",
-            "code": "class Solution {\n    private int count = 0;\n    private int result = 0;\n\n    public int kthSmallest(TreeNode root, int k) {\n        inorder(root, k);\n        return result;\n    }\n\n    private void inorder(TreeNode node, int k) {\n        if (node == null) return;\n        inorder(node.left, k);\n        if (++count == k) {\n            result = node.val;\n            return;\n        }\n        inorder(node.right, k);\n    }\n}"
+            "why_not": "Collecting all values into a list is easier but uses extra O(n) space.\n",
+            "code": "class Solution {\n    private int count = 0;\n    private int result = 0;\n\n    public int kthSmallest(TreeNode root, int k) {\n        inorder(root, k);\n        return result;\n    }\n\n    private void inorder(TreeNode node, int k) {\n        if (node == null) return;\n        inorder(node.left, k);\n        if (++count == k) {\n            result = node.val;\n            return;\n        }\n        inorder(node.right, k);\n    }\n}",
+            "interview_commentary": [
+                "Inorder traversal yields BST values in ascending order.",
+                "Stop traversal early when the kth value is found.",
+                "Use a counter to track the number of visited nodes."
+            ]
+        },
+        {
+            "name": "Iterative inorder with stack",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use an explicit stack to simulate inorder traversal and stop when the kth node is popped.",
+            "time": "O(h + k)",
+            "space": "O(h)",
+            "why_not": "Recursive code is cleaner, but iterative avoids call stack overhead.",
+            "code": "class Solution {\n    public int kthSmallest(TreeNode root, int k) {\n        Deque<TreeNode> stack = new ArrayDeque<>();\n        TreeNode node = root;\n        while (node != null || !stack.isEmpty()) {\n            while (node != null) {\n                stack.push(node);\n                node = node.left;\n            }\n            node = stack.pop();\n            if (--k == 0) return node.val;\n            node = node.right;\n        }\n        return -1;\n    }\n}",
+            "interview_commentary": [
+                "The stack simulates recursion for inorder traversal.",
+                "Push left nodes until you reach the smallest value.",
+                "Pop nodes and count until the kth smallest is reached."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why is inorder traversal used?",
-            "a": "It visits BST values in ascending order."
+            "q": "Why does inorder traversal give sorted BST values?",
+            "a": "In a BST, left subtree values are smaller, so visiting left-root-right yields ascending order."
         },
         {
-            "q": "Can traversal stop early?",
-            "a": "Yes, once the kth smallest element is found."
+            "q": "How do you stop early?",
+            "a": "Maintain a count and return as soon as the kth node is visited."
+        },
+        {
+            "q": "What is the stack space complexity?",
+            "a": "O(h), where h is the tree height."
+        },
+        {
+            "q": "What if k equals n?",
+            "a": "The algorithm traverses the entire tree and returns the largest value."
         }
     ]
 }

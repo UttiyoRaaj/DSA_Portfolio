@@ -4,39 +4,73 @@
     "title": "Distinct Subsequences",
     "difficulty": "Hard",
     "url": "https://leetcode.com/problems/distinct-subsequences/",
-    "problem_statement": "Count the number of distinct ways to form string t from string s by deleting characters without changing order.",
+    "problem_statement": "Given two strings s and t, return the number of distinct subsequences of s that equal t. A subsequence of a string is a new string formed from the original string by deleting some characters without changing the order of the remaining characters.",
     "examples": [
         {
             "input": "s = \"rabbbit\", t = \"rabbit\"",
             "output": "3",
-            "explanation": "Three subsequences of s match t."
+            "explanation": "There are three ways to delete one 'b' from s to make t."
+        },
+        {
+            "input": "s = \"babgbag\", t = \"bag\"",
+            "output": "5",
+            "explanation": "There are five distinct subsequences of s that form \"bag\"."
         }
     ],
     "constraints": [
         "1 <= s.length, t.length <= 1000",
-        "Answers fit in a 32-bit integer"
+        "s and t consist of lowercase English letters.",
+        "Answers fit in a 32-bit integer."
     ],
-    "intuition": "Use DP over prefixes of s and t and count matching subsequences incrementally.",
+    "intuition": "For each prefix of s and t, count how many ways t can be formed by either matching the current character or skipping the current character in s.",
     "approaches": [
         {
-            "name": "2D DP on prefix lengths",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Recurse on both strings. If the current characters match, add ways from matching and skipping; otherwise skip the current character in s.",
+            "time": "O(2^{m+n})",
+            "space": "O(m + n) stack",
+            "why_not": "Exponential due to exploring all subsequence decisions. Many subproblems overlap."
+            ,"code": "class Solution {\n    public int numDistinct(String s, String t) {\n        return dfs(s, t, 0, 0);\n    }\n\n    private int dfs(String s, String t, int i, int j) {\n        if (j == t.length()) return 1;\n        if (i == s.length()) return 0;\n        int ways = dfs(s, t, i + 1, j);\n        if (s.charAt(i) == t.charAt(j)) {\n            ways += dfs(s, t, i + 1, j + 1);\n        }\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Memoize the number of ways to form t[j:] from s[i:] to avoid recomputing the same prefix states.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "why_not": "Bottom-up is iterative and avoids recursion overhead, but this is still efficient."
+            ,"code": "class Solution {\n    public int numDistinct(String s, String t) {\n        int m = s.length(), n = t.length();\n        Integer[][] memo = new Integer[m][n];\n        return dfs(s, t, 0, 0, memo);\n    }\n\n    private int dfs(String s, String t, int i, int j, Integer[][] memo) {\n        if (j == t.length()) return 1;\n        if (i == s.length()) return 0;\n        if (memo[i][j] != null) return memo[i][j];\n        int ways = dfs(s, t, i + 1, j, memo);\n        if (s.charAt(i) == t.charAt(j)) {\n            ways += dfs(s, t, i + 1, j + 1, memo);\n        }\n        memo[i][j] = ways;\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "dp[i][j] counts the ways to form t[0..j-1] from s[0..i-1], updating by matching or skipping characters.",
+            "description": "Use a 1D dp array where dp[j] counts how many ways t[0..j-1] can be formed from the processed prefix of s.",
             "time": "O(m * n)",
             "space": "O(n)",
-            "why_not": "A naive recursive solution is too slow due to repeated subproblems.",
-            "code": "class Solution {\n    public int numDistinct(String s, String t) {\n        int m = s.length(), n = t.length();\n        int[] dp = new int[n + 1];\n        dp[0] = 1;\n        for (int i = 1; i <= m; i++) {\n            for (int j = n; j >= 1; j--) {\n                if (s.charAt(i - 1) == t.charAt(j - 1)) {\n                    dp[j] += dp[j - 1];\n                }\n            }\n        }\n        return dp[n];\n    }\n}"
+            "why_not": "This is the standard way to optimize space while keeping the same correctness."
+            ,"code": "class Solution {\n    public int numDistinct(String s, String t) {\n        int m = s.length(), n = t.length();\n        int[] dp = new int[n + 1];\n        dp[0] = 1;\n        for (int i = 1; i <= m; i++) {\n            for (int j = n; j >= 1; j--) {\n                if (s.charAt(i - 1) == t.charAt(j - 1)) {\n                    dp[j] += dp[j - 1];\n                }\n            }\n        }\n        return dp[n];\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "What does dp[j] represent when using 1D optimization?",
-            "a": "The number of ways to match the first j characters of t using the processed prefix of s."
+            "q": "What is the dp state in the optimized solution?",
+            "a": "dp[j] stores the number of ways to form the first j characters of t from the processed prefix of s."
         },
         {
-            "q": "Why iterate j backward?",
-            "a": "To avoid overwriting dp values needed for the current row when using a single array."
+            "q": "Why iterate backward when using 1D dp?",
+            "a": "To avoid overwriting dp[j-1] before it is used for the current s character."
+        },
+        {
+            "q": "What happens when s[i] == t[j]?",
+            "a": "We can either use this match and add dp[j-1], or skip s[i] and keep dp[j]."
+        },
+        {
+            "q": "What is the base case?",
+            "a": "There is exactly one way to form an empty t from any prefix of s: delete all remaining characters."
         }
     ]
 }

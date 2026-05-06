@@ -4,40 +4,76 @@
     "title": "Graph Valid Tree",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/graph-valid-tree/",
-    "problem_statement": "Check whether the undirected graph with n nodes and given edges forms a valid tree.",
+    "problem_statement": "You have a graph of n nodes labeled from 0 to n - 1. You are given an integer n and a list of edges where edges[i] = [ai, bi] indicates that there is an undirected edge between ai and bi in the graph. Return true if the edges of the given graph make up a valid tree, and false otherwise.",
     "examples": [
         {
             "input": "n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]",
             "output": "true",
-            "explanation": "The graph is connected and acyclic, so it is a valid tree."
+            "explanation": "The graph is a valid tree."
+        },
+        {
+            "input": "n = 5, edges = [[0,1],[1,2],[2,3],[1,3],[1,4]]",
+            "output": "false",
+            "explanation": "The graph is not a valid tree because there is a cycle between nodes 1, 2, and 3."
         }
     ],
     "constraints": [
         "1 <= n <= 2000",
         "0 <= edges.length <= 5000",
-        "edges[i].length == 2"
+        "edges[i].length == 2",
+        "0 <= ai, bi < n",
+        "ai != bi",
+        "There are no self-loops or repeated edges."
     ],
-    "intuition": "A valid tree has exactly n-1 edges and is connected; use union-find or BFS to verify both conditions.",
+    "intuition": "A tree is an undirected graph that is connected and acyclic. It must have exactly n-1 edges and no cycles.",
     "approaches": [
         {
-            "name": "Union-Find cycle detection",
+            "name": "Union-Find",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Union endpoints of each edge and check for cycles or missing connectivity by comparing component count.",
-            "time": "O(E * \u03b1(N))",
+            "description": "Check if edges == n-1, then use Union-Find to detect cycles. If no cycles and all connected, it's a tree.",
+            "time": "O(E * α(N))",
             "space": "O(N)",
-            "why_not": "Counting edges alone is insufficient without verifying connectivity.",
-            "code": "class Solution {\n    public boolean validTree(int n, int[][] edges) {\n        if (edges.length != n - 1) return false;\n        int[] parent = new int[n];\n        for (int i = 0; i < n; i++) parent[i] = i;\n        for (int[] edge : edges) {\n            int a = find(parent, edge[0]);\n            int b = find(parent, edge[1]);\n            if (a == b) return false;\n            parent[a] = b;\n        }\n        return true;\n    }\n    private int find(int[] parent, int x) {\n        return parent[x] == x ? x : (parent[x] = find(parent, parent[x]));\n    }\n}"
+            "why_not": "DFS/BFS also work, but Union-Find is efficient for this.",
+            "code": "class Solution {\n    public boolean validTree(int n, int[][] edges) {\n        if (edges.length != n - 1) return false;\n        int[] parent = new int[n];\n        for (int i = 0; i < n; i++) parent[i] = i;\n        for (int[] edge : edges) {\n            int a = find(parent, edge[0]);\n            int b = find(parent, edge[1]);\n            if (a == b) return false;\n            parent[a] = b;\n        }\n        return true;\n    }\n    private int find(int[] parent, int x) {\n        return parent[x] == x ? x : (parent[x] = find(parent, parent[x]));\n    }\n}",
+            "interview_commentary": [
+                "First check edges count: must be n-1 for a tree.",
+                "Union-Find detects cycles: if two nodes already in same component, cycle.",
+                "Since we checked edges, if no cycles, it's connected."
+            ]
+        },
+        {
+            "name": "DFS for Connectivity and Cycles",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Build graph, DFS from node 0, count visited nodes and detect cycles using parent tracking.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "why_not": "Union-Find is simpler, but DFS works for small n.",
+            "code": "class Solution {\n    public boolean validTree(int n, int[][] edges) {\n        if (edges.length != n - 1) return false;\n        List<List<Integer>> graph = new ArrayList<>();\n        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());\n        for (int[] edge : edges) {\n            graph.get(edge[0]).add(edge[1]);\n            graph.get(edge[1]).add(edge[0]);\n        }\n        boolean[] visited = new boolean[n];\n        if (dfs(graph, 0, -1, visited)) return false; // cycle\n        for (boolean v : visited) if (!v) return false; // not connected\n        return true;\n    }\n    private boolean dfs(List<List<Integer>> graph, int node, int parent, boolean[] visited) {\n        visited[node] = true;\n        for (int nei : graph.get(node)) {\n            if (nei == parent) continue;\n            if (visited[nei]) return true; // cycle\n            if (dfs(graph, nei, node, visited)) return true;\n        }\n        return false;\n    }\n}",
+            "interview_commentary": [
+                "DFS checks for cycles by avoiding parent and checking visited.",
+                "Also ensures all nodes visited for connectivity.",
+                "Edge count check prevents disconnected components."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why must a tree have n-1 edges?",
-            "a": "Connected n nodes require at least n-1 edges, and any extra edge creates a cycle."
+            "q": "Why n-1 edges?",
+            "a": "Tree has no cycles, so minimum edges for connectivity."
         },
         {
-            "q": "How can a graph fail to be a tree despite having n-1 edges?",
-            "a": "It may be disconnected, so checking both edges count and connectivity is necessary."
+            "q": "Can a graph have n-1 edges but not be connected?",
+            "a": "No, because with n-1 edges, if no cycles, it must be connected."
+        },
+        {
+            "q": "Difference between tree and forest?",
+            "a": "Tree is connected forest; forest has multiple components."
+        },
+        {
+            "q": "Why Union-Find over DFS?",
+            "a": "Union-Find is iterative and efficient for large n."
         }
     ]
 }

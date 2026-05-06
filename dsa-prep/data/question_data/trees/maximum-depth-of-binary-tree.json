@@ -4,7 +4,7 @@
     "title": "Maximum Depth of Binary Tree",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
-    "problem_statement": "Return the maximum depth of a binary tree.",
+    "problem_statement": "Return the maximum depth (height) of a binary tree, defined as the number of nodes along the longest root-to-leaf path.",
     "examples": [
         {
             "input": "root = [3,9,20,null,null,15,7]",
@@ -13,29 +13,58 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [0, 10^4]"
+        "The number of nodes is in the range [0, 10^4]",
+        "-1000 <= Node.val <= 1000"
     ],
-    "intuition": "Use recursion or BFS to compute the depth of the tree from root to farthest leaf.",
+    "intuition": "Compute the height of left and right subtrees and take the larger one, adding one for the current node.",
     "approaches": [
         {
-            "name": "Recursive depth-first search",
+            "name": "Recursive DFS height",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Return 1 plus the maximum depth of the left and right subtrees.",
+            "description": "Return 1 plus the maximum of the depths of the left and right subtrees.",
             "time": "O(n)",
             "space": "O(h)",
-            "why_not": "An iterative BFS is also valid but recursion is straightforward.",
-            "code": "class Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null) return 0;\n        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));\n    }\n}"
+            "why_not": "Breadth-first search also works but requires storing a queue of nodes at each level.\n",
+            "code": "class Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null) return 0;\n        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));\n    }\n}",
+            "interview_commentary": [
+                "The height is one plus the maximum height of the children.",
+                "Null nodes contribute depth zero.\n",
+                "Recursive DFS is the simplest way to compute tree height."
+            ]
+        },
+        {
+            "name": "Iterative BFS height",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use a queue to traverse level by level and count the number of levels processed.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Recursive DFS has smaller auxiliary space in balanced trees and is simpler.",
+            "code": "class Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new ArrayDeque<>();\n        queue.offer(root);\n        int depth = 0;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode node = queue.poll();\n                if (node.left != null) queue.offer(node.left);\n                if (node.right != null) queue.offer(node.right);\n            }\n            depth++;\n        }\n        return depth;\n    }\n}",
+            "interview_commentary": [
+                "Each BFS layer corresponds to one more depth level.",
+                "Count the number of levels until the queue is empty.",
+                "This is useful when explicit level information is helpful."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the base case for recursion?",
-            "a": "Return 0 for a null node."
+            "q": "What is the recurrence for tree height?",
+            "a": "height(node) = 1 + max(height(left), height(right))."
         },
         {
-            "q": "What does depth measure?",
-            "a": "The number of nodes along the longest path from the root to a leaf."
+            "q": "Why can BFS compute depth?",
+            "a": "Each BFS level corresponds to one depth increment."
+        },
+        {
+            "q": "What is the difference between tree height and node count?",
+            "a": "Height counts nodes along the longest path, not total nodes."
+        },
+        {
+            "q": "What is the worst-case stack depth?",
+            "a": "O(h), where h is the tree height."
         }
     ]
 }

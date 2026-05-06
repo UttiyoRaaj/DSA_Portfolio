@@ -26,7 +26,12 @@
             "time": "O(n)",
             "space": "O(n)",
             "why_not": "A brute force nested loop is O(n^2) and too slow for large input.",
-            "code": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] answer = new int[n];\n        Deque<Integer> stack = new ArrayDeque<>();\n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {\n                int prev = stack.pop();\n                answer[prev] = i - prev;\n            }\n            stack.push(i);\n        }\n        return answer;\n    }\n}"
+            "code": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int n = temperatures.length;\n        int[] answer = new int[n];\n        Deque<Integer> stack = new ArrayDeque<>();\n        for (int i = 0; i < n; i++) {\n            while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {\n                int prev = stack.pop();\n                answer[prev] = i - prev;\n            }\n            stack.push(i);\n        }\n        return answer;\n    }\n}",
+            "interview_commentary": [
+                "The stack holds indices of unresolved days sorted by temperature descending.",
+                "When a warmer day appears, resolve previous days by computing the index difference.",
+                "This avoids nested loops and finds the next warmer day in linear time."
+            ]
         }
     ],
     "interview_qa": [

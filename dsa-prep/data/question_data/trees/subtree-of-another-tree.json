@@ -4,7 +4,7 @@
     "title": "Subtree of Another Tree",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/subtree-of-another-tree/",
-    "problem_statement": "Check whether one binary tree is a subtree of another.",
+    "problem_statement": "Check whether one binary tree is a subtree of another, meaning there exists a node in the larger tree whose subtree matches the smaller tree exactly.",
     "examples": [
         {
             "input": "root = [3,4,5,1,2], subRoot = [4,1,2]",
@@ -13,29 +13,43 @@
         }
     ],
     "constraints": [
-        "The number of nodes is in the range [1, 2000]"
+        "The number of nodes is in the range [1, 2000]",
+        "-10^4 <= Node.val <= 10^4"
     ],
-    "intuition": "Traverse the main tree and compare subtrees when a matching root value is found.",
+    "intuition": "For each candidate node in the main tree, compare the subtree rooted there with the target subtree using a structural equality check.",
     "approaches": [
         {
-            "name": "Traversal plus subtree comparison",
+            "name": "Traversal plus subtree equality",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "For each node in root, check if the subtree rooted there is identical to subRoot.",
+            "description": "Traverse the main tree and for each node use a subtree comparison helper to determine if it matches subRoot.",
             "time": "O(m*n)",
             "space": "O(h)",
-            "why_not": "A simple string representation can work but may require careful delimiting to avoid false matches.",
-            "code": "class Solution {\n    public boolean isSubtree(TreeNode root, TreeNode subRoot) {\n        if (root == null) return false;\n        if (isSameTree(root, subRoot)) return true;\n        return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);\n    }\n\n    private boolean isSameTree(TreeNode s, TreeNode t) {\n        if (s == null && t == null) return true;\n        if (s == null || t == null || s.val != t.val) return false;\n        return isSameTree(s.left, t.left) && isSameTree(s.right, t.right);\n    }\n}"
+            "why_not": "Serialization and string search can reduce the constant factor but requires careful delimiter handling.\n",
+            "code": "class Solution {\n    public boolean isSubtree(TreeNode root, TreeNode subRoot) {\n        if (root == null) return false;\n        if (isSameTree(root, subRoot)) return true;\n        return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);\n    }\n\n    private boolean isSameTree(TreeNode s, TreeNode t) {\n        if (s == null && t == null) return true;\n        if (s == null || t == null || s.val != t.val) return false;\n        return isSameTree(s.left, t.left) && isSameTree(s.right, t.right);\n    }\n}",
+            "interview_commentary": [
+                "Try every node in root as a possible subtree root.",
+                "Use subtree equality checks to validate each candidate.",
+                "Return early when a matching subtree is found."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What is the main check for each node?",
-            "a": "Whether the subtree rooted there is identical to subRoot."
+            "q": "What is the main idea of this solution?",
+            "a": "Try every node in root as a candidate subtree root and compare structures with subRoot."
         },
         {
-            "q": "Can this be optimized?",
-            "a": "Yes, with serialization and string matching techniques, but recursion is simpler."
+            "q": "When do you compare the subtree?",
+            "a": "When the current node value matches subRoot’s root value or for every node in the tree."
+        },
+        {
+            "q": "Why is this O(m*n)?",
+            "a": "Because for each node in the larger tree you may compare an entire subtree with subRoot."
+        },
+        {
+            "q": "What does isSameTree check?",
+            "a": "Whether both trees have identical structure and values at each node."
         }
     ]
 }

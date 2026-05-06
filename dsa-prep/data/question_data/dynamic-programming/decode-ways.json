@@ -4,39 +4,72 @@
     "title": "Decode Ways",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/decode-ways/",
-    "problem_statement": "Given a digit string, count the number of ways to decode it using mapping 1->A, 2->B, ..., 26->Z.",
+    "problem_statement": "A message containing letters from A-Z is encoded to numbers using the mapping 'A'->\"1\", 'B'->\"2\", ..., 'Z'->\"26\". Given a digit string s, return the number of ways to decode it. The string may contain leading zeros, and any invalid encoding should be counted as zero.",
     "examples": [
         {
             "input": "s = \"226\"",
             "output": "3",
-            "explanation": "Decoded as \"BZ\", \"VF\", and \"BBF\"."
+            "explanation": "Decoded as \"BZ\" (2 26), \"VF\" (22 6), and \"BBF\" (2 2 6)."
+        },
+        {
+            "input": "s = \"06\"",
+            "output": "0",
+            "explanation": "No valid decoding starts with 0."
         }
     ],
     "constraints": [
         "1 <= s.length <= 100",
-        "s contains only digits and may include leading zeros"
+        "s contains only digits."
     ],
-    "intuition": "DP on string positions, considering one-digit and two-digit decode options.",
+    "intuition": "At each index, count decodings by using either one digit or two digits if the pair forms a valid number between 10 and 26.",
     "approaches": [
         {
-            "name": "Linear DP with small-state transitions",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Try decoding one digit and two digits from the current position, and sum the valid paths.",
+            "time": "O(2^n)",
+            "space": "O(n) recursion stack",
+            "why_not": "Exponential because it explores both one-digit and two-digit options at each position without memoization.",
+            "code": "class Solution {\n    public int numDecodings(String s) {\n        return decode(s, 0);\n    }\n\n    private int decode(String s, int i) {\n        if (i == s.length()) return 1;\n        if (s.charAt(i) == '0') return 0;\n        int ways = decode(s, i + 1);\n        if (i + 1 < s.length() && Integer.parseInt(s.substring(i, i + 2)) <= 26) {\n            ways += decode(s, i + 2);\n        }\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Cache the number of decodings from each index to avoid re-evaluating the same suffix multiple times.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "why_not": "Still recursive, but memoization makes it linear time. Bottom-up removes recursion overhead.",
+            "code": "class Solution {\n    public int numDecodings(String s) {\n        Integer[] memo = new Integer[s.length()];\n        return decode(s, 0, memo);\n    }\n\n    private int decode(String s, int i, Integer[] memo) {\n        if (i == s.length()) return 1;\n        if (s.charAt(i) == '0') return 0;\n        if (memo[i] != null) return memo[i];\n        int ways = decode(s, i + 1, memo);\n        if (i + 1 < s.length() && Integer.parseInt(s.substring(i, i + 2)) <= 26) {\n            ways += decode(s, i + 2, memo);\n        }\n        memo[i] = ways;\n        return ways;\n    }\n}"
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Traverse the string and build the count of decodings using previous one and two positions.",
+            "description": "Use a 1D dp array where dp[i] counts decodings for s[0..i-1], and update it based on one-digit and two-digit validity.",
             "time": "O(n)",
             "space": "O(1)",
-            "why_not": "Brute force decoding branches can explode exponentially.",
-            "code": "class Solution {\n    public int numDecodings(String s) {\n        if (s == null || s.isEmpty() || s.charAt(0) == '0') return 0;\n        int n = s.length();\n        int prev = 1, curr = 1;\n        for (int i = 1; i < n; i++) {\n            int temp = 0;\n            if (s.charAt(i) != '0') temp = curr;\n            int twoDigit = Integer.parseInt(s.substring(i - 1, i + 1));\n            if (twoDigit >= 10 && twoDigit <= 26) {\n                temp += prev;\n            }\n            prev = curr;\n            curr = temp;\n        }\n        return curr;\n    }\n}"
+            "why_not": "This is the standard optimal solution for decoding count."
+            ,"code": "class Solution {\n    public int numDecodings(String s) {\n        if (s == null || s.isEmpty() || s.charAt(0) == '0') return 0;\n        int n = s.length();\n        int prev = 1, curr = 1;\n        for (int i = 1; i < n; i++) {\n            int temp = 0;\n            if (s.charAt(i) != '0') temp = curr;\n            int twoDigit = Integer.parseInt(s.substring(i - 1, i + 1));\n            if (twoDigit >= 10 && twoDigit <= 26) {\n                temp += prev;\n            }\n            prev = curr;\n            curr = temp;\n        }\n        return curr;\n    }\n}"
         }
     ],
     "interview_qa": [
         {
-            "q": "How do zeros affect decode counts?",
-            "a": "A zero must be paired with a previous 1 or 2; standalone zeros are invalid."
+            "q": "How do zeros affect the decoding?",
+            "a": "A zero cannot be decoded on its own. It must be paired with a preceding '1' or '2' to form 10 or 20."
         },
         {
-            "q": "What are the DP transitions?",
-            "a": "dp[i] = dp[i-1] if current digit is valid + dp[i-2] if last two digits form a valid number."
+            "q": "What are the dp transitions?",
+            "a": "dp[i] = dp[i-1] if single digit is valid + dp[i-2] if two-digit slice is valid."
+        },
+        {
+            "q": "Why is dp[0] initialized to 1?",
+            "a": "It represents one way to decode an empty prefix and simplifies the recurrence for the first valid digit."
+        },
+        {
+            "q": "What invalidates a decoding?",
+            "a": "Any substring starting with '0' that is not part of '10' or '20' results in zero valid decodings."
         }
     ]
 }

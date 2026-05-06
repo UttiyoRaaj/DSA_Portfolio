@@ -25,7 +25,12 @@
             "time": "O(n)",
             "space": "O(1)",
             "why_not": "Building a filtered string uses extra space unnecessarily.",
-            "code": "class Solution {\n    public boolean isPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        while (left < right) {\n            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) left++;\n            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) right--;\n            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n}"
+            "code": "class Solution {\n    public boolean isPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        while (left < right) {\n            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) left++;\n            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) right--;\n            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {\n                return false;\n            }\n            left++;\n            right--;\n        }\n        return true;\n    }\n}",
+            "interview_commentary": [
+                "Skip characters that are not alphanumeric to compare only relevant characters.",
+                "Normalize characters to lowercase so case differences do not affect palindrome validation.",
+                "Use two pointers moving toward each other to verify symmetry in one pass."
+            ]
         }
     ],
     "interview_qa": [

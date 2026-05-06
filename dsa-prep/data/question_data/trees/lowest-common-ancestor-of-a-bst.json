@@ -4,7 +4,7 @@
     "title": "Lowest Common Ancestor of a BST",
     "difficulty": "Easy",
     "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
-    "problem_statement": "Find the lowest common ancestor of two nodes in a binary search tree.",
+    "problem_statement": "Find the lowest common ancestor (LCA) of two given nodes in a binary search tree.",
     "examples": [
         {
             "input": "root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8",
@@ -13,29 +13,58 @@
         }
     ],
     "constraints": [
-        "All node values are unique and p, q exist in the tree."
+        "All node values are unique and p, q exist in the tree.",
+        "-10^5 <= Node.val <= 10^5"
     ],
-    "intuition": "Use BST ordering: if both nodes are less than root, go left; if both are greater, go right.",
+    "intuition": "Use BST ordering to move left or right until the current node is between p and q or equals one of them.",
     "approaches": [
         {
-            "name": "BST property traversal",
+            "name": "Iterative BST traversal",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Walk down the tree until the split point or root equals one of the nodes.",
+            "description": "Move down the tree using values: go left if both targets are smaller, right if both are larger, otherwise current node is LCA.",
             "time": "O(h)",
             "space": "O(1)",
-            "why_not": "General binary tree LCA methods work but are more expensive than using BST properties.",
-            "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (root != null) {\n            if (p.val < root.val && q.val < root.val) {\n                root = root.left;\n            } else if (p.val > root.val && q.val > root.val) {\n                root = root.right;\n            } else {\n                return root;\n            }\n        }\n        return null;\n    }\n}"
+            "why_not": "A generic binary tree LCA solution uses extra recursion and does not exploit BST properties.",
+            "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (root != null) {\n            if (p.val < root.val && q.val < root.val) {\n                root = root.left;\n            } else if (p.val > root.val && q.val > root.val) {\n                root = root.right;\n            } else {\n                return root;\n            }\n        }\n        return null;\n    }\n}",
+            "interview_commentary": [
+                "Use BST ordering to decide whether to go left or right.",
+                "The split point where p and q diverge is the LCA.",
+                "If one target equals the current node, it is the LCA."
+            ]
+        },
+        {
+            "name": "Recursive BST traversal",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "Use recursion to descend into the appropriate subtree until the split point is reached.",
+            "time": "O(h)",
+            "space": "O(h)",
+            "why_not": "Iterative traversal avoids recursion overhead and uses constant additional space.",
+            "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (p.val < root.val && q.val < root.val) {\n            return lowestCommonAncestor(root.left, p, q);\n        } else if (p.val > root.val && q.val > root.val) {\n            return lowestCommonAncestor(root.right, p, q);\n        } else {\n            return root;\n        }\n    }\n}",
+            "interview_commentary": [
+                "Recursively follow the BST path until the split point is found.",
+                "The first node whose children diverge contains the LCA.",
+                "BST properties let you avoid exploring both subtrees."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What indicates the split point?",
-            "a": "When one node is on the left and the other is on the right, or one equals the current root."
+            "q": "How do BST properties help?",
+            "a": "They let you decide which subtree contains both nodes instead of exploring both."
         },
         {
-            "q": "Why is BST ordering important?",
-            "a": "It lets you choose the correct subtree without exploring both sides."
+            "q": "What is the split point?",
+            "a": "The first node where p and q diverge into different subtrees or one matches the current node."
+        },
+        {
+            "q": "Why can current root be the LCA?",
+            "a": "Because one node is on one side and the other is on the other side, so current root is the lowest common ancestor."
+        },
+        {
+            "q": "What if p or q equals root?",
+            "a": "Then root is the LCA."
         }
     ]
 }

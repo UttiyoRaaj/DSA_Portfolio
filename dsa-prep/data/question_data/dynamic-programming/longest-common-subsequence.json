@@ -4,38 +4,93 @@
     "title": "Longest Common Subsequence",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/longest-common-subsequence/",
-    "problem_statement": "Find the length of the longest subsequence common to two strings.",
+    "problem_statement": "Given two strings text1 and text2, return the length of their longest common subsequence. A subsequence of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters. A common subsequence of two strings is a subsequence that is common to both strings.",
     "examples": [
         {
             "input": "text1 = \"abcde\", text2 = \"ace\"",
             "output": "3",
-            "explanation": "The longest common subsequence is \"ace\"."
+            "explanation": "The longest common subsequence is \"ace\" with length 3."
+        },
+        {
+            "input": "text1 = \"abc\", text2 = \"abc\"",
+            "output": "3",
+            "explanation": "The longest common subsequence is \"abc\" with length 3."
+        },
+        {
+            "input": "text1 = \"abc\", text2 = \"def\"",
+            "output": "0",
+            "explanation": "There is no common subsequence, so the result is 0."
         }
     ],
     "constraints": [
-        "1 <= text1.length, text2.length <= 1000"
+        "1 <= text1.length, text2.length <= 1000",
+        "text1 and text2 consist of lowercase English characters."
     ],
-    "intuition": "Use DP on prefixes of both strings, matching characters or skipping one side.",
+    "intuition": "We need to find the longest sequence that appears in both strings in the same order, not necessarily contiguous.",
     "approaches": [
         {
-            "name": "2D DP on prefixes",
+            "name": "Recursive Brute Force",
+            "badge": "Brute Force",
+            "badge_color": "red",
+            "description": "Recurse on both strings. If chars match, include and move both. Else, try skipping from text1 or text2. Base: if either string empty, 0.",
+            "time": "O(2^{m+n})",
+            "space": "O(m + n) stack",
+            "why_not": "Exponential due to exploring all subsequence combinations. Many overlapping subproblems.",
+            "code": "class Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        return dp(text1, text2, text1.length(), text2.length());\n    }\n\n    private int dp(String t1, String t2, int i, int j) {\n        if (i == 0 || j == 0) return 0;\n        if (t1.charAt(i - 1) == t2.charAt(j - 1)) {\n            return 1 + dp(t1, t2, i - 1, j - 1);\n        } else {\n            return Math.max(dp(t1, t2, i - 1, j), dp(t1, t2, i, j - 1));\n        }\n    }\n}",
+            "interview_commentary": [
+                "This is the naive recursive approach. If the last chars match, include them and recurse on the prefixes. If not, take the max of skipping the last char from t1 or t2.",
+                "The recursion tree is large because for each mismatch, we branch into two choices.",
+                "This works for small strings but will be slow for lengths > 10."
+            ]
+        },
+        {
+            "name": "Memoized Recursion (Top-Down DP)",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Same recursion, but memoize on (i, j) to store LCS length for prefixes.",
+            "time": "O(m * n)",
+            "space": "O(m * n) for memo",
+            "why_not": "Bottom-up is iterative and avoids recursion depth issues.",
+            "code": "class Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        int m = text1.length(), n = text2.length();\n        int[][] memo = new int[m + 1][n + 1];\n        for (int[] row : memo) Arrays.fill(row, -1);\n        return dp(text1, text2, m, n, memo);\n    }\n\n    private int dp(String t1, String t2, int i, int j, int[][] memo) {\n        if (i == 0 || j == 0) return 0;\n        if (memo[i][j] != -1) return memo[i][j];\n        if (t1.charAt(i - 1) == t2.charAt(j - 1)) {\n            return memo[i][j] = 1 + dp(t1, t2, i - 1, j - 1, memo);\n        } else {\n            return memo[i][j] = Math.max(dp(t1, t2, i - 1, j, memo), dp(t1, t2, i, j - 1, memo));\n        }\n    }\n}",
+            "interview_commentary": [
+                "To optimize, I'll memoize on the pair (i, j) — the lengths of the remaining strings.",
+                "This ensures each subproblem is solved once, time O(m*n).",
+                "Space O(m*n) for the memo table."
+            ]
+        },
+        {
+            "name": "Bottom-Up Dynamic Programming",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "dp[i][j] is the length of the LCS of text1[0..i-1] and text2[0..j-1].",
+            "description": "Fill a 2D dp table. dp[i][j] = LCS of text1[0..i-1] and text2[0..j-1]. If chars match, dp[i][j] = dp[i-1][j-1] + 1. Else, max(dp[i-1][j], dp[i][j-1]).",
             "time": "O(m * n)",
             "space": "O(m * n)",
-            "why_not": "Trying all subsequence pairs is exponential.",
-            "code": "class Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        int m = text1.length(), n = text2.length();\n        int[][] dp = new int[m + 1][n + 1];\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[m][n];\n    }\n}"
+            "why_not": "This is optimal. Space can be optimized to O(min(m,n)) with two arrays.",
+            "code": "class Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        int m = text1.length(), n = text2.length();\n        int[][] dp = new int[m + 1][n + 1];\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[m][n];\n    }\n}",
+            "interview_commentary": [
+                "Bottom-up: initialize dp[0][j] = 0 and dp[i][0] = 0.",
+                "For each i,j, if chars match, take dp[i-1][j-1] + 1. Else, max of dp[i-1][j] (skip from t1) and dp[i][j-1] (skip from t2).",
+                "This builds the solution iteratively.",
+                "Time O(m*n), space O(m*n)."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "What recurrence does LCS use?",
-            "a": "Match characters to extend by one; otherwise take the max of skipping one character from either string."
+            "q": "What is a subsequence vs substring?",
+            "a": "Subsequence doesn't need to be contiguous; substring does."
         },
         {
-            "q": "How can space be reduced?",
-            "a": "Use two rolling arrays because each row depends only on the previous row."
+            "q": "Why max when chars don't match?",
+            "a": "Because we can skip the char from either string to potentially find a longer common subsequence."
+        },
+        {
+            "q": "How to reconstruct the LCS string?",
+            "a": "Backtrack through the dp table: if chars match, include and go diagonal; else go to the max direction."
+        },
+        {
+            "q": "Space optimization?",
+            "a": "Use two 1D arrays since each row depends on the previous."
         }
     ]
 }

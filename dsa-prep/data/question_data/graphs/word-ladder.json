@@ -4,40 +4,77 @@
     "title": "Word Ladder",
     "difficulty": "Medium",
     "url": "https://leetcode.com/problems/word-ladder/",
-    "problem_statement": "Return the length of the shortest transformation sequence from beginWord to endWord using one-letter intermediate words from a dictionary.",
+    "problem_statement": "A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that: Every adjacent pair of words differs by a single letter. Every si for 1 <= i <= k is in wordList. All words in the sequence are of the same length. Note that beginWord does not need to be in wordList. sk == endWord. Given two words, beginWord and endWord, and a dictionary wordList, return the number of words in the shortest transformation sequence from beginWord to endWord, or 0 if no such sequence exists.",
     "examples": [
         {
             "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
             "output": "5",
-            "explanation": "One shortest sequence is hit -> hot -> dot -> dog -> cog."
+            "explanation": "One shortest transformation sequence is \"hit\" -> \"hot\" -> \"dot\" -> \"dog\" -> \"cog\", which is 5 words long."
+        },
+        {
+            "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]",
+            "output": "0",
+            "explanation": "The endWord \"cog\" is not in wordList, therefore there is no valid transformation sequence."
         }
     ],
     "constraints": [
+        "1 <= beginWord.length <= 10",
+        "endWord.length == beginWord.length",
         "1 <= wordList.length <= 5000",
-        "beginWord.length == endWord.length",
-        "All words contain only lowercase letters."
+        "wordList[i].length == beginWord.length",
+        "beginWord, endWord, and wordList[i] consist of lowercase English letters.",
+        "beginWord != endWord",
+        "All the words in wordList are unique."
     ],
-    "intuition": "Use BFS on the word graph where edges connect words that differ by one letter, and stop when endWord is reached.",
+    "intuition": "Model as graph where words are nodes, edges if differ by one letter. BFS for shortest path.",
     "approaches": [
         {
-            "name": "Single-direction BFS",
+            "name": "BFS",
             "badge": "Optimal",
             "badge_color": "green",
-            "description": "Generate neighbors by changing one letter at a time and search breadth-first for the target word.",
+            "description": "Use queue for BFS, generate neighbors by changing one letter. Remove from set to avoid revisit.",
             "time": "O(N * L^2)",
             "space": "O(N * L)",
-            "why_not": "DFS may find longer paths and is inefficient for shortest sequence search.",
-            "code": "class Solution {\n    public int ladderLength(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        if (!dict.contains(endWord)) return 0;\n        Queue<String> queue = new ArrayDeque<>();\n        queue.offer(beginWord);\n        int steps = 1;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            for (int i = 0; i < size; i++) {\n                String word = queue.poll();\n                if (word.equals(endWord)) return steps;\n                char[] arr = word.toCharArray();\n                for (int j = 0; j < arr.length; j++) {\n                    char original = arr[j];\n                    for (char c = 'a'; c <= 'z'; c++) {\n                        arr[j] = c;\n                        String next = new String(arr);\n                        if (dict.remove(next)) queue.offer(next);\n                    }\n                    arr[j] = original;\n                }\n            }\n            steps++;\n        }\n        return 0;\n    }\n}"
+            "why_not": "Bidirectional BFS faster in practice.",
+            "code": "class Solution {\n    public int ladderLength(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        if (!dict.contains(endWord)) return 0;\n        Queue<String> queue = new ArrayDeque<>();\n        queue.offer(beginWord);\n        int steps = 1;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            for (int i = 0; i < size; i++) {\n                String word = queue.poll();\n                if (word.equals(endWord)) return steps;\n                char[] arr = word.toCharArray();\n                for (int j = 0; j < arr.length; j++) {\n                    char original = arr[j];\n                    for (char c = 'a'; c <= 'z'; c++) {\n                        arr[j] = c;\n                        String next = new String(arr);\n                        if (dict.remove(next)) queue.offer(next);\n                    }\n                    arr[j] = original;\n                }\n            }\n            steps++;\n        }\n        return 0;\n    }\n}",
+            "interview_commentary": [
+                "BFS ensures shortest path.",
+                "Generate neighbors by changing each letter.",
+                "Remove from set to prevent cycles."
+            ]
+        },
+        {
+            "name": "Bidirectional BFS",
+            "badge": "Alternative",
+            "badge_color": "yellow",
+            "description": "BFS from both start and end, meet in middle.",
+            "time": "O(N * L^2)",
+            "space": "O(N * L)",
+            "why_not": "Slower in worst case, but faster average.",
+            "code": "class Solution {\n    public int ladderLength(String beginWord, String endWord, List<String> wordList) {\n        Set<String> dict = new HashSet<>(wordList);\n        if (!dict.contains(endWord)) return 0;\n        Set<String> start = new HashSet<>(), end = new HashSet<>();\n        start.add(beginWord);\n        end.add(endWord);\n        dict.remove(endWord);\n        int steps = 1;\n        while (!start.isEmpty() && !end.isEmpty()) {\n            if (start.size() > end.size()) {\n                Set<String> temp = start;\n                start = end;\n                end = temp;\n            }\n            Set<String> next = new HashSet<>();\n            for (String word : start) {\n                char[] arr = word.toCharArray();\n                for (int j = 0; j < arr.length; j++) {\n                    char original = arr[j];\n                    for (char c = 'a'; c <= 'z'; c++) {\n                        arr[j] = c;\n                        String nei = new String(arr);\n                        if (end.contains(nei)) return steps + 1;\n                        if (dict.remove(nei)) next.add(nei);\n                    }\n                    arr[j] = original;\n                }\n            }\n            start = next;\n            steps++;\n        }\n        return 0;\n    }\n}",
+            "interview_commentary": [
+                "Two sets: from start and end.",
+                "Expand smaller set.",
+                "Meet when neighbor in other set."
+            ]
         }
     ],
     "interview_qa": [
         {
-            "q": "Why remove words from the dictionary once used?",
-            "a": "To avoid revisiting and keep BFS efficient."
+            "q": "Why BFS?",
+            "a": "Shortest path in unweighted graph."
         },
         {
-            "q": "What does each BFS layer represent?",
-            "a": "One additional transformation step."
+            "q": "Why remove from dict?",
+            "a": "Avoid revisiting words."
+        },
+        {
+            "q": "Bidirectional advantage?",
+            "a": "Reduces search space."
+        },
+        {
+            "q": "If beginWord in list?",
+            "a": "Still works, but remove if needed."
         }
     ]
 }

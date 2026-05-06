@@ -26,7 +26,12 @@
             "time": "O(n)",
             "space": "O(1)",
             "why_not": "Using extra arrays for left and right max heights works but uses extra space.",
-            "code": "class Solution {\n    public int trap(int[] height) {\n        int left = 0, right = height.length - 1;\n        int leftMax = 0, rightMax = 0;\n        int water = 0;\n        while (left < right) {\n            if (height[left] < height[right]) {\n                if (height[left] >= leftMax) leftMax = height[left];\n                else water += leftMax - height[left];\n                left++;\n            } else {\n                if (height[right] >= rightMax) rightMax = height[right];\n                else water += rightMax - height[right];\n                right--;\n            }\n        }\n        return water;\n    }\n}"
+            "code": "class Solution {\n    public int trap(int[] height) {\n        int left = 0, right = height.length - 1;\n        int leftMax = 0, rightMax = 0;\n        int water = 0;\n        while (left < right) {\n            if (height[left] < height[right]) {\n                if (height[left] >= leftMax) leftMax = height[left];\n                else water += leftMax - height[left];\n                left++;\n            } else {\n                if (height[right] >= rightMax) rightMax = height[right];\n                else water += rightMax - height[right];\n                right--;\n            }\n        }\n        return water;\n    }\n}",
+            "interview_commentary": [
+                "The lower side pointer determines trapped water because the current height is bounded by the shorter wall.",
+                "Keep track of max heights seen from both ends to compute volume without extra arrays.",
+                "Each position is handled exactly once, making the algorithm linear."
+            ]
         }
     ],
     "interview_qa": [

@@ -26,7 +26,12 @@
             "time": "O(n)",
             "space": "O(n)",
             "why_not": "Brute force checking all pairs of bars is O(n^2) and too slow.",
-            "code": "class Solution {\n    public int largestRectangleArea(int[] heights) {\n        Deque<Integer> stack = new ArrayDeque<>();\n        int maxArea = 0;\n        for (int i = 0; i <= heights.length; i++) {\n            int h = (i == heights.length) ? 0 : heights[i];\n            while (!stack.isEmpty() && h < heights[stack.peek()]) {\n                int height = heights[stack.pop()];\n                int width = stack.isEmpty() ? i : i - stack.peek() - 1;\n                maxArea = Math.max(maxArea, height * width);\n            }\n            stack.push(i);\n        }\n        return maxArea;\n    }\n}"
+            "code": "class Solution {\n    public int largestRectangleArea(int[] heights) {\n        Deque<Integer> stack = new ArrayDeque<>();\n        int maxArea = 0;\n        for (int i = 0; i <= heights.length; i++) {\n            int h = (i == heights.length) ? 0 : heights[i];\n            while (!stack.isEmpty() && h < heights[stack.peek()]) {\n                int height = heights[stack.pop()];\n                int width = stack.isEmpty() ? i : i - stack.peek() - 1;\n                maxArea = Math.max(maxArea, height * width);\n            }\n            stack.push(i);\n        }\n        return maxArea;\n    }\n}",
+            "interview_commentary": [
+                "The stack maintains indices of bars with increasing height to compute widths efficiently.",
+                "When a shorter bar appears, calculate areas for taller bars that end at this position.",
+                "A sentinel zero height flushes remaining bars and simplifies edge handling."
+            ]
         }
     ],
     "interview_qa": [

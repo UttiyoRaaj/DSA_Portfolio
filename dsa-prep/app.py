@@ -8,7 +8,7 @@ from urllib.parse import urljoin, urlparse
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify, request, redirect, session, url_for, flash, g
-from data.auth import authenticate_user, create_or_get_oauth_user, create_user, get_user_by_id
+from data.auth import authenticate_user, create_or_get_oauth_user, create_user, get_user_by_email, get_user_by_id
 from data.chat import (
     init_chat_db,
     create_chat_session,
@@ -28,6 +28,7 @@ from data.teacher import TeacherAgent
 init_chat_db()
 
 load_dotenv()
+# load_dotenv("/home/reetcode/DSA_Portfolio/dsa-prep/.env")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-me-for-production")
@@ -99,7 +100,7 @@ def send_signup_confirmation(email: str) -> dict:
     if not all([smtp_server, smtp_username, smtp_password]):
         app.logger.warning("SMTP not configured, logging email instead")
         app.logger.info("Signup confirmation email for %s:\nSubject: %s\n\n%s", email, subject, body)
-        return {"subject": subject, "body": body}
+        return {"subject": subject, "body": body, "sent": False}
 
     try:
         msg = MIMEMultipart()
@@ -115,12 +116,13 @@ def send_signup_confirmation(email: str) -> dict:
         server.sendmail(smtp_username, email, text)
         server.quit()
         app.logger.info("Signup confirmation email sent to %s", email)
+        return {"subject": subject, "body": body, "sent": True}
     except Exception as e:
         app.logger.error("Failed to send email to %s: %s", email, str(e))
         # Fallback to logging
         app.logger.info("Signup confirmation email for %s:\nSubject: %s\n\n%s", email, subject, body)
 
-    return {"subject": subject, "body": body}
+    return {"subject": subject, "body": body, "sent": False}
 
 
 def _topics_with_progress(user_id: int = 0):
@@ -304,10 +306,17 @@ def auth_google():
         flash("Unable to retrieve an email address from Google.", "error")
         return redirect(url_for("login"))
 
-    user = create_or_get_oauth_user(user_info["email"], "google")
+    email = user_info["email"].strip().lower()
+    is_new_user = get_user_by_email(email) is None
+    user = create_or_get_oauth_user(email, "google")
     if not user:
         flash("Unable to sign in with Google.", "error")
         return redirect(url_for("login"))
+
+    if is_new_user:
+        mail_result = send_signup_confirmation(user["email"])
+        if not mail_result["sent"]:
+            app.logger.warning("Signup confirmation email was not delivered to %s", user["email"])
 
     session["user_id"] = user["id"]
     session["session_id"] = new_session_id()
@@ -354,12 +363,15 @@ def signup():
             if user is None:
                 flash("Email already in use. Try logging in.", "error")
             else:
-                send_signup_confirmation(user["email"])
+                mail_result = send_signup_confirmation(user["email"])
                 session["user_id"] = user["id"]
                 session["session_id"] = new_session_id()
                 if next_page and is_safe_url(next_page):
                     return redirect(next_page)
-                flash("Account created successfully. A confirmation email has been sent.", "success")
+                if mail_result["sent"]:
+                    flash("Account created successfully. A confirmation email has been sent.", "success")
+                else:
+                    flash("Account created successfully, but the confirmation email could not be sent. Please contact support if you need help.", "warning")
                 return redirect(url_for("index"))
     return render_template("signup.html", next=next_page, page='signup')
 

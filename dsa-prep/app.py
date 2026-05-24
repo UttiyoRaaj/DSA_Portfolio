@@ -18,7 +18,8 @@ from data.chat import (
     delete_chat_session,
     update_session_timestamp
 )
-from data.memory import new_session_id, save_message, search_memories
+from data.interview_agent import InterviewAgent
+from data.memory import get_session_messages, new_session_id, save_message
 from data.questions import get_topics
 from data.progress import clear_progress, load_progress, mark_visited, question_key, update_progress
 from data.teacher import TeacherAgent
@@ -83,7 +84,7 @@ def send_signup_confirmation(email: str) -> dict:
     body = (
         f"Hi there,\n\n"
         f"Thanks for joining ReetCode with {email}. Your account has been created successfully.\n\n"
-        "Master data structures and algorithms through interactive problem-solving. Build skills for technical interviews, coding practice, or pure problem-solving growth.\n\n"
+        "Master data structures and algorithms through interactive problem-solving. Build skills for technical interviews, coding fluency, or pure problem-solving growth.\n\n"
         "If you have any questions, just hit reply to this message.\n\n"
         "Happy coding,\n"
         "The ReetCode Team\n"
@@ -385,87 +386,44 @@ def api_session():
     return jsonify({"session_id": new_session_id()})
 
 
-def _teacher_reply(message: str, memories: list[dict], language_hint: str) -> str:
-    lowered = message.lower()
-    prefix = ""
-    if language_hint == "hinglish":
-        prefix = "Bilkul, "
-    elif language_hint == "bengali_roman":
-        prefix = "Bujhlam, "
-
-    if memories:
-        memory = memories[0]["content"]
-        memory_line = (
-            "Tiny memory refresh: last time you had a related thought around "
-            f"\"{memory[:120]}\". Let us connect that to this."
-        )
-    else:
-        memory_line = "Let us build this from the ground up, no drama."
-
-    if any(word in lowered for word in ["forget", "forgot", "bhule", "mone", "yaad", "confuse", "confused"]):
-        return (
-            prefix
-            + memory_line
-            + "\n\nHint: first name the pattern, then name the state you keep, then say when that state changes. "
-            + "Try explaining only those three things."
-        )
-
-    if "why" in lowered or "keno" in lowered or "kyu" in lowered or "kya" in lowered:
-        return (
-            prefix
-            + "Great question. The trick is to ask what information would save us from repeating work. "
-            + memory_line
-            + "\n\nTell me what you think the repeated work is, and I will nudge from there."
-        )
-
-    return (
-        prefix
-        + "Nice, I am with you. "
-        + memory_line
-        + "\n\nNow say it back casually: what are we tracking, why does it help, and what edge case might break it?"
-    )
-
-
-def _interview_reply(message: str, memories: list[dict]) -> str:
-    if memories:
-        return (
-            "Noted. I see a related prior discussion in your history, but in this interview please reason from first principles. "
-            "Now clarify your approach, complexity, and one edge case."
-        )
-    return "Understood. Please continue with your approach, expected complexity, and edge cases."
-
-
 @app.route("/api/conversation", methods=["POST"])
 def api_conversation():
     data = request.get_json(silent=True) or {}
     session_id = data.get("session_id") or new_session_id()
-    mode = data.get("mode", "practice")
+    mode = data.get("mode", "interview")
     content = (data.get("content") or "").strip()
     topic_slug = data.get("topic_slug")
     topic_title = data.get("topic_title")
     q_key = data.get("question_key")
     question_title = data.get("question_title")
+    problem_statement = data.get("problem_statement")
 
     if not content:
         return jsonify({"ok": False, "error": "Message is required"}), 400
 
+    history = get_session_messages(session_id, limit=12)
     user_memory = save_message(
         session_id=session_id,
         mode=mode,
-        role="student" if mode == "practice" else "candidate",
+        role="candidate",
         content=content,
         topic_slug=topic_slug,
         topic_title=topic_title,
         question_key=q_key,
         question_title=question_title,
     )
-    memories = search_memories(content, mode=mode, topic_slug=topic_slug)
-    if mode == "practice":
-        reply = _teacher_reply(content, memories, user_memory["language_hint"])
-        assistant_role = "teacher"
-    else:
-        reply = _interview_reply(content, memories)
-        assistant_role = "interviewer"
+    try:
+        reply = InterviewAgent().reply(
+            candidate_message=content,
+            history=history,
+            topic_title=topic_title,
+            question_title=question_title,
+            problem_statement=problem_statement,
+        )
+    except Exception as error:
+        app.logger.exception("Interview LLM failed")
+        return jsonify({"ok": False, "error": f"LLM request failed: {error}"}), 502
+    assistant_role = "interviewer"
 
     save_message(
         session_id=session_id,
@@ -482,11 +440,10 @@ def api_conversation():
         "session_id": session_id,
         "reply": reply,
         "language_hint": user_memory["language_hint"],
-        "memories": memories,
     })
 
 
-# Practice Mode Chat API Routes
+# Live interview chat API routes
 @app.route("/api/chat/start", methods=["POST"])
 def start_chat_session():
     """Start a new chat session with selected topics"""
@@ -590,22 +547,6 @@ def delete_chat_session_route(session_id):
 
     return jsonify({"ok": True})
 
-
-@app.route("/practice")
-def practice():
-    if not g.current_user:
-        return redirect(url_for("login", next=request.path))
-
-    # Get user's chat sessions for history
-    chat_sessions = get_chat_sessions(current_user_id())
-    topics = _topics_with_progress(user_id=current_user_id())
-
-    return render_template(
-        "practice.html",
-        topics=topics,
-        chat_sessions=chat_sessions,
-        page='practice'
-    )
 
 @app.route("/live-interview")
 def live_interview():

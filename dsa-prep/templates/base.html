@@ -706,7 +706,6 @@
         ReetCode
     </a>
     <div class="nav-actions">
-        <a href="/practice" class="nav-topic-link {% if page is defined and page == 'practice' %}active{% endif %}">Practice</a>
         <a href="/live-interview" class="nav-topic-link {% if page is defined and page == 'live-interview' %}active{% endif %}">Live Interview</a>
         {% if current_user %}
             <span class="nav-user">{{ current_user.email | email_preview }}</span>

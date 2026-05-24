@@ -80,6 +80,23 @@ def search_memories(content, mode=None, topic_slug=None, limit=5):
     similar = [m for m in memories if content.lower() in m["content"].lower()][:limit]
     return similar
 
+def get_session_messages(session_id, limit=8):
+    conn = _get_db()
+    cursor = conn.execute(
+        '''
+        SELECT session_id, mode, role, content, topic_slug, topic_title, question_key, question_title, timestamp, language_hint
+        FROM conversations
+        WHERE session_id = ?
+        ORDER BY id DESC
+        LIMIT ?
+        ''',
+        (session_id, limit),
+    )
+    columns = [desc[0] for desc in cursor.description]
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(zip(columns, row)) for row in reversed(rows)]
+
 def detect_language_hint(content):
     # Simple detection
     if any(word in content.lower() for word in ["bhai", "yaar", "kya", "hai", "kar", "raha", "tha", "mujhe", "tum", "tera"]):

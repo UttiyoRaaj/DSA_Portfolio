@@ -1,6 +1,8 @@
 from pathlib import Path
 import json
 
+from data.visualization_traces import enhance_question_visualizations
+
 DATA_DIR = Path(__file__).resolve().parent
 QUESTION_DATA_DIR = DATA_DIR / "question_data"
 
@@ -106,7 +108,8 @@ TOPICS_META = [
 
 def _load_question_file(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        question = json.load(f)
+    return enhance_question_visualizations(question)
 
 
 def _get_question_paths(topic_slug: str) -> list[Path]:

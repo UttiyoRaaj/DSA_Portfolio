@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}DSA (Java) — ReetCode{% endblock %}
+
+{% block head %}
+<style>
+    .dsa-hero, .dsa-content { max-width: 980px; margin: 0 auto; padding-left: 3rem; padding-right: 3rem; }
+    .dsa-hero { padding-top: 4rem; padding-bottom: 2.5rem; }
+    .dsa-title { font-family: var(--font-logo); font-size: clamp(3rem, 5vw, 4.25rem); line-height: 1; margin-bottom: 1rem; }
+    .dsa-sub { max-width: 630px; color: var(--text2); font-size: 1rem; }
+    .dsa-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin-top: 2rem; }
+    .dsa-stat { padding: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; }
+    .dsa-stat-num { display: block; color: var(--accent); font-family: var(--font-mono); font-size: 1.55rem; font-weight: 700; }
+    .dsa-stat-label { color: var(--text3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .dsa-content { padding-top: 2rem; padding-bottom: 5rem; border-top: 1px solid var(--border); }
+    .dsa-header { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1rem; }
+    .dsa-heading { font-family: var(--font-logo); font-size: 2rem; }
+    .dsa-note { max-width: 320px; text-align: right; color: var(--text3); font-size: 0.82rem; }
+    .topics-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.55rem; }
+    .topic-row { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 0.9rem; text-decoration: none; color: var(--text); transition: 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; gap: 0.75rem; min-height: 62px; }
+    .topic-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--topic-color, var(--accent)); opacity: 0.8; }
+    .topic-row:hover { border-color: var(--border2); background: #fffaf2; transform: translateX(2px); }
+    .topic-mark { width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center; background: color-mix(in srgb, var(--topic-color, var(--accent)) 14%, transparent); border: 1px solid color-mix(in srgb, var(--topic-color, var(--accent)) 34%, transparent); font-family: var(--font-topic); font-weight: 700; flex-shrink: 0; }
+    .topic-main { flex: 1; min-width: 0; }
+    .topic-row-title { font-family: var(--font-topic); font-weight: 600; font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .topic-progress { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem; }
+    .topic-progress-track { height: 4px; border-radius: 999px; background: var(--bg2); flex: 1; overflow: hidden; }
+    .topic-progress-fill { height: 100%; border-radius: inherit; background: var(--topic-color, var(--accent)); opacity: 0.75; }
+    .topic-count { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text3); white-space: nowrap; }
+    @media (max-width: 640px) { .dsa-hero, .dsa-content { padding-left: 1.25rem; padding-right: 1.25rem; } .dsa-stats, .topics-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dsa-header { align-items: start; flex-direction: column; } .dsa-note { text-align: left; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="dsa-hero">
+    <div class="hero-eyebrow">Learning path</div>
+    <h1 class="dsa-title">DSA (Java)</h1>
+    <p class="dsa-sub">Practice data structures and algorithms with Java solutions, clear approach evolution, and progress tracking.</p>
+    <div class="dsa-stats">
+        <div class="dsa-stat"><span class="dsa-stat-num">{{ stats.total_topics }}</span><span class="dsa-stat-label">Topics</span></div>
+        <div class="dsa-stat"><span class="dsa-stat-num">{{ stats.total_questions }}</span><span class="dsa-stat-label">Questions</span></div>
+        <a href="/completed" class="dsa-stat"><span class="dsa-stat-num">{{ stats.completed_questions }}</span><span class="dsa-stat-label">Completed</span></a>
+        <a href="/tricky" class="dsa-stat"><span class="dsa-stat-num">{{ stats.tricky_questions }}</span><span class="dsa-stat-label">Tricky</span></a>
+    </div>
+</section>
+
+<section class="dsa-content">
+    <div class="dsa-header">
+        <div><div class="section-label" style="margin-bottom: 0.45rem;">Topics</div><h2 class="dsa-heading">Choose a DSA topic</h2></div>
+        <p class="dsa-note">Pick a topic and jump straight into its questions, explanations, and Java solutions.</p>
+    </div>
+    <div class="topics-list">
+        {% for topic in topics %}
+        <a href="/topic/{{ topic.slug }}" class="topic-row" style="--topic-color: {{ topic.color }}">
+            <div class="topic-mark">{{ topic.title[:1] }}</div>
+            <div class="topic-main">
+                <div class="topic-row-title">{{ topic.title }}</div>
+                <div class="topic-progress"><div class="topic-progress-track"><div class="topic-progress-fill" style="width: {% if topic.total %}{{ (topic.completed_count / topic.total * 100) | round(0, 'floor') }}{% else %}0{% endif %}%"></div></div><span class="topic-count">{{ topic.completed_count }}/{{ topic.total }} done</span></div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

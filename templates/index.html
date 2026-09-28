@@ -48,6 +48,90 @@
         margin-bottom: 3rem;
     }
 
+    /* LEARNING PATHS */
+    .paths-section {
+        padding: 0 3rem 2rem;
+        max-width: 980px;
+        margin: 0 auto;
+    }
+
+    .paths-heading {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .paths-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .path-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 198px;
+        padding: 1.35rem;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--text);
+        text-decoration: none;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .path-card::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 5px;
+        background: var(--path-color);
+    }
+
+    .path-card:not(.coming-soon):hover {
+        transform: translateY(-3px);
+        border-color: color-mix(in srgb, var(--path-color) 45%, var(--border));
+        box-shadow: 0 16px 30px rgba(92, 64, 42, 0.1);
+    }
+
+    .path-card.coming-soon { opacity: 0.82; }
+
+    .path-kicker {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--path-color);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 0.55rem;
+    }
+
+    .path-title {
+        font-family: var(--font-logo);
+        font-size: 1.75rem;
+        line-height: 1.05;
+        font-weight: 700;
+        margin-bottom: 0.65rem;
+    }
+
+    .path-description {
+        color: var(--text2);
+        font-size: 0.85rem;
+        line-height: 1.65;
+    }
+
+    .path-action, .path-status {
+        margin-top: auto;
+        padding-top: 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--path-color);
+    }
+
+    .path-status { color: var(--text3); }
+
     .hero-stats {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -237,12 +321,13 @@
     }
 
     @media (max-width: 640px) {
-        .hero, .topics-section { padding-left: 1.25rem; padding-right: 1.25rem; }
+        .hero, .paths-section, .topics-section { padding-left: 1.25rem; padding-right: 1.25rem; }
         .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
         .features-row { grid-template-columns: 1fr; }
         .topics-header { align-items: start; flex-direction: column; }
         .topics-note { text-align: left; }
         .topics-list { grid-template-columns: 1fr; }
+        .paths-grid { grid-template-columns: 1fr; }
     }
 
     /* TRUSTED COMPANIES SECTION */
@@ -318,65 +403,38 @@
 
 {% block content %}
 <div class="hero">
-    <div class="hero-eyebrow">The rhythm of problem-solving</div>
-    <h1 class="hero-title">Master DSA<br>Code your way to success...</h1>
+    <div class="hero-eyebrow">Your technical interview companion</div>
+    <h1 class="hero-title">Build skills that<br>move your career forward.</h1>
     <p class="hero-sub">
-        Topic-wise solutions with full approach evolution — from brute force to optimal. Perfect for interviews, coding fluency, or skill-building at any level.
+        Learn with structured DSA, Agentic &amp; Gen AI, and System Design content — built for deeper understanding and confident interviews.
     </p>
 
-    <div class="hero-stats">
-        <div class="stat-card">
-            <div class="stat">
-                <span class="stat-num">{{ stats.total_topics }}</span>
-                <span class="stat-label">Topics</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat">
-                <span class="stat-num">{{ stats.total_questions }}</span>
-                <span class="stat-label">Questions</span>
-            </div>
-        </div>
-        <a href="/completed" class="stat-card">
-            <div class="stat">
-                <span class="stat-num">{{ stats.completed_questions }}</span>
-                <span class="stat-label">Completed</span>
-            </div>
-        </a>
-        <a href="/tricky" class="stat-card">
-            <div class="stat">
-                <span class="stat-num">{{ stats.tricky_questions }}</span>
-                <span class="stat-label">Tricky</span>
-            </div>
-        </a>
-    </div>
 </div>
 
-<div class="topics-section">
-    <div class="topics-header">
-        <div>
-            <div class="section-label" style="margin-bottom: 0.45rem;">Topics</div>
-            <h3 class="topics-title">Choose a topic</h3>
-        </div>
-        <p class="topics-note">Here's the inception of zenith. Pick a topic and jump straight into its questions.</p>
-    </div>
-    <div class="topics-list">
-        {% for topic in topics %}
-        <a href="/topic/{{ topic.slug }}" class="topic-row" style="--topic-color: {{ topic.color }}">
-            <div class="topic-mark">{{ topic.title[:1] }}</div>
-            <div class="topic-main">
-                <div class="topic-row-title">{{ topic.title }}</div>
-                <div class="topic-progress">
-                    <div class="topic-progress-track">
-                        <div class="topic-progress-fill" style="width: {% if topic.total %}{{ (topic.completed_count / topic.total * 100) | round(0, 'floor') }}{% else %}0{% endif %}%"></div>
-                    </div>
-                    <span class="topic-count">{{ topic.completed_count }}/{{ topic.total }} done</span>
-                </div>
-            </div>
+<section class="paths-section" aria-labelledby="paths-heading">
+    <div class="section-label" style="margin-bottom: 0.45rem;">Learning paths</div>
+    <h2 id="paths-heading" class="paths-heading">Choose your focus</h2>
+    <div class="paths-grid">
+        <a href="/dsa" class="path-card" style="--path-color: #905f30;">
+            <div class="path-kicker">Available now</div>
+            <h3 class="path-title">DSA (Java)</h3>
+            <p class="path-description">Practice patterns and interview questions with Java solutions, explanations, and progress tracking.</p>
+            <span class="path-action">Explore DSA topics &rarr;</span>
         </a>
-        {% endfor %}
+        <a href="/agentic-gen-ai" class="path-card" style="--path-color: #5a6e9b;">
+            <div class="path-kicker">Dedicated learning path</div>
+            <h3 class="path-title">Agentic &amp; Gen AI</h3>
+            <p class="path-description">Learn modern AI concepts, agent workflows, practical patterns, and interview-ready answers.</p>
+            <span class="path-action">Explore learning path &rarr;</span>
+        </a>
+        <a href="/system-design" class="path-card" style="--path-color: #37755a;">
+            <div class="path-kicker">Dedicated learning path</div>
+            <h3 class="path-title">System Design</h3>
+            <p class="path-description">Build intuition for scalable systems through fundamentals, trade-offs, diagrams, and real-world designs.</p>
+            <span class="path-action">Explore learning path &rarr;</span>
+        </a>
     </div>
-</div>
+</section>
 
 <!-- Trusted Companies Section -->
 <div class="trusted-section">
@@ -431,6 +489,6 @@
             <span class="company-name">Stripe</span>
         </div>
     </div>
-    <p class="trusted-footnote">Join thousands of engineers who mastered DSA and landed interviews at their dream companies.</p>
+    <p class="trusted-footnote">Build the foundations for your next technical interview and the role after it.</p>
 </div>
 {% endblock %}

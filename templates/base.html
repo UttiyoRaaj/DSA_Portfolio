@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Dancing+Script:wght@500;600;700&family=Lora:wght@400;500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/visualization.css') }}">
     <style>
         :root {
             --bg: #fbf7ef;
@@ -734,6 +735,7 @@
 <div class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="{{ url_for('static', filename='js/visualization-player.js') }}"></script>
 <script>
     hljs.highlightAll();
 

@@ -404,7 +404,12 @@
                     <div class="approach-card {% if ap.badge_color == 'green' %}optimal{% endif %}">
                         <div class="approach-header">
                             <span class="approach-name">{{ ap.name }}</span>
-                            <span class="badge badge-{{ ap.badge_color }}">{{ ap.badge }}</span>
+                            <div class="approach-actions">
+                                <span class="badge badge-{{ ap.badge_color }}">{{ ap.badge }}</span>
+                                {% if ap.visualization %}
+                                <button type="button" class="button button-secondary approach-animation-btn" data-open-visualization>Animation</button>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="approach-desc">{{ ap.description | safe }}</div>
@@ -433,6 +438,95 @@
                             <pre><code class="language-java">{{ ap.code }}</code></pre>
                         </div>
                         {% endif %}
+
+                        {% if ap.visualization %}
+                        <div class="visualization-shell" data-visualization='{"visualization": {{ ap.visualization | tojson | safe }}}'>
+                            <div class="visualization-toolbar">
+                                <div class="visualization-toolbar-group">
+                                    <button type="button" data-action="play">▶ Play</button>
+                                    <button type="button" data-action="pause">⏸ Pause</button>
+                                    <button type="button" data-action="next">⏭ Next</button>
+                                    <button type="button" data-action="previous">⏮ Previous</button>
+                                    <button type="button" data-action="reset">⏹ Reset</button>
+                                </div>
+                                <div class="visualization-toolbar-group">
+                                    <label class="visualization-speed">
+                                        Speed
+                                        <input type="range" min="0.5" max="4" step="0.5" value="1" data-speed>
+                                    </label>
+                                    <span data-speed-value>1.0x</span>
+                                    <input type="range" class="visualization-progress" min="1" max="1" value="1" data-progress>
+                                    <span class="visualization-step-pill" data-step-label>Step 1 / 1</span>
+                                </div>
+                                <button type="button" class="visualization-close-btn" data-action="close">✕</button>
+                            </div>
+
+                            <div class="visualization-split-shell" style="--visualization-split: 65%;">
+                                <div class="visualization-pane-left">
+                                    <div class="visualization-board">
+                                        <div class="visualization-board-card">
+                                            <div class="visualization-board-header">
+                                                <div>
+                                                    <div class="visualization-label">Blackboard Walkthrough</div>
+                                                    <h3>Two Sum explained like a classroom lesson</h3>
+                                                </div>
+                                                <div class="visualization-status" data-current-line>Currently Executing: —</div>
+                                            </div>
+                                            <div class="visualization-workflow" data-workflow></div>
+                                            <div class="visualization-board-card-inner">
+                                                <div class="visualization-board-left-scroll">
+                                                    <div class="visualization-board-left">
+                                                        <div class="visualization-structure-card visualization-main-structure">
+                                                            <div class="structure-card-header">Main Data Structure</div>
+                                                            <div class="structure-card-body" data-main-structure></div>
+                                                        </div>
+                                                        <div class="visualization-structure-card visualization-secondary-structure">
+                                                            <div class="structure-card-header">Other Data Structure</div>
+                                                            <div class="structure-card-body" data-secondary-structure></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="visualization-board-right-scroll">
+                                                    <div class="visualization-board-right">
+                                                        <div class="visualization-card visualization-variables-card">
+                                                            <h4>Variables</h4>
+                                                            <div data-variables></div>
+                                                        </div>
+                                                        <div class="visualization-card visualization-explanation-card">
+                                                            <h4>Explanation</h4>
+                                                            <p data-explanation>Use the controls to watch how this approach moves through the input.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="visualization-splitter" data-splitter role="separator" aria-orientation="vertical" tabindex="0"></div>
+
+                                <div class="visualization-pane-right">
+                                    <div class="visualization-code">
+                                        <div class="code-header">
+                                            <span>Java</span>
+                                            <span data-step-label-inline>Step 1 / 1</span>
+                                        </div>
+                                        <div class="visualization-code-scroll">
+                                            <div class="visualization-code-lines" data-code-snippet>{{ ap.code }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="visualization-input-panel">
+                                <div class="visualization-card">
+                                    <h4>Custom Input</h4>
+                                    <textarea class="visualization-input" data-visualization-input>{{ ap.visualization.defaultInputText }}</textarea>
+                                </div>
+                                <button class="button" type="button" data-apply-input>Apply Input</button>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -454,6 +548,8 @@
             {% endfor %}
         </div>
         {% endif %}
+
+        <div class="visualization-modal-backdrop" data-visualization-backdrop hidden></div>
 
         <div class="section-block">
             <div class="section-label">Study Notes</div>

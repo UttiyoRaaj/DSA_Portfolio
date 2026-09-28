@@ -25,6 +25,36 @@
     "intuition": "Keep a map from number to index. For each element, check if its complement target - num already exists in the map.",
     "approaches": [
         {
+            "name": "Brute Force",
+            "badge": "Brute",
+            "badge_color": "red",
+            "description": "Check every pair of indices and return the first pair whose values add to the target.",
+            "time": "O(n²)",
+            "space": "O(1)",
+            "why_not": "This is simple but too slow for large input arrays.",
+            "code": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        for (int i = 0; i < nums.length; i++) {\n            for (int j = i + 1; j < nums.length; j++) {\n                if (nums[i] + nums[j] == target) {\n                    return new int[]{i, j};\n                }\n            }\n        }\n        return new int[]{};\n    }\n}",
+            "visualization": {
+                "type": "two-sum-brute-force",
+                "defaultInputText": "nums = [2,7,11,15], target = 9",
+                "steps": []
+            }
+        },
+        {
+            "name": "Sorted Two Pointers",
+            "badge": "Better",
+            "badge_color": "yellow",
+            "description": "Sort the values, then use two pointers to find a matching pair while preserving the original indices.",
+            "time": "O(n log n)",
+            "space": "O(n)",
+            "why_not": "The sort step adds overhead and the solution is less direct than the one-pass hashmap approach.",
+            "code": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        int[][] pairs = new int[nums.length][2];\n        for (int i = 0; i < nums.length; i++) {\n            pairs[i][0] = nums[i];\n            pairs[i][1] = i;\n        }\n        Arrays.sort(pairs, (a, b) -> Integer.compare(a[0], b[0]));\n\n        int left = 0;\n        int right = pairs.length - 1;\n        while (left < right) {\n            int sum = pairs[left][0] + pairs[right][0];\n            if (sum == target) {\n                return new int[]{pairs[left][1], pairs[right][1]};\n            } else if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return new int[]{};\n    }\n}",
+            "visualization": {
+                "type": "two-sum-two-pointers",
+                "defaultInputText": "nums = [2,7,11,15], target = 9",
+                "steps": []
+            }
+        },
+        {
             "name": "HashMap One Pass",
             "badge": "Optimal",
             "badge_color": "green",
@@ -32,7 +62,12 @@
             "time": "O(n)",
             "space": "O(n)",
             "why_not": null,
-            "code": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int complement = target - nums[i];\n            if (map.containsKey(complement)) {\n                return new int[]{map.get(complement), i};\n            }\n            map.put(nums[i], i);\n        }\n        return new int[]{};\n    }\n}"
+            "code": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int complement = target - nums[i];\n            if (map.containsKey(complement)) {\n                return new int[]{map.get(complement), i};\n            }\n            map.put(nums[i], i);\n        }\n        return new int[]{};\n    }\n}",
+            "visualization": {
+                "type": "two-sum-hashmap",
+                "defaultInputText": "nums = [2,7,11,15], target = 9",
+                "steps": []
+            }
         }
     ],
     "interview_qa": [

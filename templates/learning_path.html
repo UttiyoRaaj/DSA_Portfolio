@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ path.title }} — ReetCode{% endblock %}
+
+{% block head %}
+<style>
+    .path-page { max-width: 900px; margin: 0 auto; padding: 5rem 3rem; }
+    .path-page .hero-eyebrow { color: {{ path.color }}; }
+    .path-page .hero-eyebrow::before { background: {{ path.color }}; }
+    .path-page-title { font-family: var(--font-logo); font-size: clamp(3rem, 6vw, 4.75rem); line-height: 1; margin-bottom: 1rem; }
+    .path-page-sub { max-width: 620px; color: var(--text2); font-size: 1.05rem; }
+    .empty-state { margin-top: 3rem; padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-top: 4px solid {{ path.color }}; border-radius: 14px; }
+    .empty-state h2 { font-family: var(--font-logo); font-size: 1.8rem; margin-bottom: 0.55rem; }
+    .empty-state p { color: var(--text2); }
+    .question-list { margin-top: 3rem; }
+    .question-card { display: block; padding: 1.3rem 1.4rem; margin-top: 0.75rem; border: 1px solid var(--border); border-left: 4px solid {{ path.color }}; border-radius: 12px; background: var(--surface); color: var(--text); text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .question-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(92,64,42,0.08); }
+    .question-meta { color: {{ path.color }}; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .question-card h2 { font-family: var(--font-logo); font-size: 1.55rem; line-height: 1.15; margin: 0.3rem 0 0.45rem; }
+    .question-card p { color: var(--text2); font-size: 0.88rem; }
+    @media (max-width: 640px) { .path-page { padding: 3rem 1.25rem; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="path-page">
+    <div class="hero-eyebrow">{{ path.eyebrow }}</div>
+    <h1 class="path-page-title">{{ path.title }}</h1>
+    <p class="path-page-sub">{{ path.description }}</p>
+    {% if questions %}
+    <section class="question-list" aria-label="Questions">
+        <div class="section-label">Questions</div>
+        {% for question in questions %}
+        <a class="question-card" href="/{{ page }}/question/{{ question.slug }}">
+            <div class="question-meta">{{ question.category }} · {{ question.difficulty }}</div>
+            <h2>{{ question.title }}</h2>
+            <p>{{ question.description }}</p>
+        </a>
+        {% endfor %}
+    </section>
+    {% else %}
+    <section class="empty-state">
+        <h2>Content is on its way</h2>
+        <p>This dedicated page is ready for its questions, answers, code examples, and diagrams.</p>
+    </section>
+    {% endif %}
+</main>
+{% endblock %}

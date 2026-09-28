@@ -21,6 +21,7 @@ from data.chat import (
 from data.interview_agent import InterviewAgent
 from data.memory import get_session_messages, new_session_id, save_message
 from data.questions import get_topics
+from data.learning_content import get_learning_question, get_learning_questions
 from data.progress import clear_progress, load_progress, mark_visited, question_key, update_progress
 from data.teacher import TeacherAgent
 
@@ -172,7 +173,69 @@ def inject_site_stats():
 
 @app.route("/")
 def index():
-    return render_template("index.html", topics=_topics_with_progress(user_id=current_user_id()))
+    return render_template("index.html")
+
+@app.route("/dsa")
+def dsa():
+    return render_template("dsa.html", topics=_topics_with_progress(user_id=current_user_id()), page="dsa")
+
+@app.route("/agentic-gen-ai")
+def agentic_gen_ai():
+    return render_template(
+        "learning_path.html",
+        page="agentic-gen-ai",
+        path={
+            "eyebrow": "Learning path",
+            "title": "Agentic & Gen AI",
+            "description": "Explore generative AI concepts, agent workflows, patterns, and interview-ready knowledge.",
+            "color": "#5a6e9b",
+        },
+        questions=get_learning_questions("agentic-gen-ai"),
+    )
+
+@app.route("/agentic-gen-ai/question/<question_slug>")
+def agentic_gen_ai_question(question_slug):
+    question = get_learning_question("agentic-gen-ai", question_slug)
+    if not question:
+        return "Question not found", 404
+    return render_template(
+        "learning_question.html",
+        page="agentic-gen-ai",
+        path_title="Agentic & Gen AI",
+        path_url=url_for("agentic_gen_ai"),
+        question=question,
+        questions=get_learning_questions("agentic-gen-ai"),
+        accent="#5a6e9b",
+    )
+
+@app.route("/system-design")
+def system_design():
+    return render_template(
+        "learning_path.html",
+        page="system-design",
+        path={
+            "eyebrow": "Learning path",
+            "title": "System Design",
+            "description": "Build intuition for scalable systems through architecture, trade-offs, and real-world design exercises.",
+            "color": "#37755a",
+        },
+        questions=get_learning_questions("system-design"),
+    )
+
+@app.route("/system-design/question/<question_slug>")
+def system_design_question(question_slug):
+    question = get_learning_question("system-design", question_slug)
+    if not question:
+        return "Question not found", 404
+    return render_template(
+        "learning_question.html",
+        page="system-design",
+        path_title="System Design",
+        path_url=url_for("system_design"),
+        question=question,
+        questions=get_learning_questions("system-design"),
+        accent="#37755a",
+    )
 
 @app.route("/topic/<topic_slug>")
 def topic(topic_slug):
